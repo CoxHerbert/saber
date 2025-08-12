@@ -193,25 +193,25 @@ const uploadFileFun = async option => {
   return res;
 };
 
-function handleBeforeUpload(file) {
+const handleBeforeUpload = file => {
   if (!props.targetType) {
     proxy.$message.error('上传文件类型不能为空');
     return false;
   }
-  let isImg = props.fileType.some(type => file.type.includes(type) || file.name.endsWith(type));
+  const isImg = props.fileType.some(type => file.type.includes(type) || file.name.endsWith(type));
   if (!isImg) {
     proxy.$message.error(`文件格式不正确, 请上传${props.fileType.join('/')}格式文件!`);
     return false;
   }
   proxy.$modal.loading('正在上传文件，请稍候...');
   number.value++;
-}
+};
 
-function handleExceed() {
+const handleExceed = () => {
   proxy.$message.error(`上传文件数量不能超过 ${props.limit} 个!`);
-}
+};
 
-async function handleUploadSuccess(res, file) {
+const handleUploadSuccess = async (res, file) => {
   const { code, data } = res.data;
   if (code === 200) {
     const res2 = await Api.common.postSubmitFile({
@@ -236,18 +236,18 @@ async function handleUploadSuccess(res, file) {
     proxy.$refs.fileUpload.handleRemove(file);
   }
   proxy.$modal.closeLoading();
-}
+};
 
-function handleDelete(file) {
+const handleDelete = file => {
   const index = fileList.value.findIndex(f => f.id === file.id);
   if (index > -1) {
     fileList.value.splice(index, 1);
     emit('update:modelValue', fileList.value);
     return false;
   }
-}
+};
 
-function uploadedSuccessfully() {
+const uploadedSuccessfully = () => {
   if (number.value && fileList.value.length === number.value) {
     fileList.value = fileList.value.filter(f => f.url).concat(fileList.value);
     fileList.value = [];
@@ -255,12 +255,12 @@ function uploadedSuccessfully() {
     emit('update:modelValue', fileList.value);
     proxy.$modal.closeLoading();
   }
-}
+};
 
-function handleUploadError() {
+const handleUploadError = () => {
   proxy.$message.error('上传文件失败');
   proxy.$modal.closeLoading();
-}
+};
 
 const handleDownload = item => {
   try {

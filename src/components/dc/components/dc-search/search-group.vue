@@ -248,9 +248,9 @@ onBeforeUnmount(() => {
 });
 
 /** 递归寻找匹配的数据 */
-function findMatches(items, condition) {
-  let results = [];
-  function search(arr) {
+const findMatches = (items, condition) => {
+  const results = [];
+  const search = arr => {
     arr.forEach(item => {
       if (condition(item)) {
         results.push(item);
@@ -259,10 +259,10 @@ function findMatches(items, condition) {
         search(item.children); // 递归调用
       }
     });
-  }
+  };
   search(items);
   return results;
-}
+};
 
 const getSelectLabel = key => {
   const itemConfig = props.config.paramType[key];
