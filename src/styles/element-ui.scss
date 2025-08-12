@@ -1,3 +1,5 @@
+@use './variables' as var;
+
 .el-card.is-always-shadow {
   box-shadow: none;
   border: none !important;
@@ -8,7 +10,7 @@
 }
 
 .el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content {
-  color: #f26c0c;
+  color: var.$color-primary;
   background: none;
 }
 
@@ -30,23 +32,10 @@
 }
 .el-button.is-disabled,
 .el-button.is-disabled:hover {
-  // --el-button-disabled-text-color: #ffffff;
-  // --el-button-disabled-bg-color: #f3d19e;
-  // --el-button-disabled-border-color: #f3d19e;
   --el-button-disabled-text-color: var(--el-color-white);
   --el-button-disabled-bg-color: var(--el-color-warning-light-5);
   --el-button-disabled-border-color: var(--el-color-warning-light-5);
 }
-// .el-button.is-disabled, .el-button.is-disabled:hover {
-//   color: var(--el-button-disabled-text-color);
-//   cursor: not-allowed;
-//   background-image: none;
-//   background-color: var(--el-button-disabled-bg-color);
-//   border-color: var(--el-button-disabled-border-color);
-// }
-// .el-drawer__body {
-//   padding-top: 0 !important;
-// }
 
 .el-date-editor .el-range-input,
 .el-date-editor .el-range-separator {
@@ -238,7 +227,7 @@
     font-weight: bold;
     font-size: 16px;
     color: #fff;
-    border: 1px solid #f78431;
+    border: 1px solid var.$color-accent;
   }
 
   .step-title {
@@ -250,8 +239,8 @@
   // 已结束
   &-finish {
     .step-num {
-      border-color: #f78431;
-      color: #f78431;
+      border-color: var.$color-accent;
+      color: var.$color-accent;
     }
 
     .step-title {
@@ -263,12 +252,12 @@
   &-process {
     .step-num {
       color: #fff;
-      background-color: #f78431;
-      border: 1px solid #f78431;
+      background-color: var.$color-accent;
+      border: 1px solid var.$color-accent;
     }
 
     .step-title {
-      color: #f78431;
+      color: var.$color-accent;
     }
   }
 

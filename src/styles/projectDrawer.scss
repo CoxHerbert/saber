@@ -1,3 +1,5 @@
+@use './variables' as var;
+
 .project-drawer {
   padding-left: 24px;
   width: 1100px !important;
@@ -82,7 +84,7 @@
               align-items: center;
               font-weight: 400;
               font-size: 14px;
-              color: #f78431;
+                color: var.$color-accent;
               cursor: pointer;
               user-select: none;
               .plus-icon {

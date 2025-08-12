@@ -22,7 +22,6 @@
 .login-left,
 .login-border {
   position: relative;
-  // min-height: 500px;
   align-items: center;
   display: flex;
 }
@@ -76,7 +75,6 @@
 }
 
 .login-main {
-  // margin: 0 auto;
   width: 100%;
   box-sizing: border-box;
 }
@@ -177,7 +175,6 @@
       box-shadow: none;
       border-radius: 0;
       color: #333;
-      // border-bottom: 1px solid rgb(235, 237, 242);
     }
 
     .el-input__prefix {
