@@ -33,9 +33,7 @@ const props = defineProps({
   },
   pageSizes: {
     type: Array,
-    default() {
-      return [10, 20, 30, 50, 9999];
-    },
+    default: () => [10, 20, 30, 50, 9999],
   },
   // 移动端页码按钮的数量端默认值5
   pagerCount: {
@@ -62,23 +60,15 @@ const props = defineProps({
 
 const emit = defineEmits();
 const currentPage = computed({
-  get() {
-    return props.page;
-  },
-  set(val) {
-    emit('update:page', val);
-  },
+  get: () => props.page,
+  set: val => emit('update:page', val),
 });
 const pageSize = computed({
-  get() {
-    return props.limit;
-  },
-  set(val) {
-    emit('update:limit', val);
-  },
+  get: () => props.limit,
+  set: val => emit('update:limit', val),
 });
-function handleSizeChange(val) {
-  pageSize.vlaue = val;
+const handleSizeChange = val => {
+  pageSize.value = val;
   if (currentPage.value * val > props.total) {
     currentPage.value = 1;
   }
@@ -86,13 +76,13 @@ function handleSizeChange(val) {
   if (props.autoScroll) {
     scrollTo(0, 800);
   }
-}
-function handleCurrentChange(val) {
+};
+const handleCurrentChange = val => {
   emit('pagination', { page: val, limit: pageSize.value });
   if (props.autoScroll) {
     scrollTo(0, 800);
   }
-}
+};
 
 onMounted(() => {
   if (props.limit === 9999) {

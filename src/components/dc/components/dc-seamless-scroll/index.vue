@@ -77,7 +77,7 @@ const STEP = 1; // 可调：步长越大滚越快
 // 定时器间隔(ms)
 const INTERVAL = 80; // 可调：间隔越小滚越平滑
 
-function startScroll() {
+const startScroll = () => {
   if (timer || !scrollContainer.value || !scrollContent.value) return;
   timer = setInterval(() => {
     const cont = scrollContainer.value;
@@ -89,14 +89,14 @@ function startScroll() {
       cont.scrollTop += STEP;
     }
   }, INTERVAL);
-}
+};
 
-function stopScroll() {
+const stopScroll = () => {
   if (timer) {
     clearInterval(timer);
     timer = null;
   }
-}
+};
 
 onMounted(() => {
   // 等 DOM 完全渲染后再启动滚动

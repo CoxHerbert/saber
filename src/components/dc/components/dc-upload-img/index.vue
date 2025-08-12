@@ -101,8 +101,8 @@ const uploadFileFun = async option => {
   return res;
 };
 
-function handleBeforeUpload(file) {
-  let isImg = props.fileType.some(type => file.type.includes(type) || file.name.endsWith(type));
+const handleBeforeUpload = file => {
+  const isImg = props.fileType.some(type => file.type.includes(type) || file.name.endsWith(type));
   if (!isImg) {
     proxy.$message.error(`文件格式不正确, 请上传${props.fileType.join('/')}图片格式文件!`);
     return false;
@@ -113,13 +113,13 @@ function handleBeforeUpload(file) {
   }
   proxy.$modal.loading('正在上传图片，请稍候...');
   number.value++;
-}
+};
 
-function handleExceed() {
+const handleExceed = () => {
   proxy.$message.error(`上传文件数量不能超过 ${props.limit} 个!`);
-}
+};
 
-function handleUploadSuccess(res, file) {
+const handleUploadSuccess = (res, file) => {
   const { code, data } = res.data;
   if (code === 200) {
     uploadList.value.push({ name: data.link, url: data.link });
@@ -130,18 +130,18 @@ function handleUploadSuccess(res, file) {
     proxy.$refs.imageUpload.handleRemove(file);
   }
   proxy.$modal.closeLoading();
-}
+};
 
-function handleDelete(file) {
+const handleDelete = file => {
   const index = fileList.value.findIndex(f => f.name === file.name);
   if (index > -1 && uploadList.value.length === number.value) {
     fileList.value.splice(index, 1);
     emit('update:modelValue', listToString(fileList.value));
     return false;
   }
-}
+};
 
-function uploadedSuccessfully() {
+const uploadedSuccessfully = () => {
   if (number.value && uploadList.value.length === number.value) {
     fileList.value = fileList.value.filter(f => f.url).concat(uploadList.value);
     uploadList.value = [];
@@ -149,24 +149,23 @@ function uploadedSuccessfully() {
     emit('update:modelValue', listToString(fileList.value));
     proxy.$modal.closeLoading();
   }
-}
+};
 
-function handleUploadError() {
+const handleUploadError = () => {
   proxy.$message.error('上传图片失败');
   proxy.$modal.closeLoading();
-}
+};
 
-function handlePictureCardPreview(file) {
+const handlePictureCardPreview = file => {
   dialogImageUrl.value = file.url;
   dialogVisible.value = true;
-}
+};
 
-function listToString(list, separator = ',') {
-  return list
+const listToString = (list, separator = ',') =>
+  list
     .filter(item => item.url && !item.url.startsWith('blob:'))
     .map(item => item.url)
     .join(separator);
-}
 </script>
 
 <style scoped lang="scss">
