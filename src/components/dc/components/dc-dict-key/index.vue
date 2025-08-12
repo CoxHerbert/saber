@@ -20,7 +20,7 @@ const props = defineProps({
   value: [Number, String, Array],
   color: {
     type: String,
-    default: null,
+    default: 'var(--el-color-text-placeholder)',
   },
 });
 
