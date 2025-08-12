@@ -40,7 +40,7 @@
           </el-icon>
           下载
         </div>
-        <div class="item" @click="claer">
+        <div class="item" @click="clearFiles">
           <el-icon>
             <Delete />
           </el-icon>
@@ -270,18 +270,19 @@ const handleDownload = item => {
   }
 };
 
-const claer = () => {
+const clearFiles = () => {
   fileList.value = [];
   emit('update:modelValue', []);
 };
 
 const download = () => {
-  if (!props.modelValue || props.modelValue.length === 0)
+  if (!fileList.value.length) {
     return proxy.$message({ type: 'warning', message: '无可下载文件' });
+  }
   try {
-    props.modelValue.forEach(item => downloadFileBlob(item.url, item.originalName));
-    if (props.modelValue)
-      props.modelValue.forEach(item => downloadFileBlob(item.url, item.originalName));
+    fileList.value.forEach(({ url, originalName }) =>
+      downloadFileBlob(url, originalName)
+    );
   } catch (err) {
     proxy.$message.error('下载异常');
   }
