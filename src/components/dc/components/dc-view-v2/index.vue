@@ -31,11 +31,11 @@ const props = defineProps({
 
   bgColor: {
     type: String,
-    default: 'rgb(252.5, 245.7, 235.5)',
+    default: 'var(--el-fill-color-light)',
   },
   textColor: {
     type: String,
-    default: '#e6a23c',
+    default: 'var(--el-color-primary)',
   },
   // 需要展示的类名 比如用户 user
   objectName: {

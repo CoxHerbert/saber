@@ -1,3 +1,5 @@
+@use './variables' as var;
+
 .app-container {
   padding: 10px;
   display: flex;
@@ -20,7 +22,6 @@
 
     // 操作栏样式
     .operate-container {
-      // display: flex;
       justify-content: space-between;
       align-items: center;
       margin: 8px 0;
@@ -139,11 +140,11 @@
     }
 
     &:hover {
-      background: rgba(247, 132, 49, 0.05);
+        background: rgba(var.$color-accent, 0.05);
       border-radius: 4px;
 
       .list-item_name {
-        color: #f78431;
+          color: var.$color-accent;
       }
     }
   }

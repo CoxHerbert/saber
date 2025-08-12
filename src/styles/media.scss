@@ -2,12 +2,6 @@
 @use './variables' as var;
 
 @media screen and (max-width: 992px) {
-  // .avue-sidebar {
-  //   position: fixed;
-  //   top: 0;
-  //   left: -265px;
-  //   z-index: 1024;
-  // }
 
   .avue--collapse {
     .avue-sidebar {
@@ -19,9 +13,6 @@
       width: var.$sidebar_width;
     }
 
-    // .avue-main {
-    //   margin-left: var.$sidebar_width;
-    // }
   }
 
   // ele的自适应

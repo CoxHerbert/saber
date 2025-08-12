@@ -25,8 +25,8 @@ export default {
   props: {
     // 展示类型：tag | text
     type: { type: String, default: 'text' },
-    bgColor: { type: String, default: 'rgb(252.5, 245.7, 235.5)' },
-    textColor: { type: String, default: '#e6a23c' },
+    bgColor: { type: String, default: 'var(--el-fill-color-light)' },
+    textColor: { type: String, default: 'var(--el-color-primary)' },
     // 需要展示的对象名（用于 cacheData 映射）
     objectName: { type: String, default: null },
     // 绑定值：Array | Object | String(逗号分隔) | Number

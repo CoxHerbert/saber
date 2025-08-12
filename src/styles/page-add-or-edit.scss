@@ -1,3 +1,5 @@
+@use './variables' as var;
+
 .page-add-or-edit {
     .group-toolbar {
         display: flex;
@@ -178,7 +180,7 @@
             font-weight: bold;
             box-sizing: border-box;
             padding-left: 4px;
-            border-left: 3px solid #f78431;
+              border-left: 3px solid var.$color-accent;
             line-height: 16px;
             font-size: 16px;
             margin: 10px 0;
