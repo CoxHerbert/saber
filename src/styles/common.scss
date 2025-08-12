@@ -1,0 +1,388 @@
+// 全局变量
+@use './variables' as var;
+// ele样式覆盖
+@use './element-ui';
+// 顶部右侧显示
+@use './top';
+// 导航标签
+@use './tags';
+// 工具类函数
+@use './mixin' as *;
+// 侧面导航栏
+@use './sidebar';
+// 通用配置
+@use './normalize';
+// 图标配置
+@use './iconfont';
+// 登录样式
+@use './login';
+// 适配
+@use './media';
+// 业务代码样式
+@use './crud';
+@use './appContainer';
+// 备注弹窗
+@use './remarkDialog';
+// 备注弹窗
+@use './page-add-or-edit';
+@use './list-edit-page';
+@use './list-page';
+
+:root {
+  --el-menu-base-level-padding: 15px;
+  --el-menu-level-padding: 15px;
+  --el-menu-item-height: 46px;
+  --el-color-primary: #f26c0c;
+  --el-color-primary-light-3: #f26c0c;
+  --el-color-primary-dark-2: #f26c0c;
+  --el-color-primary-light-5: #f26c0c;
+  // --el-color-primary-light-9: #fff;
+  --el-fill-color-light: #f2f2f4;
+  --el-disabled-bg-color: #f2f2f4;
+  --el-disabled-text-color: #333333;
+  --el-color-text-placeholder: #666666;
+  --el-button-disabled-bg-color: #666666;
+  --el-table-row-active-bg-color: #fef8f3;
+
+  .el-card {
+    --el-card-padding: 10px;
+  }
+}
+
+a {
+  text-decoration: none;
+  color: #333;
+}
+
+* {
+  outline: none;
+}
+
+.avue-sidebar,
+.avue-top,
+.avue-logo,
+.avue-layout .login-logo,
+.avue-main {
+  transition: all 0.3s;
+}
+
+.avue-layout {
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+
+  &--horizontal {
+    flex-direction: column;
+
+    .avue-sidebar {
+      padding: 8px 20px;
+      width: 100%;
+      height: var.$top_height;
+      display: flex;
+
+      .avue-menu,
+      .el-menu-item,
+      .el-sub-menu__title {
+        height: var.$top_height;
+        line-height: var.$top_height;
+      }
+
+      .is-active:before {
+        display: none;
+      }
+    }
+
+    .avue-logo {
+      width: var.$sidebar_width;
+    }
+  }
+}
+
+.avue-contail {
+  width: 100%;
+  height: 100%;
+  background: #f0f2f5;
+  background-size: 100%;
+  background-repeat: no-repeat;
+}
+
+.avue--collapse {
+  .avue-sidebar,
+  .avue-logo {
+    width: var.$sidebar_collapse;
+  }
+}
+
+.avue-main {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  flex: 1;
+  box-sizing: border-box;
+  overflow: hidden;
+  background-color: #f5f5f5;
+}
+
+#avue-view {
+  flex: 1;
+  overflow-y: auto;
+  background-color: #f5f5f5;
+  padding: 5px;
+  flex: 1;
+}
+
+.avue-view {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.avue-footer {
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  text-align: center;
+
+  .copyright {
+    color: #666;
+    font-size: 12px;
+  }
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  line-height: 12px;
+  padding: 4px 6px;
+  font-size: 12px;
+  border-radius: 4px;
+
+  &.pendApproval {
+    color: #f78431;
+    background: rgba(247, 132, 49, 0.1);
+  }
+
+  &.finished {
+    color: #23c69f;
+    background: rgba(35, 198, 159, 0.1);
+  }
+
+  &.inApproval {
+    color: #1d65f3;
+    background: rgba(29, 101, 243, 0.1);
+  }
+
+  &.red {
+    color: #fff;
+    background: #f56c6c;
+  }
+}
+
+// 字典回显样式
+.dict {
+  display: inline-block;
+  padding: 4px 6px;
+  font-weight: 400;
+  font-size: 12px;
+  border-radius: 4px;
+  line-height: 12px;
+  overflow: hidden;
+
+  &-text {
+    color: #000;
+  }
+
+  &-default {
+    color: #1d65f3;
+    background-color: #1d65f31a;
+  }
+
+  &-1 {
+    color: #67c23a;
+    background-color: rgb(224.6, 242.8, 215.6);
+  }
+
+  &-2 {
+    color: #e6a23c;
+    background-color: rgb(252.5, 245.7, 235.5);
+  }
+
+  &-3 {
+    color: #f56c6c;
+    background-color: rgb(253, 225.6, 225.6);
+  }
+
+  &-4 {
+    color: #909399;
+    background-color: rgb(232.8, 233.4, 234.6);
+  }
+
+  &-5 {
+    color: #fff;
+    background-color: #11afa7;
+  }
+
+  &-6 {
+    color: #fff;
+    background-color: #83cf5c;
+  }
+
+  &-7 {
+    color: #fff;
+    background-color: #168be8;
+  }
+
+  &-8 {
+    color: #fff;
+    background-color: #994fe1;
+  }
+
+  &-9 {
+    color: #fff;
+    background-color: #000;
+  }
+
+  &-10 {
+    color: #fff;
+    background-color: #cccccc;
+  }
+
+  &-11 {
+    color: #f78431;
+    background-color: rgba(247, 132, 49, 0.1);
+  }
+
+  &-12 {
+    color: #23c69f;
+    background-color: rgba(35, 198, 159, 0.1);
+  }
+
+  &-13 {
+    color: #1d65f3;
+    background-color: rgba(29, 101, 243, 0.1);
+  }
+
+  &-14 {
+    color: #fff;
+    background-color: #f56c6c;
+  }
+}
+
+// 计划类型
+.plan-type-radio-group {
+  .el-radio-button--small .el-radio-button__inner {
+    padding: 10px;
+  }
+
+  .el-radio-button__inner {
+    background: transparent;
+    color: #fff;
+    border: none;
+    height: 100%;
+  }
+
+  .el-radio-button:last-child {
+    border-radius: 0 var(--el-border-radius-base) var(--el-border-radius-base) 0;
+  }
+
+  .el-radio-button:first-child {
+    border-radius: var(--el-border-radius-base) 0 0 var(--el-border-radius-base);
+  }
+}
+
+.plan-type {
+  display: inline-block;
+  margin-right: 5px;
+  padding: 3px 7px;
+  border-radius: 3px;
+  font-weight: 400;
+  font-size: 12px;
+  color: #fff;
+  line-height: 12px;
+}
+
+// 甘特图 任务名 描述 样式
+.task-title {
+  padding: 1px 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  gap: 3px;
+
+  .task-name {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 136px;
+    color: #333;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 16px;
+    word-break: break-all;
+    white-space: normal;
+
+    .count {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      overflow: hidden;
+    }
+  }
+
+  .task-desc {
+    font-size: 14px;
+    line-height: 14px;
+    max-height: calc(100% - 36px);
+    word-break: break-all;
+    white-space: normal;
+    overflow: hidden;
+  }
+
+  .task-assemblyLeaderName {
+    font-size: 12px;
+    line-height: 12px;
+    word-break: break-all;
+    white-space: normal;
+  }
+}
+
+.gantt_task_line.gantt_selected {
+  box-shadow: unset !important;
+}
+
+// 日标记线
+.today-line {
+  background-color: #f78431 !important;
+  user-select: unset;
+
+  &::before {
+    content: '今天';
+    color: #f78431;
+  }
+}
+
+.no-select {
+  user-select: none;
+}
+
+.el-message-box__message p {
+  white-space: wrap;
+  word-break: break-all;
+}
+
+.gantt_cal_cover {
+  display: none !important;
+}
+
+.el-select-dropdown {
+  min-width: 200px;
+}
+
+.el-vl__window {
+  min-width: 200px;
+}
+
+//滚动条样式
+@include scrollBar;

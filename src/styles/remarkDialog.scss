@@ -1,0 +1,47 @@
+.remark-dialog {
+    display: flex;
+    flex-direction: column;
+    max-height: 400px;
+
+    .head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .remark-wrap {
+        height: 100%;
+        overflow: auto;
+
+        .remark {
+            display: flex;
+            align-items: flex-start;
+            font-size: 14px;
+
+            &-user {
+                color: #909399;
+            }
+
+            &-content {
+                flex: 1;
+                color: #303133;
+                overflow: hidden;
+                overflow-wrap: break-word;
+
+                .remove-btn {
+                    margin-left: 5px;
+                    color: red;
+                    cursor: pointer;
+                }
+            }
+        }
+
+        .no-data {
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #ccc;
+        }
+    }
+}

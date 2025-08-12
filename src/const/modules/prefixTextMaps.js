@@ -1,0 +1,17 @@
+export default {
+  input: '请输入',
+  number: '请输入',
+  dict: '请选择',
+  'remote-select': '请选择',
+  'wf-select-dialog': '请选择',
+  'wf-select-single': '请选择',
+  'select-price': '请选择',
+  date: '请选择',
+  select: '请选择',
+  'remote-select': '请选择',
+  'dc-select-dialog': '请选择',
+  upload: '请选择',
+  'dc-select-dialog-v2': '请选择',
+  'el-cascader': '请选择',
+  'el-tree-select': '请选择',
+};

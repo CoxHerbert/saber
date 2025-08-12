@@ -1,0 +1,109 @@
+@font-face {
+  font-family: "iconfont"; /* Project id  */
+  src: url('iconfont.ttf?t=1732615427533') format('truetype');
+}
+
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-wenjianleixing-biaozhuntu-jishiben:before {
+  content: "\e6a4";
+}
+
+.icon-wenjianleixing-biaozhuntu-gongzuobiao:before {
+  content: "\e6a5";
+}
+
+.icon-wenjianleixing-biaozhuntu-huandengpian:before {
+  content: "\e6a6";
+}
+
+.icon-wenjianleixing-biaozhuntu-shipinwenjian:before {
+  content: "\e6a7";
+}
+
+.icon-wenjianleixing-biaozhuntu-wenjianjia:before {
+  content: "\e6a8";
+}
+
+.icon-wenjianleixing-biaozhuntu-tupianwenjian:before {
+  content: "\e6a9";
+}
+
+.icon-wenjianleixing-biaozhuntu-weizhiwenjian:before {
+  content: "\e6aa";
+}
+
+.icon-wenjianleixing-biaozhuntu-yasuowenjian:before {
+  content: "\e6ab";
+}
+
+.icon-wenjianleixing-biaozhuntu-lianjie:before {
+  content: "\e6ac";
+}
+
+.icon-wenjianleixing-biaozhuntu-PDFwendang:before {
+  content: "\e6ad";
+}
+
+.icon-wenjianleixing-biaozhuntu-Wordwendang:before {
+  content: "\e6ae";
+}
+
+.icon-wenjianleixing-biaozhuntu-shengyinwenjian:before {
+  content: "\e6af";
+}
+
+.icon-wenjianleixing-suolvetu-huandengpian:before {
+  content: "\e6b0";
+}
+
+.icon-wenjianleixing-suolvetu-jishiben:before {
+  content: "\e6b1";
+}
+
+.icon-wenjianleixing-suolvetu-gongzuobiao:before {
+  content: "\e6b2";
+}
+
+.icon-wenjianleixing-suolvetu-shipinwenjian:before {
+  content: "\e6b3";
+}
+
+.icon-wenjianleixing-suolvetu-tupianwenjian:before {
+  content: "\e6b4";
+}
+
+.icon-wenjianleixing-suolvetu-weizhiwenjian:before {
+  content: "\e6b5";
+}
+
+.icon-wenjianleixing-suolvetu-wenjianjia:before {
+  content: "\e6b6";
+}
+
+.icon-wenjianleixing-suolvetu-yasuowenjian:before {
+  content: "\e6b7";
+}
+
+.icon-wenjianleixing-suolvetu-Word:before {
+  content: "\e6b8";
+}
+
+.icon-wenjianleixing-suolvetu-PDFwendang:before {
+  content: "\e6b9";
+}
+
+.icon-wenjianleixing-suolvetu-shengyinwenjian:before {
+  content: "\e6ba";
+}
+
+.icon-wenjianleixing-suolvetu-lianjie:before {
+  content: "\e6bb";
+}
+

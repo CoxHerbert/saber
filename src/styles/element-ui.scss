@@ -1,0 +1,315 @@
+.el-card.is-always-shadow {
+  box-shadow: none;
+  border: none !important;
+}
+
+.el-tree {
+  --el-tree-node-content-height: 36px;
+}
+
+.el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content {
+  color: #f26c0c;
+  background: none;
+}
+
+.el-menu {
+  border-right: none;
+}
+
+.el-tooltip__popper-myclients-detail {
+  width: 60%;
+}
+
+.el-message__icon,
+.el-message__content {
+  display: inline-block;
+}
+
+.el-date-editor {
+  --el-date-editor-width: 220px;
+}
+.el-button.is-disabled,
+.el-button.is-disabled:hover {
+  // --el-button-disabled-text-color: #ffffff;
+  // --el-button-disabled-bg-color: #f3d19e;
+  // --el-button-disabled-border-color: #f3d19e;
+  --el-button-disabled-text-color: var(--el-color-white);
+  --el-button-disabled-bg-color: var(--el-color-warning-light-5);
+  --el-button-disabled-border-color: var(--el-color-warning-light-5);
+}
+// .el-button.is-disabled, .el-button.is-disabled:hover {
+//   color: var(--el-button-disabled-text-color);
+//   cursor: not-allowed;
+//   background-image: none;
+//   background-color: var(--el-button-disabled-bg-color);
+//   border-color: var(--el-button-disabled-border-color);
+// }
+// .el-drawer__body {
+//   padding-top: 0 !important;
+// }
+
+.el-date-editor .el-range-input,
+.el-date-editor .el-range-separator {
+  height: auto;
+  overflow: hidden;
+}
+
+.select-dialog {
+  .el-dialog__body {
+    height: 70vh;
+  }
+}
+.el-dialog__body {
+  max-height: 70vh;
+  overflow: auto;
+}
+
+.el-dialog__wrapper {
+  z-index: 2048;
+}
+
+.el-col {
+  margin-bottom: 8px;
+}
+
+.el-main {
+  padding: 0 !important;
+}
+
+.ProjectCycleTimer {
+  width: 300px !important;
+}
+
+.el-dropdown-menu__item--divided:before,
+.el-menu,
+.el-menu--horizontal > .el-menu-item:not(.is-disabled):focus,
+.el-menu--horizontal > .el-menu-item:not(.is-disabled):hover,
+.el-menu--horizontal > .el-sub-menu .el-sub-menu__title:hover {
+  background-color: transparent;
+}
+
+.el-dropdown-menu__item--divided:before,
+.el-menu,
+.el-menu--horizontal > .el-menu-item:not(.is-disabled):focus,
+.el-menu--horizontal > .el-menu-item:not(.is-disabled):hover,
+.el-menu--horizontal > .el-sub-menu .el-sub-menu__title:hover {
+  background-color: transparent !important;
+}
+
+.el-collapse-item__header {
+  height: auto;
+  overflow: hidden;
+}
+
+.el-button.is-text:not(.is-disabled):active {
+  background-color: transparent;
+}
+
+.el-button.is-text:not(.is-disabled):focus,
+.el-button.is-text:not(.is-disabled):hover {
+  background-color: transparent;
+}
+
+.avue-icon i,
+.avue-icon svg {
+  line-height: 20px;
+}
+
+.avue--detail .el-form-item {
+  background-color: #fafafa;
+}
+
+// 抽屉样式
+.el-drawer {
+  overflow: unset;
+
+  &__header {
+    position: relative;
+    box-sizing: border-box;
+    padding-bottom: 30px;
+    padding-left: 48px;
+    margin-bottom: 0;
+    font-weight: bold;
+    font-size: 18px;
+    color: #333;
+    border-bottom: 1px solid #dedbd9;
+  }
+
+  &__close-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 15px;
+    left: 9px;
+    width: 27px;
+    height: 27px;
+    background: #bbb;
+    border-radius: 50%;
+
+    .el-drawer__close {
+      width: 15px;
+      height: 15px;
+      color: #fff;
+    }
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: flex-start;
+
+    .dialog-footer {
+      display: flex;
+      justify-content: flex-start;
+    }
+  }
+}
+
+// dialog样式
+.el-overlay {
+  overflow: hidden;
+
+  &-dialog {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .el-dialog {
+    margin: 0;
+  }
+}
+
+// 避免与avue冲突
+.el-card__body {
+  .el-form {
+    &-item {
+      &__label {
+        &::after {
+          content: unset;
+        }
+      }
+    }
+  }
+}
+
+// 修改table样式
+.el-table {
+  .label-suffix {
+    color: #f56c6c;
+  }
+  th.el-table__cell {
+    background-color: #f7f6f5 !important;
+
+    .cell {
+      color: #333;
+      font-size: 14px;
+    }
+  }
+
+  td.el-table__cell {
+    padding: 5px 0;
+    cursor: pointer;
+  }
+}
+
+// 步骤调样式
+.is-finish .el-step__line .el-step__line-inner {
+  border-width: 1px !important;
+  width: 100% !important;
+}
+
+.el-step__icon.is-icon {
+  width: 120px;
+}
+
+.step-item {
+  display: flex;
+  align-items: center;
+
+  .step-num {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    font-weight: bold;
+    font-size: 16px;
+    color: #fff;
+    border: 1px solid #f78431;
+  }
+
+  .step-title {
+    margin-left: 16px;
+    font-weight: bold;
+    font-size: 16px;
+  }
+
+  // 已结束
+  &-finish {
+    .step-num {
+      border-color: #f78431;
+      color: #f78431;
+    }
+
+    .step-title {
+      color: #333;
+    }
+  }
+
+  // 进行中
+  &-process {
+    .step-num {
+      color: #fff;
+      background-color: #f78431;
+      border: 1px solid #f78431;
+    }
+
+    .step-title {
+      color: #f78431;
+    }
+  }
+
+  // 未完成
+  &-wait {
+    .step-num {
+      border-color: #dcdcdc;
+      color: rgba(0, 0, 0, 0.4);
+    }
+
+    .step-title {
+      color: #999;
+    }
+  }
+}
+
+// 级联选择器样式
+.el-cascader-panel {
+  .el-cascader-node {
+    position: relative;
+
+    .el-radio {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+
+      &__input {
+        display: none;
+      }
+    }
+  }
+}
+
+.el-button--primary.is-link,
+.el-button--primary.is-plain,
+.el-button--primary.is-text {
+  --el-button-bg-color: #fff;
+
+  &:hover {
+    --el-color-primary-light-5: #ccc;
+  }
+}
