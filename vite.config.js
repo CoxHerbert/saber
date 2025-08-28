@@ -11,6 +11,11 @@ import importToCDN from 'vite-plugin-cdn-import';
 const cdnModules = [
   { name: 'axios', var: 'axios', path: 'https://cdn.staticfile.org/axios/0.21.1/axios.min.js' },
   { name: 'dayjs', var: 'dayjs', path: 'https://cdn.staticfile.org/dayjs/1.11.13/dayjs.min.js' },
+  {
+    name: 'dayjs/plugin/localeData.js',
+    var: 'dayjs_plugin_localeData',
+    path: 'https://cdn.staticfile.org/dayjs/1.11.13/plugin/localeData.min.js',
+  },
   { name: 'crypto-js', var: 'CryptoJS', path: 'https://cdn.staticfile.org/crypto-js/4.1.1/crypto-js.min.js' },
   { name: 'js-cookie', var: 'Cookies', path: 'https://cdn.staticfile.org/js-cookie/3.0.0/js.cookie.min.js' },
   { name: 'bignumber.js', var: 'BigNumber', path: 'https://cdn.staticfile.org/bignumber.js/9.1.2/bignumber.min.js' },
@@ -90,15 +95,15 @@ export default ({ mode, command }) => {
         components: resolve(__dirname, './src/components'),
         styles: resolve(__dirname, './src/styles'),
         utils: resolve(__dirname, './src/utils'),
-        axios: resolve(__dirname, './src/axios.js'),
+        axios: resolve(__dirname, './src/cdn/axios.js'),
         dayjs: resolve(__dirname, './src/cdn/dayjs.js'),
+        'dayjs/plugin/localeData.js': resolve(
+          __dirname,
+          './src/cdn/dayjs-plugin-localeData.js'
+        ),
         'crypto-js': resolve(__dirname, './src/cdn/crypto-js.js'),
         'js-cookie': resolve(__dirname, './src/cdn/js-cookie.js'),
         nprogress: resolve(__dirname, './src/cdn/nprogress.js'),
-        'nprogress/nprogress.css': resolve(
-          __dirname,
-          './src/cdn/nprogress.css'
-        ),
         echarts: resolve(__dirname, './src/cdn/echarts.js'),
         'bignumber.js': resolve(__dirname, './src/cdn/bignumber.js'),
         codemirror: resolve(__dirname, './src/cdn/codemirror.js'),
@@ -110,7 +115,6 @@ export default ({ mode, command }) => {
       minify: isProd ? 'terser' : 'esbuild',
       rollupOptions: {
         external: [
-          'axios',
           'dayjs',
           'crypto-js',
           'js-cookie',
@@ -122,7 +126,6 @@ export default ({ mode, command }) => {
         output: {
           // 把裸导入重写到 CDN ESM/UMD 地址
           paths: {
-            axios: 'https://cdn.staticfile.org/axios/0.21.1/axios.min.js',
             dayjs: 'https://cdn.staticfile.org/dayjs/1.11.13/dayjs.min.js',
             'crypto-js': 'https://cdn.staticfile.org/crypto-js/4.1.1/crypto-js.min.js',
             'js-cookie': 'https://cdn.staticfile.org/js-cookie/3.0.0/js.cookie.min.js',
@@ -132,7 +135,6 @@ export default ({ mode, command }) => {
             codemirror: 'https://cdn.staticfile.org/codemirror/5.65.18/codemirror.js',
           },
           globals: {
-            axios: 'axios',
             dayjs: 'dayjs',
             'crypto-js': 'CryptoJS',
             'js-cookie': 'Cookies',
@@ -157,7 +159,6 @@ export default ({ mode, command }) => {
         target: 'esnext',
       },
       exclude: [
-        'axios',
         'dayjs',
         'crypto-js',
         'js-cookie',

@@ -1,5 +1,5 @@
 import { ElMessageBox } from 'element-plus';
-import axios from 'axios';
+import axios from '@/axios';
 
 function generateUUID() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {

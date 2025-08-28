@@ -2,7 +2,6 @@ import router from './router/';
 import store from './store';
 import { getToken } from '@/utils/auth';
 import NProgress from 'nprogress'; // progress bar
-import 'nprogress/nprogress.css'; // progress bar style
 import { gantt } from 'dhtmlx-gantt';
 import { versionCheck } from '@/utils/versionCheck';
 NProgress.configure({ showSpinner: false });

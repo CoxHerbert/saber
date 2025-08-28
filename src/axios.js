@@ -14,7 +14,6 @@ import { isURL, validatenull } from '@/utils/validate';
 import { ElMessage } from 'element-plus';
 import website from '@/config/website';
 import NProgress from 'nprogress'; // progress bar
-import 'nprogress/nprogress.css'; // progress bar style
 import { Base64 } from 'js-base64';
 import { baseUrl } from '@/config/env';
 import crypto from '@/utils/crypto';
