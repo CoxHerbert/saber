@@ -163,6 +163,14 @@ export default ({ mode, command }) => {
         'codemirror',
         'element-plus',
       ],
+      include: [
+        'dayjs/plugin/advancedFormat.js',
+        'dayjs/plugin/customParseFormat.js',
+        'dayjs/plugin/localeData.js',
+        'dayjs/plugin/weekOfYear.js',
+        'dayjs/plugin/weekYear.js',
+        'dayjs/plugin/dayOfYear.js',
+      ],
     },
     css: {
       preprocessorOptions: {
