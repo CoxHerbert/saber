@@ -97,6 +97,10 @@ export default ({ mode, command }) => {
         utils: resolve(__dirname, './src/utils'),
         axios: resolve(__dirname, './src/cdn/axios.js'),
         dayjs: resolve(__dirname, './src/cdn/dayjs.js'),
+        'dayjs/plugin/localeData': resolve(
+          __dirname,
+          './src/cdn/dayjs-plugin-localeData.js'
+        ),
         'dayjs/plugin/localeData.js': resolve(
           __dirname,
           './src/cdn/dayjs-plugin-localeData.js'
@@ -116,6 +120,8 @@ export default ({ mode, command }) => {
       rollupOptions: {
         external: [
           'dayjs',
+          'dayjs/plugin/localeData.js',
+          'dayjs/plugin/localeData',
           'crypto-js',
           'js-cookie',
           'bignumber.js',
@@ -128,21 +134,24 @@ export default ({ mode, command }) => {
           paths: {
             dayjs: 'https://cdn.staticfile.org/dayjs/1.11.13/dayjs.min.js',
             'crypto-js': 'https://cdn.staticfile.org/crypto-js/4.1.1/crypto-js.min.js',
-            'js-cookie': 'https://cdn.staticfile.org/js-cookie/3.0.0/js.cookie.min.js',
-            'bignumber.js': 'https://cdn.staticfile.org/bignumber.js/9.1.2/bignumber.min.js',
-            nprogress: 'https://cdn.staticfile.org/nprogress/0.2.0/nprogress.js',
-            echarts: 'https://cdn.staticfile.net/echarts/5.4.3/echarts.common.min.js',
-            codemirror: 'https://cdn.staticfile.org/codemirror/5.65.18/codemirror.js',
-          },
-          globals: {
-            dayjs: 'dayjs',
-            'crypto-js': 'CryptoJS',
-            'js-cookie': 'Cookies',
-            'bignumber.js': 'BigNumber',
-            nprogress: 'NProgress',
-            echarts: 'echarts',
-            codemirror: 'CodeMirror',
-          },
+          'js-cookie': 'https://cdn.staticfile.org/js-cookie/3.0.0/js.cookie.min.js',
+          'bignumber.js': 'https://cdn.staticfile.org/bignumber.js/9.1.2/bignumber.min.js',
+          nprogress: 'https://cdn.staticfile.org/nprogress/0.2.0/nprogress.js',
+          echarts: 'https://cdn.staticfile.net/echarts/5.4.3/echarts.common.min.js',
+          codemirror: 'https://cdn.staticfile.org/codemirror/5.65.18/codemirror.js',
+          'dayjs/plugin/localeData.js':
+            'https://cdn.staticfile.org/dayjs/1.11.13/plugin/localeData.min.js',
+        },
+        globals: {
+          dayjs: 'dayjs',
+          'crypto-js': 'CryptoJS',
+          'js-cookie': 'Cookies',
+          'bignumber.js': 'BigNumber',
+          nprogress: 'NProgress',
+          echarts: 'echarts',
+          codemirror: 'CodeMirror',
+          'dayjs/plugin/localeData.js': 'dayjs_plugin_localeData',
+        },
           entryFileNames: '[name].[hash].js',
           chunkFileNames: chunkInfo =>
             chunkInfo.name === 'vendor'
@@ -160,12 +169,15 @@ export default ({ mode, command }) => {
       },
       exclude: [
         'dayjs',
+        'dayjs/plugin/localeData.js',
+        'dayjs/plugin/localeData',
         'crypto-js',
         'js-cookie',
         'bignumber.js',
         'nprogress',
         'echarts',
         'codemirror',
+        'element-plus',
       ],
     },
     css: {
