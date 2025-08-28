@@ -66,6 +66,12 @@ const options = () => {
         minWidth: 140,
       },
       {
+        prop: 'quality',
+        label: '材质',
+        type: 'rowText',
+        minWidth: 140,
+      },
+      {
         prop: 'number',
         label: '计划数量',
         type: 'rowText',
@@ -104,6 +110,12 @@ const options = () => {
         label: '规格',
         type: 'rowText',
         minWidth: 140,
+      },
+      {
+        prop: 'note',
+        label: '备注',
+        type: 'rowText',
+        width: 100,
       },
       {
         prop: 'orgId',

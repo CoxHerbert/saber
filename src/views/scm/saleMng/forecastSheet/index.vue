@@ -1,6 +1,6 @@
 <template>
   <basic-container>
-    <div class="content-warp">
+    <div class="list-page">
       <div class="header">
         <div class="title">
           <el-tabs v-model="applyStatus" @tab-click="handleClick">
@@ -317,36 +317,4 @@ const resetQuery = () => {
 };
 </script>
 
-<style scoped lang="scss">
-.pass {
-  color: #23c69f;
-}
-.notpass {
-  color: #e12137;
-}
-
-:deep(.el-card__body) {
-  padding-top: 0px;
-  .content-warp {
-    padding: 0px;
-    position: relative;
-    .header {
-      height: 50px;
-      display: flex;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-  }
-  .search-container {
-    margin-top: 20px;
-  }
-}
-
-:deep(.el-tabs__nav-wrap):after {
-  height: 0px !important;
-}
-
-:deep(.el-tabs__item) {
-  height: 52px !important;
-}
-</style>
+<style scoped lang="scss"></style>

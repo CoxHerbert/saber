@@ -1,96 +1,77 @@
 <template>
-  <div class="content-warp">
-    <div class="header none-border">
+  <div class="list-page pda-rbac-list-page">
+    <div class="header">
       <div class="title">PDA权限管理</div>
-      <div class="search-area"></div>
     </div>
-    <div class="content-body">
-      <div class="content-area">
-        <div class="operate-container">
-          <el-button type="primary" @click="handleAdd">新增</el-button>
-        </div>
-        <div class="table-container">
-          <el-table :data="tableData" style="width: 100%">
-            <el-table-column prop="roleId" label="角色" align="center" show-overflow-tooltip>
-              <template #default="scoped">
-                <dc-dict type="text" :options="DC_PDA_ROLE" :value="scoped.row.roleId" />
-              </template>
-            </el-table-column>
-            <el-table-column prop="userIds" label="用户数量" align="center" show-overflow-tooltip>
-              <template #default="scoped">
-                {{ scoped.row.userIds.split(',').length }}
-              </template>
-            </el-table-column>
-            <el-table-column prop="orgId" label="所属组织" align="center" show-overflow-tooltip>
-              <template #default="scoped">
-                <dc-view v-model="scoped.row.orgId" objectName="org" />
-              </template>
-            </el-table-column>
-            <el-table-column prop="funcIds" label="功能列表" align="center" show-overflow-tooltip>
-              <template #default="scoped">
-                <template v-for="(funcId, index) in scoped.row.funcIds.split(',')" :key="index">
-                  <dc-dict type="text" :options="DC_PDA_FUNC" :value="funcId" />
-                  <span v-if="index < scoped.row.funcIds.split(',').length - 1"> | </span>
-                </template>
-              </template>
-            </el-table-column>
-            <el-table-column prop="funcIds" label="打印服务" align="center" show-overflow-tooltip>
-              <template #default="scoped">
-                <dc-dict
-                  type="text"
-                  :options="DC_PDA_PRINTER_SERVER"
-                  :value="scoped.row.printerServer"
-                />
-              </template>
-            </el-table-column>
-            <el-table-column
-              prop="funcIds"
-              label="标签默认打印机"
-              align="center"
-              show-overflow-tooltip
-            >
-              <template #default="scoped">
-                {{ scoped.row.cardDefaultPrinter }}
-              </template>
-            </el-table-column>
-            <el-table-column
-              prop="funcIds"
-              label="单据默认打印机"
-              align="center"
-              show-overflow-tooltip
-            >
-              <template #default="scoped">
-                {{ scoped.row.orderDefaultPrinter }}
-              </template>
-            </el-table-column>
-            <el-table-column prop="createUser" label="创建人" align="center" show-overflow-tooltip>
-              <template #default="scoped">
-                <dc-view v-model="scoped.row.createUser" objectName="user" showKey="realName" />
-              </template>
-            </el-table-column>
-            <el-table-column
-              prop="createTime"
-              label="创建时间"
-              align="center"
-              show-overflow-tooltip
+    <div class="action-banner">
+      <el-button type="primary" @click="handleAdd">新增</el-button>
+    </div>
+
+    <div class="table-container">
+      <el-table :data="tableData" style="width: 100%">
+        <el-table-column prop="roleId" label="角色" align="center" show-overflow-tooltip>
+          <template #default="scoped">
+            <dc-dict type="text" :options="DC_PDA_ROLE" :value="scoped.row.roleId" />
+          </template>
+        </el-table-column>
+        <el-table-column prop="userIds" label="用户数量" align="center" show-overflow-tooltip>
+          <template #default="scoped">
+            {{ scoped.row.userIds.split(',').length }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="orgId" label="所属组织" align="center" show-overflow-tooltip>
+          <template #default="scoped">
+            <dc-view v-model="scoped.row.orgId" objectName="org" />
+          </template>
+        </el-table-column>
+        <el-table-column prop="funcIds" label="功能列表" align="center" show-overflow-tooltip>
+          <template #default="scoped">
+            <template v-for="(funcId, index) in scoped.row.funcIds.split(',')" :key="index">
+              <dc-dict type="text" :options="DC_PDA_FUNC" :value="funcId" />
+              <span v-if="index < scoped.row.funcIds.split(',').length - 1"> | </span>
+            </template>
+          </template>
+        </el-table-column>
+        <el-table-column prop="funcIds" label="打印服务" align="center" show-overflow-tooltip>
+          <template #default="scoped">
+            <dc-dict
+              type="text"
+              :options="DC_PDA_PRINTER_SERVER"
+              :value="scoped.row.printerServer"
             />
-            <el-table-column label="操作" align="center" fixed="right" width="180">
-              <template #default="scoped">
-                <el-button link type="primary" @click="handleUpdate(scoped.row)">修改</el-button>
-                <el-button link type="primary" @click="handleDelete(scoped.row)">删除</el-button>
-              </template>
-            </el-table-column>
-          </el-table>
-        </div>
-        <dc-pagination
-          v-show="total > 0"
-          :total="total"
-          v-model:page="queryParams.current"
-          v-model:limit="queryParams.size"
-          @pagination="getData"
-        />
-      </div>
+          </template>
+        </el-table-column>
+        <el-table-column prop="funcIds" label="标签默认打印机" align="center" show-overflow-tooltip>
+          <template #default="scoped">
+            {{ scoped.row.cardDefaultPrinter }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="funcIds" label="单据默认打印机" align="center" show-overflow-tooltip>
+          <template #default="scoped">
+            {{ scoped.row.orderDefaultPrinter }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="createUser" label="创建人" align="center" show-overflow-tooltip>
+          <template #default="scoped">
+            <dc-view v-model="scoped.row.createUser" objectName="user" showKey="realName" />
+          </template>
+        </el-table-column>
+        <el-table-column prop="createTime" label="创建时间" align="center" show-overflow-tooltip />
+        <el-table-column label="操作" align="center" fixed="right" width="180">
+          <template #default="scoped">
+            <el-button link type="primary" @click="handleUpdate(scoped.row)">修改</el-button>
+            <el-button link type="primary" @click="handleDelete(scoped.row)">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
     </div>
+    <dc-pagination
+      v-show="total > 0"
+      :total="total"
+      v-model:page="queryParams.current"
+      v-model:limit="queryParams.size"
+      @pagination="getData"
+    />
   </div>
 
   <el-drawer v-model="open.drawer" width="600px" :title="open.operateTitle" @close="cancel">
@@ -181,7 +162,7 @@
   </el-drawer>
 </template>
 
-<script setup name="MyClientsList">
+<script setup name="pdaRbac">
 import { getCurrentInstance, reactive, toRefs } from 'vue';
 import Api from '@/api/index';
 import { onMounted } from 'vue';
@@ -396,8 +377,9 @@ const cancel = () => {
 };
 </script>
 <style scoped lang="scss">
-.tag-label {
-  display: flex;
-  flex-wrap: wrap;
+.pda-rbac-list-page {
+  .title {
+    padding: 10px 0;
+  }
 }
 </style>

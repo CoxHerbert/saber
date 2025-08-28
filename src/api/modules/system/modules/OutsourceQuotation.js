@@ -85,6 +85,7 @@ export default {
       params,
     });
   },
+
   // 根据物料编码查询历史工艺
   getHistoryProcess(params) {
     return request({
@@ -107,6 +108,23 @@ export default {
       url: `/blade-bip/OutsourceQuotation/Opt/load-history-by-entry-id`,
       method: 'get',
       params,
+    });
+  },
+  // 外协采购单-查询报价单列表
+  queryQtList(params) {
+    return request({
+      url: `/blade-bip/dcQt/queryQtList`,
+      method: 'get',
+      params,
+    });
+  },
+
+  // 不核价
+  notPricing(data) {
+    return request({
+      url: `/blade-bip/OutsourceQuotation/Opt/bhj`,
+      method: 'post',
+      data,
     });
   },
 };

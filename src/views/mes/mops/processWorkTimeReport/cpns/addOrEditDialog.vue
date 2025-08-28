@@ -1,7 +1,7 @@
 <template>
   <el-drawer v-model="dialogVisible" size="1000" :title="title" @close="doAction('close')">
     <el-select
-      v-if="mode === 'add'"
+      v-if="['push-erp', 'add'].includes(pageConfig.action)"
       class="mb-4"
       v-model="planId"
       placeholder="请输入专案号查询选择"
@@ -19,23 +19,9 @@
         :value="item.id"
       />
     </el-select>
-    <el-descriptions class="mb-5" :column="2" border v-if="mode === 'edit'">
-      <el-descriptions-item>
-        <template #label>
-          <div class="cell-item">汇报人</div>
-        </template>
-        <dc-view v-model="row.createUser" objectName="user"></dc-view>
-      </el-descriptions-item>
-      <el-descriptions-item>
-        <template #label>
-          <div class="cell-item">汇报时间</div>
-        </template>
-        {{ row.createTime || '-' }}
-      </el-descriptions-item>
-    </el-descriptions>
     <el-table
       :style="{
-        height: mode === 'add' ? 'calc(100% - 50px)' : '100%',
+        height: ['push-erp', 'add'].includes(pageConfig.action) ? 'calc(100% - 50px)' : '100%',
       }"
       ref="tableRef"
       v-loading="loading"
@@ -111,7 +97,13 @@
               <dc-widget
                 v-if="col?.type === 'input'"
                 v-model="scoped.row[col.prop]"
-                :data="col"
+                :data="{
+                  ...col,
+                  props: {
+                    ...col.props,
+                    max: scoped.row.qty - scoped.row.reportQty,
+                  },
+                }"
                 :dictMaps="dictMaps"
                 @change="
                   val => {
@@ -143,7 +135,7 @@
 import Api from '@/api/index';
 import editDialog from '@/mixins/edit-dialog';
 import listEditPage from '@/mixins/list-edit-page';
-import options from './addOrEditDialog.js';
+import tableOptions from './addOrEditDialog.js';
 
 export default {
   emits: ['success'],
@@ -154,35 +146,31 @@ export default {
       mode: 'add',
       loading: false,
       planId: null,
-      columns: options('add').columns,
+      columns: tableOptions('add').columns,
       dialogVisible: false,
       title: '新增',
       options: [],
       tableData: [],
       row: null,
+      actionsEnum: {
+        look: '查看',
+        add: '新增',
+        'push-erp': '提交ERP',
+      },
+      pageConfig: {},
     };
-  },
-  created() {
-    // this.dictKeys = [
-    //   { key: 'DC_SIP_CHECK_TYPE' },
-    //   { key: 'DC_SIP_CHECK_ITEM' },
-    //   { key: 'DC_INSPECTION_CLASS' },
-    // ];
-    // this.getDictData().then(res => {});
   },
   methods: {
     /** 打开添加弹窗 **/
-    openDialog(row) {
+    openDialog(config) {
       this.dialogVisible = true;
-      this.title = row ? '查看' : '新增';
-      this.mode = row ? 'look' : 'add';
+      this.pageConfig = config;
+      this.title = this.actionsEnum[this.pageConfig.action] || '-';
       this.markAsUnsaved();
-      this.columns = options(this.mode).columns;
-      if (row) {
-        this.row = row;
-        this.getDetail(row);
-      } else {
-        this.remoteMethod('init');
+      this.columns = tableOptions(this.pageConfig.action).columns;
+      if (this.pageConfig.action === 'look') {
+        this.row = this.pageConfig.row;
+        this.getDetail(this.pageConfig.row);
       }
     },
     getDetail({ id }) {
@@ -202,7 +190,7 @@ export default {
     },
     remoteMethod(query) {
       if (query === 'init') {
-        Api.mes.mops.getPlanList().then(res => {
+        this.pageConfig.searchApi().then(res => {
           const {
             code,
             data: { records },
@@ -212,8 +200,8 @@ export default {
           }
         });
       } else if (query) {
-        Api.mes.mops
-          .getPlanList({
+        this.pageConfig
+          .searchApi({
             mtoNo: query,
           })
           .then(res => {
@@ -232,6 +220,7 @@ export default {
       Api.mes.mops
         .getItemDetail({
           planId: this.planId,
+          isLast: this.pageConfig.action === 'push-erp' || null,
         })
         .then(res => {
           const {
@@ -253,6 +242,7 @@ export default {
         this.formData = {};
         this.tableData = [];
         this.planId = null;
+        this.pageConfig = {};
       } else if (action === 'submit') {
         this.handleSubmit();
       }

@@ -1,52 +1,62 @@
 <template>
-  <basic-container>
-    <div class="content-warp page-driving-record">
-      <div class="header">
-        <dc-search
-          v-if="searchConfig"
-          v-model="queryParams"
-          v-bind="searchConfig"
-          @reset="resetQuery"
-          @search="handleQuery"
-          @itemChange="handleSearItemChange"
-        />
-      </div>
-
-      <div class="table-container">
-        <el-table v-loading="loading" :data="dataList">
-          <template v-for="(column, i) in tableColumns" :key="i">
-            <el-table-column
-              :prop="column.prop"
-              :label="column.label"
-              :align="column.align || 'center'"
-              :width="column.width"
-              show-overflow-tooltip
-            >
-              <!-- 自定义单元格内容 -->
-              <template #default="scope">
-                {{ scope.row[column.prop] || '-' }}
-              </template>
-            </el-table-column>
-          </template>
-        </el-table>
-      </div>
-      <dc-pagination
-        v-show="total > 0"
-        :total="total"
-        v-model:page="queryParams.current"
-        v-model:limit="queryParams.size"
-        @pagination="getData"
+  <div class="list-edit-page mrp-list-page">
+    <div class="header">
+      <dc-search
+        v-if="searchConfig"
+        v-model="queryParams"
+        v-bind="searchConfig"
+        @reset="resetQuery"
+        @search="handleQuery"
+        @itemChange="handleSearItemChange"
       />
     </div>
-    <!-- <AddOrEdit ref="addOrEditRef" @close="handleQuery" /> -->
-  </basic-container>
+    <div class="action-banner">
+      <el-button
+        type="primary"
+        :loading="exportLoading"
+        :disabled="!dataList || exportLoading"
+        @click="exportExcelFunc"
+        >导出表格</el-button
+      >
+    </div>
+    <div class="table-container">
+      <el-form ref="formRef" class="form-main" :model="dataList">
+        <el-form-item class="form-item-table" :label-width="0">
+          <el-table v-loading="loading" :data="dataList" height="calc(100vh - 250px)">
+            <template v-for="(column, i) in tableColumns" :key="i">
+              <el-table-column
+                :prop="column.prop"
+                :label="column.label"
+                :align="column.align || 'center'"
+                :width="column.width"
+                show-overflow-tooltip
+              >
+                <!-- 自定义单元格内容 -->
+                <template #default="scope">
+                  {{ scope.row[column.prop] || '-' }}
+                </template>
+              </el-table-column>
+            </template>
+          </el-table>
+        </el-form-item>
+      </el-form>
+    </div>
+    <!-- <dc-pagination
+      v-show="total > 0"
+      :total="total"
+      v-model:page="queryParams.current"
+      v-model:limit="queryParams.size"
+      @pagination="getData"
+    /> -->
+  </div>
+  <!-- <AddOrEdit ref="addOrEditRef" @close="handleQuery" /> -->
 </template>
-<script setup name="Productiongroup">
-import { onMounted, ref, watch } from 'vue';
+<script setup name="comprouter">
+import { nextTick, onMounted, ref, watch } from 'vue';
 import Api from '@/api/index';
 import options from './index';
 import { useRoute } from 'vue-router';
-
+import { exportSingleSheetExcel } from '@/utils/useExcelExport';
 const { proxy } = getCurrentInstance();
 const data = reactive({
   searchConfig: null,
@@ -65,10 +75,12 @@ const data = reactive({
   loading: true,
   total: 0,
   title: '',
+  exportLoading: false,
   rules: {},
 });
 
-const { queryParams, dataList, loading, total, columns, searchConfig, dictCache } = toRefs(data);
+const { queryParams, dataList, loading, exportLoading, total, columns, searchConfig, dictCache } =
+  toRefs(data);
 const route = useRoute();
 const templateId = ref('');
 const tableColumns = ref([]); // 动态列配
@@ -167,13 +179,6 @@ const adjustColumnOrder = () => {
     return 0;
   });
 };
-const getDictData = async () => {
-  const res = await proxy.getMultipleDict('DC_HR_LOCATION');
-  dictCache.value = {
-    ...dictCache.value,
-    ...(res || {}),
-  };
-};
 
 const getSearchConfig = () => {
   return {
@@ -255,89 +260,27 @@ const resetQuery = () => {
   getData();
 };
 
-const doAction = async (action, scoped = {}) => {
-  if (action === 'view') {
-    const { taskId, processInstanceId } = scoped.row;
-    let param = window.btoa(
-      JSON.stringify({
-        taskId,
-        processInsId: processInstanceId,
-      })
-    );
-    const type = 'detail';
-    proxy.$router.push({
-      path: `/workflow/process/${type}/${param}`,
-      query: {
-        parentMenuId: '1932365219625013249',
-      },
-    });
-  } else if (action == 'add') {
-    const params = {
-      processKey: 'drivingDeclaration',
-    };
-    const res = await Api.pdp.settled.processForm(params);
-    const { code, data } = res.data;
-    if (code === 200) {
-      proxy.$router.push(`/workflow/process/start/${data.enCode}?parentMenuId=1932365219625013249`);
-    }
-  }
+const exportExcelFunc = () => {
+  exportLoading.value = true;
+  exportSingleSheetExcel({
+    data: dataList.value,
+    fields: tableColumns.value.map(item => ({
+      key: item.prop,
+      title: item.label,
+    })),
+    filename: route.query.routName,
+    sheetName: route.query.routName,
+  });
+  setTimeout(() => {
+    exportLoading.value = false;
+  }, 1000);
 };
 </script>
-
-<style scoped lang="scss">
-.page-driving-record {
-  padding-left: 16px;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-flow: column nowrap;
-
-  .table-container {
-    flex: 1;
-    position: relative;
-    overflow: hidden;
-
-    :deep(.el-table) {
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-    }
-  }
-  .toolbar {
-    padding-bottom: 8px;
-  }
-  .search-area {
-    :deep(.select-param) {
-      width: 108px;
-    }
-  }
-  .header {
-    padding-top: 4px;
-    margin-bottom: 10px;
-  }
-  .search-container {
-    margin-top: 0 !important;
-  }
-  .action-banner {
-    padding: 8px 0;
-  }
-}
-
-:deep(.el-card__body) {
-  padding-top: 0px;
-  .content-warp {
-    padding: 0px;
-    position: relative;
-    .header {
-      height: 50px;
-      display: flex;
-      align-items: center;
-    }
-  }
-  .search-container {
-    margin-top: 20px;
+<style scoped>
+.mrp-list-page {
+  :deep(.form-main) {
+    width: 100%;
+    height: 100%;
   }
 }
 </style>

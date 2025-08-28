@@ -122,7 +122,7 @@
           <span>{{ infoDetail.isCm ? '是' : '否' }}</span>
         </el-descriptions-item>
         <el-descriptions-item v-if="infoDetail.isCm" :width="descItemWidth100">
-          <el-table :border="true" :data="infoDetail.crmCustomerAreas" row-key="=id">
+          <el-table  :border="true" :data="infoDetail.crmCustomerAreas" row-key="=id">
             <el-table-column prop="factoryCode" label="厂区编码" align="left" />
             <el-table-column prop="areaName" label="区域" align="center" />
             <el-table-column prop="address" label="详细地址" align="center" />

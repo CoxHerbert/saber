@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div class="list-page">
     <el-form
       class="search-container"
       :model="queryParams"
@@ -16,41 +16,33 @@
         <el-button icon="Refresh" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
-    <div class="body-container">
-      <div class="operate-container">
-        <el-button type="primary" icon="Plus" @click="handleSubmit">新增</el-button>
-      </div>
-      <div class="table-container">
-        <el-table v-loading="loading" :data="dataList">
-          <el-table-column label="序号" width="60" type="index" align="center">
-            <template #default="scoped">
-              <span>{{ (queryParams.current - 1) * queryParams.size + scoped.$index + 1 }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column
-            label="名称"
-            width="100"
-            prop="name"
-            align="center"
-            show-overflow-tooltip
-          >
-            <template #default="scoped">
-              <span>{{ scoped.row.name || '-' }}</span>
-            </template>
-          </el-table-column>
-          <!-- 在此添加其他列 -->
-          <el-table-column width="150" fixed="right" label="操作" align="center">
-            <template #default="scoped">
-              <el-button link type="primary" icon="Edit" @click="handleSubmit(scoped.row)"
-                >编辑</el-button
-              >
-              <el-button link type="primary" icon="Delete" @click="handleDelete(scoped.row)"
-                >删除</el-button
-              >
-            </template>
-          </el-table-column>
-        </el-table>
-      </div>
+    <div class="action-banner">
+      <el-button type="primary" icon="Plus" @click="handleSubmit">新增</el-button>
+    </div>
+    <div class="table-container">
+      <el-table v-loading="loading" :data="dataList">
+        <el-table-column label="序号" width="60" type="index" align="center">
+          <template #default="scoped">
+            <span>{{ (queryParams.current - 1) * queryParams.size + scoped.$index + 1 }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="名称" width="100" prop="name" align="center" show-overflow-tooltip>
+          <template #default="scoped">
+            <span>{{ scoped.row.name || '-' }}</span>
+          </template>
+        </el-table-column>
+        <!-- 在此添加其他列 -->
+        <el-table-column width="150" fixed="right" label="操作" align="center">
+          <template #default="scoped">
+            <el-button link type="primary" icon="Edit" @click="handleSubmit(scoped.row)"
+              >编辑</el-button
+            >
+            <el-button link type="primary" icon="Delete" @click="handleDelete(scoped.row)"
+              >删除</el-button
+            >
+          </template>
+        </el-table-column>
+      </el-table>
     </div>
     <dc-pagination
       v-show="total > 0"

@@ -33,6 +33,7 @@ import dayjs from 'dayjs';
 import 'styles/common.scss';
 import 'tailwindcss/tailwind.css';
 import permissionDirective, { hasPermissionCommon } from './directive/permission.js';
+import DragScroll from './directive/drag-scroll.js';
 // graphql客户端
 import apolloClient from './api/graphql/index.js';
 // import { DefaultApolloClient } from '@apollo/client/core';
@@ -108,6 +109,7 @@ app.use(i18n);
 app.use(store);
 app.use(router);
 app.directive('permission', permissionDirective);
+app.directive('drag-scroll', DragScroll);
 app.use(ElementPlus, {
   locale: messages[language],
 });

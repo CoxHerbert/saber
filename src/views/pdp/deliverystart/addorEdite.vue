@@ -632,8 +632,8 @@ export default {
           },
         },
         {
-          prop: 'lastest ETD',
-          label: 'lastEtd',
+          prop: 'lastEtd',
+          label: 'lastest ETD',
           type: 'text',
           width: 120,
           formType: 'el-date-picker',

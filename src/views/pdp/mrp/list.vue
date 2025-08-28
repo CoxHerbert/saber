@@ -1,6 +1,6 @@
 <template>
   <basic-container v-loading="loading">
-    <div class="content-warp page-processing-outsourcing list-edit-page">
+    <div class="list-edit-page mrp-list-page">
       <div class="header">
         <dc-search
           v-model="queryParams"
@@ -283,7 +283,7 @@ export default {
         {
           name: '转返工',
           releaseType: '生产返工类',
-          releaseTypeId: 4,
+          releaseTypeId: 1,
           orderSplittingStatus: '3',
           releaseBillType: '工序汇报入库-返工生产',
           releaseBillTypeId: '61512b4487890c',
@@ -763,36 +763,11 @@ export default {
 } */
 </style>
 <style lang="scss" scoped>
-.page-processing-outsourcing {
-  .action-banner {
-    padding: 8px 0;
-    display: flex;
-    justify-content: space-between;
-    flex-flow: row wrap;
-    width: 100%;
-  }
+.mrp-list-page {
   :deep(.form-main) {
     width: 100%;
     height: 100%;
   }
-}
-
-:deep(.el-card__body) {
-  padding-top: 0px;
-  .content-warp {
-    padding: 0px;
-    position: relative;
-    .header {
-      padding-top: 6px;
-      padding-bottom: 0;
-    }
-  }
-  .search-container {
-    margin-top: 20px;
-  }
-}
-:deep(.label-suffix) {
-  color: #f56c6c;
 }
 :deep(.el-table) {
   .warning-row {

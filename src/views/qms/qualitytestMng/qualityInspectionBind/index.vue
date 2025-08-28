@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container content-warp">
+  <div class="list-page">
     <div class="header">
       <div class="title">
         <el-tabs v-model="queryParams.type" @tab-change="handleQuery">
@@ -60,183 +60,176 @@
         </el-form-item>
       </div>
     </div>
-    <div class="body-container">
-      <div class="table-container">
-        <el-table
-          ref="tableRef"
-          v-loading="loading"
-          :data="dataList"
-          row-key="id"
-          @selection-change="handleSelectionChange"
+    <div class="table-container">
+      <el-table
+        ref="tableRef"
+        v-loading="loading"
+        :data="dataList"
+        row-key="id"
+        @selection-change="handleSelectionChange"
+      >
+        <el-table-column type="selection" width="40" align="center" :reserve-selection="true" />
+        <el-table-column label="序号" width="60" align="center">
+          <template #default="{ $index }">
+            {{ $index + 1 }}
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="计划单号"
+          prop="billNumber"
+          align="center"
+          width="160"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          label="专案号"
+          prop="mtono"
+          align="center"
+          width="120"
+          show-overflow-tooltip
         >
-          <el-table-column type="selection" width="40" align="center" :reserve-selection="true" />
-          <el-table-column label="序号" width="60" align="center">
-            <template #default="{ $index }">
-              {{ $index + 1 }}
-            </template>
-          </el-table-column>
-          <el-table-column
-            label="计划单号"
-            prop="billNumber"
-            align="center"
-            width="160"
-            show-overflow-tooltip
-          />
-          <el-table-column
-            label="专案号"
-            prop="mtono"
-            align="center"
-            width="120"
-            show-overflow-tooltip
-          >
-            <template #default="scoped">
-              {{ scoped.row.mtono || '-' }}
-            </template>
-          </el-table-column>
-          <el-table-column
-            label="物料编码"
-            prop="materialCode"
-            align="center"
-            width="160"
-            show-overflow-tooltip
-          >
-            <template #default="scoped">
-              {{ scoped.row.materialCode || '-' }}
-            </template>
-          </el-table-column>
-          <el-table-column
-            label="物料名称"
-            prop="materialName"
-            align="center"
-            min-width="200"
-            show-overflow-tooltip
-          >
-            <template #default="scoped">
-              {{ scoped.row.materialName || '-' }}
-            </template>
-          </el-table-column>
-          <el-table-column
-            label="数量"
-            prop="splitAmount"
-            align="center"
-            min-width="60"
-            show-overflow-tooltip
-          />
-          <el-table-column
-            label="开始时间结束时间"
-            prop="materialName"
-            align="center"
-            min-width="90"
-            show-overflow-tooltip
-          >
-            <template #default="scoped">
-              <div>
-                {{ scoped.row.planStartTime || '-' }} <br />{{ scoped.row.planEndTime || '-' }}
-              </div>
-            </template>
-          </el-table-column>
-          <el-table-column label="负责人" prop="chargePersonId" align="center" width="100">
-            <template #default="scoped">
-              <dc-view v-model="scoped.row.chargePersonId" objectName="user" />
-            </template>
-          </el-table-column>
-          <el-table-column label="PQE负责人" prop="pqeChargePersonId" align="center" width="100">
-            <template #default="scoped">
-              <dc-view v-model="scoped.row.pqeChargePersonId" objectName="user" />
-            </template>
-          </el-table-column>
-          <el-table-column label="IPQC负责人" prop="ipqcChargePersonId" align="center" width="100">
-            <template #default="scoped">
-              <dc-view v-model="scoped.row.ipqcChargePersonId" objectName="user" />
-            </template>
-          </el-table-column>
-          <el-table-column
-            label="计划工时"
-            prop="totalWorkingHours"
-            align="center"
-            min-width="120"
-            show-overflow-tooltip
-          >
-            <template #default="scoped">
-              {{ secondToHour(scoped.row.totalWorkingHours) }} 小时
-            </template>
-          </el-table-column>
-          <el-table-column
-            label="汇报工时"
-            prop="reportHours"
-            align="center"
-            width="120"
-            show-overflow-tooltip
-          >
-            <template #default="scoped"> {{ secondToHour(scoped.row.reportHours) }}小时 </template>
-          </el-table-column>
-          <el-table-column
-            label="ERP汇报工时"
-            prop="erpReportHours"
-            align="center"
-            width="120"
-            show-overflow-tooltip
-          >
-            <template #default="scoped"
-              >{{ secondToHour(scoped.row.erpReportHours) }}小时
-            </template>
-          </el-table-column>
-          <el-table-column
-            label="业务状态"
-            prop="businessStatusName"
-            align="center"
-            min-width="80"
-            show-overflow-tooltip
-          />
-          <el-table-column
-            label="齐套时间"
-            prop="completionTime"
-            align="center"
-            min-width="140"
-            show-overflow-tooltip
-          />
-          <el-table-column
-            label="生产组别"
-            prop="workGroupName"
-            align="center"
-            min-width="120"
-            show-overflow-tooltip
-          >
-            <template #default="scoped">
-              {{ scoped.row.workGroupName || '-' }}
-            </template>
-          </el-table-column>
-          <el-table-column label="排程状态" prop="planStatusCode" align="center" width="100">
-            <template #default="scoped">
-              <dc-dict-key
-                :options="DC_MES_MPS_SCHEDULE_STATUS"
-                :value="scoped.row.planStatusCode"
-              />
-            </template>
-          </el-table-column>
-          <el-table-column label="操作" align="center" fixed="right" width="120">
-            <template #default="scoped">
-              <el-button
-                type="primary"
-                text
-                v-permission="{ id: 'DC_QMS_QLB_AP', row: scoped.row }"
-                @click="doAction('edit', scoped)"
-                v-if="btnShow"
-              >
-                指派人员
-              </el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-      </div>
-      <dc-pagination
-        v-show="total > 0"
-        :total="total"
-        v-model:page="queryParams.current"
-        v-model:limit="queryParams.size"
-        @pagination="getData"
-      />
+          <template #default="scoped">
+            {{ scoped.row.mtono || '-' }}
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="物料编码"
+          prop="materialCode"
+          align="center"
+          width="160"
+          show-overflow-tooltip
+        >
+          <template #default="scoped">
+            {{ scoped.row.materialCode || '-' }}
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="物料名称"
+          prop="materialName"
+          align="center"
+          min-width="200"
+          show-overflow-tooltip
+        >
+          <template #default="scoped">
+            {{ scoped.row.materialName || '-' }}
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="数量"
+          prop="splitAmount"
+          align="center"
+          min-width="60"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          label="开始时间结束时间"
+          prop="materialName"
+          align="center"
+          min-width="90"
+          show-overflow-tooltip
+        >
+          <template #default="scoped">
+            <div>
+              {{ scoped.row.planStartTime || '-' }} <br />{{ scoped.row.planEndTime || '-' }}
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="负责人" prop="chargePersonId" align="center" width="100">
+          <template #default="scoped">
+            <dc-view v-model="scoped.row.chargePersonId" objectName="user" />
+          </template>
+        </el-table-column>
+        <el-table-column label="PQE负责人" prop="pqeChargePersonId" align="center" width="100">
+          <template #default="scoped">
+            <dc-view v-model="scoped.row.pqeChargePersonId" objectName="user" />
+          </template>
+        </el-table-column>
+        <el-table-column label="IPQC负责人" prop="ipqcChargePersonId" align="center" width="100">
+          <template #default="scoped">
+            <dc-view v-model="scoped.row.ipqcChargePersonId" objectName="user" />
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="计划工时"
+          prop="totalWorkingHours"
+          align="center"
+          min-width="120"
+          show-overflow-tooltip
+        >
+          <template #default="scoped">
+            {{ secondToHour(scoped.row.totalWorkingHours) }} 小时
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="汇报工时"
+          prop="reportHours"
+          align="center"
+          width="120"
+          show-overflow-tooltip
+        >
+          <template #default="scoped"> {{ secondToHour(scoped.row.reportHours) }}小时 </template>
+        </el-table-column>
+        <el-table-column
+          label="ERP汇报工时"
+          prop="erpReportHours"
+          align="center"
+          width="120"
+          show-overflow-tooltip
+        >
+          <template #default="scoped">{{ secondToHour(scoped.row.erpReportHours) }}小时 </template>
+        </el-table-column>
+        <el-table-column
+          label="业务状态"
+          prop="businessStatusName"
+          align="center"
+          min-width="80"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          label="齐套时间"
+          prop="completionTime"
+          align="center"
+          min-width="140"
+          show-overflow-tooltip
+        />
+        <el-table-column
+          label="生产组别"
+          prop="workGroupName"
+          align="center"
+          min-width="120"
+          show-overflow-tooltip
+        >
+          <template #default="scoped">
+            {{ scoped.row.workGroupName || '-' }}
+          </template>
+        </el-table-column>
+        <el-table-column label="排程状态" prop="planStatusCode" align="center" width="100">
+          <template #default="scoped">
+            <dc-dict-key :options="DC_MES_MPS_SCHEDULE_STATUS" :value="scoped.row.planStatusCode" />
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" align="center" fixed="right" width="120">
+          <template #default="scoped">
+            <el-button
+              type="primary"
+              text
+              v-permission="{ id: 'DC_QMS_QLB_AP', row: scoped.row }"
+              @click="doAction('edit', scoped)"
+              v-if="btnShow"
+            >
+              指派人员
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
     </div>
+    <dc-pagination
+      v-show="total > 0"
+      :total="total"
+      v-model:page="queryParams.current"
+      v-model:limit="queryParams.size"
+      @pagination="getData"
+    />
 
     <!-- 指派人员 -->
     <el-drawer v-model="open" :title="title" size="600px" @close="close">

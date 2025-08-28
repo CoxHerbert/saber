@@ -5,7 +5,7 @@
   <template v-else>
     <el-input
       v-if="data.type === 'input'"
-      :placeholder="data.props?.placholder || `请输入${data.label}`"
+      :placeholder="data.props?.placeholder || `请输入${data.label}`"
       v-bind="data.props"
       v-model="value"
       clearable
@@ -28,7 +28,7 @@
     <el-select
       v-else-if="['dict', 'select'].includes(data.type)"
       v-model="value"
-      :placeholder="data.props?.placholder || `请选择${data.label}`"
+      :placeholder="data.props?.placeholder || `请选择${data.label}`"
       v-bind="data.props"
       clearable
       @change="
@@ -64,7 +64,7 @@
     <el-date-picker
       v-else-if="data.type === 'date'"
       v-model="value"
-      :placeholder="data.props?.placholder || `请选择${data.label}`"
+      :placeholder="data.props?.placeholder || `请选择${data.label}`"
       v-bind="data.props"
       @change="
         val => {
@@ -76,7 +76,7 @@
       v-else-if="data.type === 'number'"
       v-model="value"
       v-bind="data.props"
-      :placeholder="data.props?.placholder || `请输入${data.label}`"
+      :placeholder="data.props?.placeholder || `请输入${data.label}`"
       @change="
         val => {
           handleChange(val);

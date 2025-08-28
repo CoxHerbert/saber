@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div class="list-page">
     <div class="search">
       <div class="search-left">
         <el-form
@@ -47,13 +47,10 @@
             </el-select>
           </el-form-item>
           <el-form-item label="仓库名称" prop="warehouseId">
-            <dc-select-dialog
+            <wf-select-dialog
               v-model="queryParams.warehouseId"
               placeholder="请点击选择仓库"
               objectName="warehouse"
-              type="input"
-              :multiple="false"
-              :multiple-limit="1"
               :clearable="true"
             />
           </el-form-item>
@@ -64,96 +61,94 @@
         <el-button icon="Refresh" @click="resetQuery">重置</el-button>
       </div>
     </div>
-    <div class="body-container">
-      <div class="operate-container">
-        <el-button
-          type="primary"
-          icon="Plus"
-          v-permission="{ id: 'DC_OUTBOUNDORDER_ADD' }"
-          @click="handleSubmit"
-          >新增</el-button
-        >
-      </div>
-      <div class="table-container">
-        <el-table v-loading="loading" @row-dblclick="handleRowDbClick" :data="dataList">
-          <!-- <el-table-column type="selection" width="55" /> -->
-          <el-table-column label="序号" width="60" type="index" align="center">
-            <template #default="scoped">
-              <span>{{ (queryParams.current - 1) * queryParams.size + scoped.$index + 1 }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="出库类型" prop="outStockType" align="center">
-            <template #default="scoped">
-              <dc-dict-key :value="scoped.row.outStockType" :options="DC_WMS_OUT_TYPE_WMS" />
-            </template>
-          </el-table-column>
-          <el-table-column label="单据状态" prop="outStockStatus" align="center">
-            <template #default="scoped">
-              <dc-dict-key :value="scoped.row.outStockStatus" :options="DC_WMS_OUT_STATUS" />
-            </template>
-          </el-table-column>
-          <el-table-column label="单据编号" prop="outStockCode" align="center">
-            <template #default="scoped">
-              <el-popover
-                v-if="scoped.row.outStockCode"
-                placement="top-start"
-                title="出库单号"
-                :width="'100px'"
-                trigger="click"
-              >
-                <template #default>
-                  <div class="qr-code-box">
-                    <QrcodeVue :value="scoped.row.outStockCode"></QrcodeVue>
-                  </div>
-                </template>
-                <template #reference>
-                  <span class="code">{{ scoped.row.outStockCode }}</span>
-                </template>
-              </el-popover>
-              <span v-else>-</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="申请人" prop="applicantId" align="center">
-            <template #default="scoped">
-              <dc-view v-model="scoped.row.applicantId" objectName="user" />
-            </template>
-          </el-table-column>
-          <el-table-column label="处理人" prop="processingPersonnel" align="center">
-            <template #default="scoped">
-              <dc-view v-model="scoped.row.processingPersonnel" objectName="user" />
-            </template>
-          </el-table-column>
-          <el-table-column label="登记时间" prop="createTime" align="center" />
+    <div class="action-banner">
+      <el-button
+        type="primary"
+        icon="Plus"
+        v-permission="{ id: 'DC_OUTBOUNDORDER_ADD' }"
+        @click="handleSubmit"
+        >新增</el-button
+      >
+    </div>
+    <div class="table-container">
+      <el-table v-loading="loading" @row-dblclick="handleRowDbClick" :data="dataList">
+        <!-- <el-table-column type="selection" width="55" /> -->
+        <el-table-column label="序号" width="60" type="index" align="center">
+          <template #default="scoped">
+            <span>{{ (queryParams.current - 1) * queryParams.size + scoped.$index + 1 }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="出库类型" prop="outStockType" align="center">
+          <template #default="scoped">
+            <dc-dict-key :value="scoped.row.outStockType" :options="DC_WMS_OUT_TYPE_WMS" />
+          </template>
+        </el-table-column>
+        <el-table-column label="单据状态" prop="outStockStatus" align="center">
+          <template #default="scoped">
+            <dc-dict-key :value="scoped.row.outStockStatus" :options="DC_WMS_OUT_STATUS" />
+          </template>
+        </el-table-column>
+        <el-table-column label="单据编号" prop="outStockCode" align="center">
+          <template #default="scoped">
+            <el-popover
+              v-if="scoped.row.outStockCode"
+              placement="top-start"
+              title="出库单号"
+              :width="'100px'"
+              trigger="click"
+            >
+              <template #default>
+                <div class="qr-code-box">
+                  <QrcodeVue :value="scoped.row.outStockCode"></QrcodeVue>
+                </div>
+              </template>
+              <template #reference>
+                <span class="code">{{ scoped.row.outStockCode }}</span>
+              </template>
+            </el-popover>
+            <span v-else>-</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="申请人" prop="applicantId" align="center">
+          <template #default="scoped">
+            <dc-view v-model="scoped.row.applicantId" objectName="user" />
+          </template>
+        </el-table-column>
+        <el-table-column label="处理人" prop="processingPersonnel" align="center">
+          <template #default="scoped">
+            <dc-view v-model="scoped.row.processingPersonnel" objectName="user" />
+          </template>
+        </el-table-column>
+        <el-table-column label="登记时间" prop="createTime" align="center" />
 
-          <!-- <el-table-column label="审核人" prop="auditUserId" align="center">
+        <!-- <el-table-column label="审核人" prop="auditUserId" align="center">
             <template #default="scoped">
               <dc-view v-model="scoped.row.auditUserId" objectName="user" />
             </template>
           </el-table-column> -->
 
-          <!-- 在此添加其他列 -->
-          <el-table-column width="150" fixed="right" label="操作" align="center">
-            <template #default="scoped">
-              <el-button
-                link
-                type="primary"
-                icon="Edit"
-                v-permission="{ id: 'DC_OUTBOUNDORDER_EDIT', row: scoped.row }"
-                @click.stop="handleSubmit(scoped.row)"
-                >编辑</el-button
-              >
-              <el-button
-                link
-                type="primary"
-                icon="Delete"
-                v-permission="{ id: 'DC_OUTBOUNDORDER_DEL', row: scoped.row }"
-                @click.stop="handleDelete(scoped.row)"
-                >删除</el-button
-              >
-            </template>
-          </el-table-column>
-        </el-table>
-      </div>
+        <!-- 在此添加其他列 -->
+        <el-table-column width="150" fixed="right" label="操作" align="center">
+          <template #default="scoped">
+            <el-button
+              link
+              type="primary"
+              icon="Edit"
+              v-permission="{ id: 'DC_OUTBOUNDORDER_EDIT', row: scoped.row }"
+              @click.stop="handleSubmit(scoped.row)"
+              >编辑</el-button
+            >
+            <el-button
+              link
+              type="primary"
+              icon="Delete"
+              v-permission="{ id: 'DC_OUTBOUNDORDER_DEL', row: scoped.row }"
+              @click.stop="handleDelete(scoped.row)"
+              >删除</el-button
+            >
+          </template>
+        </el-table-column>
+      </el-table>
     </div>
     <dc-pagination
       v-show="total > 0"

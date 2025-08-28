@@ -166,7 +166,7 @@ export default {
     },
     /** 处理提交 **/
     handleSubmit() {
-      this.$emit('confirm', this.radio.historyTechnologyItems);
+      this.$emit('confirm', this.radio.historyTechnologyItems, this.radio);
       this.doAction('close');
     },
   },

@@ -1,5 +1,5 @@
 <template>
-  <div class="content-warp">
+  <div class="list-page">
     <div class="search">
       <div class="search-left">
         <el-form
@@ -70,14 +70,12 @@
         <el-button @click="handleReset">重置</el-button>
       </div>
     </div>
-    <div class="table-container" v-loading="loading">
-      <el-button
-        type="primary"
-        v-permission="{ id: 'DC_SETTLED_ADD' }"
-        @click="handleInitiate"
-        class="mb-5"
+    <div class="action-banner">
+      <el-button type="primary" v-permission="{ id: 'DC_SETTLED_ADD' }" @click="handleInitiate"
         >发起流程</el-button
       >
+    </div>
+    <div class="table-container" v-loading="loading">
       <el-table :data="tableData" :row-style="{ height: '48px' }">
         <el-table-column label="序号" width="100" type="index" align="center">
           <template #default="scoped">

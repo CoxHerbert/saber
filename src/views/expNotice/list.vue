@@ -7,7 +7,7 @@
       :inline="true"
       @keyup.enter="handleQuery"
     >
-      <el-form-item label="通知名称" prop="settingTypeName" style="width:200px">
+      <el-form-item label="通知名称" prop="settingTypeName" style="width: 200px">
         <el-select v-model="queryParams.settingTypeName" placeholder="请选择通知名称" clearable>
           <el-option
             v-for="(item, index) in DC_EXPNOTICE_TYPE"
@@ -33,7 +33,7 @@
           clearable
         />
       </el-form-item>
-      <el-form-item label="通知阶段" prop="noticePhase" style="width:200px">
+      <el-form-item label="通知阶段" prop="noticePhase" style="width: 200px">
         <el-select v-model="queryParams.noticePhase" placeholder="请选择通知阶段" clearable>
           <el-option
             v-for="(item, index) in noticePhaseList"
@@ -71,27 +71,17 @@
         </el-table-column>
         <el-table-column min-width="90px" label="物料/单号" align="center" prop="noticeCode">
         </el-table-column>
-        <el-table-column
-          min-width="40px"
-          label="超时"
-          align="center"
-          prop="delayTimeInSeconds"
-        >
+        <el-table-column min-width="40px" label="超时" align="center" prop="delayTimeInSeconds">
         </el-table-column>
         <el-table-column min-width="40px" label="阶段" align="center" prop="noticePhase">
         </el-table-column>
         <el-table-column min-width="120px" label="通知时间" align="center" prop="messageTime">
         </el-table-column>
-        <el-table-column
-          min-width="120px"
-          label="最新通知人"
-          align="center"
-        >
+        <el-table-column min-width="120px" label="最新通知人" align="center">
           <template #default="scope">
             {{ scope.row.latestMessageReceiverNames || scope.row.latestMessageReceiver }}
           </template>
         </el-table-column>
-
 
         <el-table-column
           min-width="120px"
@@ -124,7 +114,7 @@ import { onMounted } from 'vue';
 import {
   getExpectionNoticeList,
   removeExpectionNotice,
-  getTenantList
+  getTenantList,
 } from '@/api/system/expNotice';
 
 const { proxy } = getCurrentInstance();
@@ -133,12 +123,12 @@ const data = reactive({
   tenantList: [],
   queryParams: {
     current: 1,
-    size: 10
+    size: 10,
   },
   dataList: [],
   loading: true,
   total: 0,
-  noticePhaseList: [1, 2, 3, 4]
+  noticePhaseList: [1, 2, 3, 4],
 });
 
 const { queryParams, dataList, loading, total, noticePhaseList } = toRefs(data);
@@ -159,7 +149,7 @@ const getData = async () => {
   if (code === 200) {
     dataList.value = data.records.map(record => ({
       ...record,
-      delayTimeInSeconds: parseFloat(record.delayTimeInSeconds / 3600).toFixed(2)
+      delayTimeInSeconds: parseFloat(record.delayTimeInSeconds / 3600).toFixed(2),
     }));
     total.value = data.total;
     queryParams.value.current = data.current;
@@ -181,7 +171,7 @@ const resetQuery = () => {
     size: 10,
     workGroupName: undefined,
     areaName: undefined,
-    chargePerson: undefined
+    chargePerson: undefined,
   };
   proxy.resetForm('queryRef');
   getData();
@@ -199,8 +189,7 @@ const handleDelete = row => {
       proxy.$message.success('删除成功');
       getData();
     })
-    .catch(() => {
-    });
+    .catch(() => {});
 };
 
 // 获取租户列表

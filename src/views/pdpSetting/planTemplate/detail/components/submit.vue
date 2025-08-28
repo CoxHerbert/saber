@@ -231,7 +231,7 @@ const compData = reactive({
     funcUrl: '',
     funcViewUrl: '',
     handlePersonId: null,
-    isMilestone: null,
+    isMilestone: false,
     planStatus: '1866033974148980737',
     processId: '',
     systemCodeMethod: '',
@@ -265,11 +265,14 @@ const formRef = ref(null);
 
 // 保存提交
 const submitForm = () => {
+  // console.log(formData.value.isMilestone);
+  console.log(formData.value.isMilestone ? 0 : 1);
+  // return;
   formRef.value.validate(async valid => {
     if (valid) {
       const res = await Api.pdp.planTempItem.submit({
         ...formData.value,
-        isMilestone: formData.value.isMilestone ? 0 : 1,
+        isMilestone: formData.value.isMilestone ? 1 : 0,
         templateId: props.templateId,
       });
       const { code, msg } = res.data;

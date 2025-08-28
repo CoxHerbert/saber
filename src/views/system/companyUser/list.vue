@@ -1,6 +1,6 @@
 <template>
   <basic-container>
-    <div class="content-warp page-processing-outsourcing list-edit-page">
+    <div class="list-edit-page mrp-list-page">
       <div class="header">
         <dc-search
           v-model="queryParams"
@@ -9,8 +9,8 @@
           @search="handleSearch"
         />
       </div>
-
-      <div class="table-container" style="margin-top: 20px">
+      <div class="action-banner"></div>
+      <div class="table-container">
         <el-form ref="formRef" class="form-main" :model="tableData">
           <!-- :rules="getTableRule(group.items)" -->
           <el-form-item class="form-item-table" :label-width="0">
@@ -149,12 +149,13 @@
         @pagination="getData"
       />
     </div>
-    <!-- <his-price ref="hisPriceRef" /> -->
   </basic-container>
+  <!-- <his-price ref="hisPriceRef" /> -->
 </template>
 <script>
 import unsavedChanges from '@/mixins/unsaved-changes';
 import listEditPage from '@/mixins/list-edit-page';
+// import useEditState from '@/mixins/useEditState';
 import options from './list';
 import { mapGetters } from 'vuex';
 // import hisPrice from './cpns/his-price.vue';
@@ -233,26 +234,16 @@ export default {
           this.$message.error('您不是考核人，不能查看');
           return;
         }
-
-        // console.log(this.userInfo.user_id);
-        // return;
         this.$router.push({
           path: '/system/companyUser/index',
           query: {
             templateId: row.templateId,
             department: row.department,
             assessor: row.assessor,
+            label: this.queryParams.label,
             assessmentPeriod: row.assessmentPeriod,
           },
         });
-        // 在目标页面中，可以通过以下方式接收数据：
-        // 在目标页面的 created 或 mounted 钩子中使用 this.$route.query 获取
-        // 示例代码：
-        // created() {
-        //   const templateId = this.$route.query.templateId;
-        //   const department = this.$route.query.department;
-        //   const assessmentPeriod = this.$route.query.assessmentPeriod;
-        // }
       } else if (action === 'batchDelete') {
         if (this.batchSelectRows.length < 1) {
           this.$message.error('请先勾选要删除的数据');
@@ -416,35 +407,11 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-.page-processing-outsourcing {
-  .action-banner {
-    padding: 8px 0;
-    display: flex;
-    flex-flow: row wrap;
-    width: 100%;
-  }
+.mrp-list-page {
   :deep(.form-main) {
     width: 100%;
     height: 100%;
   }
-}
-
-:deep(.el-card__body) {
-  padding-top: 0px;
-  .content-warp {
-    padding: 0px;
-    position: relative;
-    .header {
-      padding-top: 6px;
-      padding-bottom: 0;
-    }
-  }
-  .search-container {
-    margin-top: 20px;
-  }
-}
-:deep(.label-suffix) {
-  color: #f56c6c;
 }
 :deep(.el-table) {
   .warning-row {

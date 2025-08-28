@@ -1,5 +1,5 @@
 <template>
-  <div class="content-warp">
+  <div class="list-page">
     <div class="header">
       <dc-search
         v-model="queryParams"
@@ -8,82 +8,12 @@
         @search="handleSearch"
       />
     </div>
-    <!-- <div class="search">
-      <div class="search-left">
-        <el-form
-          class="search-container"
-          :model="queryParams"
-          ref="queryRef"
-          :inline="true"
-          label-width="auto"
-        >
-          <el-form-item label="所属部门" id="deptName" prop="deptName">
-            <el-select
-              v-model="queryParams.deptName"
-              clearable
-              filterable
-              placeholder="请选择所属部门"
-            >
-              <el-option
-                v-for="item in optionDept"
-                :key="item.productCode"
-                :label="item.productCode"
-                :value="item.productCode"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="计划单号" prop="orderCode">
-            <el-input v-model="queryParams.orderCode" placeholder="请输入计划单号" />
-          </el-form-item>
-          <el-form-item label="Project" prop="projectConfigId">
-            <dc-select-dialog
-              v-model="queryParams.projectConfigId"
-              placeholder="请选择Project"
-              objectName="projectConfig"
-              type="input"
-              :multiple="false"
-              :multiple-limit="1"
-              :clearable="true"
-            />
-          </el-form-item>
-          <el-form-item label="Station" prop="stationConfigId">
-            <dc-select-dialog
-              v-model="queryParams.stationConfigId"
-              placeholder="请选择Station"
-              objectName="stationConfig"
-              type="input"
-              :multiple="false"
-              :multiple-limit="1"
-              :clearable="true"
-            />
-          </el-form-item>
-          <el-form-item label="CM厂" prop="customerName">
-            <el-input v-model="queryParams.customerName" placeholder="请输入CM厂" />
-          </el-form-item>
-          <el-form-item label="阶段" prop="phaseId">
-            <el-select v-model="queryParams.phaseId" placeholder="请选择阶段">
-              <el-option
-                v-for="item in dataList"
-                :key="item.id"
-                :label="item.mmrPhaseName"
-                :value="item.id"
-              />
-            </el-select>
-          </el-form-item>
-        </el-form>
-      </div>
-      <div class="search-right">
-        <el-button type="primary" @click="getData">查询</el-button>
-        <el-button @click="handleReset">重置</el-button>
-      </div>
-    </div> -->
+    <div class="action-banner">
+      <el-button type="primary" icon="Download" @click="exportExcle">导出</el-button>
+      <el-button type="primary" icon="Plus" @click="handleRouterAdd">创建报工</el-button>
+      <el-button @click="handleRemove">批量删除</el-button>
+    </div>
     <div class="table-container" v-loading="loading">
-      <div class="mb-5">
-        <el-button type="primary" icon="Download" @click="exportExcle">导出</el-button>
-        <el-button type="primary" icon="Plus" @click="handleRouterAdd">创建报工</el-button>
-        <el-button @click="handleRemove">批量删除</el-button>
-      </div>
-
       <el-table
         :data="tableData"
         :row-style="{ height: '48px' }"
@@ -637,12 +567,6 @@ const exportExcle = () => {
 };
 </script>
 <style lang="scss" scoped>
-.content-warp {
-  .ht {
-    height: 70px;
-  }
-}
-
 .table-container {
   margin-top: 10px;
 }

@@ -1,5 +1,5 @@
 <template>
-  <div class="content-warp">
+  <div class="list-page">
     <div class="page-header-box header none-border ht">
       <div class="title w-full">
         <el-tabs v-model="activeName" @tab-change="handleClick">

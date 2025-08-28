@@ -215,7 +215,7 @@
             <el-form-item label="客户联系人" class="form-itme-width_100">
               <el-table
                 :data="formData.customerContactIds"
-                v-if="formData.customerContactIds instanceof Array === true"
+                v-if="Array.isArray(formData.customerContactIds)"
               >
                 <el-table-column
                   prop="contactsName"
@@ -282,7 +282,7 @@
               </dc-select-dialog>
             </div>
             <el-form-item label="代工厂" class="form-itme-width_100">
-              <el-table :data="formData.foundryIds" v-if="formData.foundryIds instanceof Array">
+              <el-table :data="formData.foundryIds" v-if="Array.isArray(formData.foundryIds)">
                 <el-table-column prop="foundryName" label="代工厂名称" align="center" width="200" />
                 <el-table-column
                   prop="foundryDesc"
@@ -612,7 +612,7 @@ const { rules, formData, keyNames, isShow, loading, uploadChecked, title } = toR
 const unfilledItems = computed(() => {
   return Object.keys(rules.value)
     .filter(key => {
-      if (formData.value[key] instanceof Array && formData.value[key].length === 0) return true;
+      if (Array.isArray(formData.value[key]) && formData.value[key].length === 0) return true;
       if (typeof formData.value[key] === 'string' && !formData.value[key]) return true;
       if (!formData.value[key]) return true;
       return false;

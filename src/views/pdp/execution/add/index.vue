@@ -2,41 +2,6 @@
   <basic-container>
     <div class="content-warp page-execution-edit" :class="pageRenderSize">
       <div v-loading="loading" class="drawer-container">
-        <!-- <div class="step-box">
-          <el-steps v-if="detailData" :active="step">
-            <el-step
-              v-for="(item, index) in dictMaps.DC_ERP_ORDER_STATUS.filter((_, i) => i < 4)"
-              :key="index"
-            >
-              <template #icon>
-                <div class="step-item" :class="getCalss(index)">
-                  <span class="step-num">
-                    <span v-if="index >= step">{{ index + 1 }}</span>
-                    <el-icon v-else><Check /></el-icon>
-                  </span>
-                  <span class="step-title"
-                    >{{ item.dictValue }} <br />
-                    <dc-view
-                      v-model="detailData.tpmOperatorId"
-                      objectName="user"
-                      v-if="index === 0"
-                    />
-                    <dc-view
-                      v-model="detailData.tpmHeaderOperatorId"
-                      objectName="user"
-                      v-if="index === 1"
-                    />
-                    <dc-view
-                      v-model="detailData.operationOperatorId"
-                      objectName="user"
-                      v-if="index === 2"
-                    />
-                  </span>
-                </div>
-              </template>
-            </el-step>
-          </el-steps>
-        </div> -->
         <div class="step-new">
           <dc-steps v-bind="stepProps" :activeIndex="step"></dc-steps>
         </div>
@@ -84,7 +49,7 @@
                     >
                       <el-input
                         v-if="col.type === 'input'"
-                        :placeholder="col.props?.placholder || `请输入${col.label}`"
+                        :placeholder="col.props?.placeholder || `请输入${col.label}`"
                         v-bind="col.props"
                         v-model="detailData[col.prop]"
                         clearable
@@ -93,7 +58,7 @@
                         class="param-value"
                         v-else-if="col.type === 'dict'"
                         v-model="detailData[col.prop]"
-                        :placeholder="col.props?.placholder || `请选择${col.label}`"
+                        :placeholder="col.props?.placeholder || `请选择${col.label}`"
                         v-bind="col.props"
                         clearable
                         @change="
@@ -129,7 +94,7 @@
                       <el-date-picker
                         v-else-if="col.type === 'date'"
                         v-model="detailData[col.prop]"
-                        :placeholder="col.props?.placholder || `请选择${col.label}`"
+                        :placeholder="col.props?.placeholder || `请选择${col.label}`"
                         v-bind="col.props"
                         value-format="YYYY-MM-DD"
                         format="YYYY-MM-DD"
@@ -139,7 +104,7 @@
                         v-else-if="col.type === 'number'"
                         v-model="detailData[col.prop]"
                         v-bind="col.props"
-                        :placeholder="col.props?.placholder || `请输入${col.label}`"
+                        :placeholder="col.props?.placeholder || `请输入${col.label}`"
                       />
                       <UserRemoteQuery
                         v-else-if="col.type === 'select-user'"
@@ -246,7 +211,7 @@
                                 }"
                                 v-if="col.type === 'dict'"
                                 v-model="scoped.row[col.prop]"
-                                :placeholder="col.props?.placholder || `请选择${col.label}`"
+                                :placeholder="col.props?.placeholder || `请选择${col.label}`"
                                 v-bind="col.props"
                                 clearable
                               >
@@ -503,7 +468,6 @@ import {
   computed,
 } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-// import store from '@/store/index';
 import Api from '@/api/index';
 import detailConfig from './utils';
 import UserRemoteQuery from '@/components/dc/components/dc-select-user/remote-query.vue';
@@ -636,12 +600,6 @@ const getLabelCode = col => {
       ? `<span class="label-suffix">*</span>${col.label}`
       : col.label;
   return result;
-};
-
-const getCalss = index => {
-  if (step.value === index) return 'step-item-process';
-  if (step.value < index) return 'step-item-wait';
-  if (step.value > index) return 'step-item-finish';
 };
 
 const uesrIdMaps = {
@@ -875,7 +833,9 @@ const submit = (onlySelectRows = false) => {
       loading.value = true;
       const formDataSend = {
         ...JSON.parse(JSON.stringify(detailData.value)),
-        attachmentId: detailData.value?.attachmentId?.map(at => at.id)?.join(','),
+        attachmentId: Array.isArray(detailData.value?.attachmentId)
+          ? detailData.value?.attachmentId?.map(at => at.id)?.join(',')
+          : '',
       };
       formDataSend.dcErpOrderNeList = onlySelectRows
         ? JSON.parse(JSON.stringify(selectionRows.value))

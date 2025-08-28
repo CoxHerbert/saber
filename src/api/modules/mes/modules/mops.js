@@ -217,4 +217,20 @@ export default {
       data,
     });
   },
+  // 获取工序工时汇报列表
+  getErpReportList(params) {
+    return request({
+      url: '/blade-bip/dc/mops/plan/get-erp-report-list',
+      method: 'get',
+      params,
+    });
+  },
+  // ERP下达
+  updateRrpStatus(data) {
+    return request({
+      url: '/blade-bip/dc/mops/plan/update-erp-status',
+      method: 'post',
+      data,
+    });
+  },
 };

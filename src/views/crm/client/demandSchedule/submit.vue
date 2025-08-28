@@ -461,7 +461,7 @@ const {
 const unfilledItems = computed(() => {
   return Object.keys(rules.value)
     .filter(key => {
-      if (formData.value[key] instanceof Array && formData.value[key].length === 0) return true;
+      if (Array.isArray(formData.value[key]) && formData.value[key].length === 0) return true;
       if (typeof formData.value[key] === 'string' && !formData.value[key]) return true;
       if (!formData.value[key]) return true;
       return false;

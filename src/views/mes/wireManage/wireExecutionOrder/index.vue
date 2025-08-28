@@ -1,6 +1,6 @@
 <template>
   <basic-container>
-    <div class="content-warp page-processing-outsourcing">
+    <div class="list-page page-processing-outsourcing">
       <div class="header">
         <dc-search
           v-model="queryParams"
@@ -14,12 +14,6 @@
           >新增</el-button
         >
       </div>
-      <!-- 
-         lazy
-            :load="loadChildren"
-            :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
-            :checkStrictly="true"
-        -->
       <div class="table-container">
         <el-table
           ref="tableRef"
@@ -293,34 +287,4 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-.page-processing-outsourcing {
-  .action-banner {
-    padding: 8px 0;
-    display: flex;
-    flex-flow: row wrap;
-    width: 100%;
-  }
-}
-.pass {
-  color: #23c69f;
-}
-.notpass {
-  color: #e12137;
-}
-
-:deep(.el-card__body) {
-  padding-top: 0px;
-  .content-warp {
-    padding: 0px;
-    position: relative;
-    .header {
-      padding-top: 6px;
-      padding-bottom: 0;
-    }
-  }
-  .search-container {
-    margin-top: 20px;
-  }
-}
-</style>
+<style lang="scss" scoped></style>

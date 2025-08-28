@@ -22,6 +22,12 @@
               >
                 <div :key="i" class="group-header">
                   {{ group.name }}
+                  <img
+                    v-if="group.renderType === 'form' && billTypeMap[detailData?.billType]"
+                    class="bill-type"
+                    :src="billTypeMap[detailData.billType]"
+                    alt="bill-type"
+                  />
                   <el-icon
                     v-if="group.showToggleExpand"
                     @click="toggleExpand(group.prop, !expand[group.prop])"
@@ -263,6 +269,11 @@ export default {
       apiFns: {
         getDetail: 'getModifDetail',
         postPlan: 'postModifyMoPlan',
+      },
+      billTypeMap: {
+        '工序汇报入库-普通生产': '/img/mes/普通.svg',
+        '工序汇报入库-返修生产': '/img/mes/返修.svg',
+        '工序汇报入库-返工生产': '/img/mes/返工.svg',
       },
     };
   },
@@ -599,5 +610,15 @@ export default {
 }
 </style>
 <style lang="scss" scoped>
-@import './../../cnps/add-or-edit-page.scss';
+@use './../../cnps/add-or-edit-page.scss';
+.group-header {
+  position: relative;
+  .bill-type {
+    top: -10px;
+    position: absolute;
+    left: 70px;
+    width: 50px;
+    z-index: 10;
+  }
+}
 </style>

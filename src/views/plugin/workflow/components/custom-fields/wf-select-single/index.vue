@@ -149,7 +149,6 @@ export default {
     objectName: {
       handler(newVal) {
         this.model = cacheData[newVal];
-
         this.columns = this.model.column;
         this.initSearchConfig();
         if (!!this.model?.rowKey) {
@@ -189,8 +188,9 @@ export default {
     },
     getData() {
       this.loading = true;
+      //添加默认参数...this.model?.defaultParams,
       this.model
-        .dialogGet({ ...this.queryParams, ...this.query })
+        .dialogGet({ ...this.model?.defaultParams, ...this.queryParams, ...this.query })
         .then(res => {
           const callBackData = !!this.model?.callBack
             ? this.model?.callBack(res)
@@ -205,7 +205,16 @@ export default {
         });
     },
     handleRowClick(row) {
-      const isSelected = this.selectedRow?.id === row.id;
+      // console.log(row);
+      // const isSelected = this.selectedRow?.id === row.id;
+      // this.selectedRow = isSelected ? null : row;
+      // console.log(this.selectedRow);
+
+      // 容错处理：如果 row 为空，直接返回（避免后续报错）以下lihaiyang修改
+      if (!row) return;
+      const currentKey = row[this.rowKey];
+      const selectedKey = this.selectedRow ? this.selectedRow[this.rowKey] : null;
+      const isSelected = currentKey === selectedKey;
       this.selectedRow = isSelected ? null : row;
     },
     handleRowDblClick(row) {
@@ -232,7 +241,7 @@ export default {
       this.open = false;
     },
     tableRowClassName({ row }) {
-      return this.selectedRow?.id === row.id ? 'row-selected' : '';
+      return this.selectedRow?.[this.rowKey] === row?.[this.rowKey] ? 'row-selected' : '';
     },
     async getDicts() {
       try {

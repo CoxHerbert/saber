@@ -1,5 +1,5 @@
 <template>
-  <div class="content-warp">
+  <div class="list-page">
     <div class="search">
       <div class="search-left">
         <el-form
@@ -27,33 +27,9 @@
           <el-form-item label="计划单号" prop="lineCode">
             <el-input v-model="queryParams.lineCode" placeholder="请输入计划单号" />
           </el-form-item>
-
-          <!-- <el-form-item label="Project" prop="projectConfigId">
-            <dc-select-dialog
-              v-model="queryParams.projectConfigId"
-              placeholder="请选择Project"
-              objectName="projectConfig"
-              type="input"
-              :multiple="false"
-              :multiple-limit="1"
-              :clearable="true"
-            />
-          </el-form-item>
-          <el-form-item label="Station" prop="stationConfigId">
-            <dc-select-dialog
-              v-model="queryParams.stationConfigId"
-              placeholder="请选择Station"
-              objectName="stationConfig"
-              type="input"
-              :multiple="false"
-              :multiple-limit="1"
-              :clearable="true"
-            />
-          </el-form-item> -->
           <el-form-item label="CM厂" prop="customerName">
             <el-input v-model="queryParams.customerName" placeholder="请输入CM厂" />
           </el-form-item>
-
           <el-form-item label="入驻人" prop="inUserId">
             <dc-select-user
               v-model="queryParams.inUserId"
@@ -70,7 +46,7 @@
         <el-button @click="handleReset">重置</el-button>
       </div>
     </div>
-    <div class="table-container" v-loading="loading">
+    <div class="action-banner">
       <el-button
         type="primary"
         @click="handleInitiate"
@@ -78,6 +54,8 @@
         class="mb-5"
         >发起流程</el-button
       >
+    </div>
+    <div class="table-container" v-loading="loading">
       <el-table :data="tableData" :row-style="{ height: '48px' }">
         <el-table-column label="序号" width="100" type="index" align="center">
           <template #default="scoped">

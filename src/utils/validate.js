@@ -246,7 +246,7 @@ export function validatenull(val) {
   if (typeof val == 'number') {
     return false;
   }
-  if (val instanceof Array) {
+  if (Array.isArray(val)) {
     if (val.length === 0) return true;
   } else if (val instanceof Object) {
     if (JSON.stringify(val) === '{}') return true;

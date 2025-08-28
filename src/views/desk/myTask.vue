@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container content-warp" v-loading="loading">
+  <div class="list-page my-task-list-page" v-loading="loading">
     <div class="header">
       <dc-search
         v-bind="searchConfigProps"
@@ -42,7 +42,7 @@
         >批量完成</el-button
       >
     </div>
-    <div class="body-container">
+    <div class="table-container">
       <el-table :data="tableData" @selection-change="handleSelectionChange">
         <el-table-column type="selection" align="center" width="60" :selectable="selectable" />
 
@@ -323,19 +323,7 @@ const doAction = (action, scope = {}) => {
 };
 </script>
 <style lang="scss" scoped>
-.app-container {
-  padding: 10px 16px;
-  display: flex;
-  flex-direction: column;
-  .action-banner {
-    padding: 8px 0;
-    display: flex;
-    flex-flow: row wrap;
-    width: 100%;
-  }
-  .header {
-    margin-bottom: 6px;
-  }
+.my-task-list-page {
 }
 .dialog-search-box {
   width: 900px;

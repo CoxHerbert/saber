@@ -24,7 +24,7 @@ export default {
     detailData: {
       handler(newVal) {
         if (Object.keys(newVal).length > 1) {
-          this.markAsUnsaved();
+          // this.markAsUnsaved();
         }
       },
       deep: true,

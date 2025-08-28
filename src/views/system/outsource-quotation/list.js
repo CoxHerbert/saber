@@ -1,3 +1,5 @@
+import dayjs from 'dayjs';
+
 const options = () => {
   return {
     columns: [
@@ -14,6 +16,14 @@ const options = () => {
         },
         searchProps: { is: 'input' },
       },
+      // {
+      //   prop: 'updateUser',
+      //   label: '负责人',
+      //   width: '100px',
+      //   objectName: 'user',
+      //   showKey: 'realName',
+      //   type: 'dc-view',
+      // },
       {
         label: '编码',
         prop: 'fnumber',
@@ -48,6 +58,67 @@ const options = () => {
       {
         label: '源单',
         prop: 'srcBillNo',
+        search: false,
+        type: 'input',
+        props: {
+          disabled: true,
+        },
+      },
+      {
+        label: '下单日期',
+        prop: 'approveDate',
+        search: false,
+        type: 'input',
+        props: {
+          disabled: true,
+        },
+        transVal(scope) {
+          if ([undefined, null, '', ' '].includes(scope.row.approveDate)) return '-';
+          return dayjs(scope.row.approveDate).format('YYYY-MM-DD');
+        },
+      },
+      {
+        label: '交期',
+        prop: 'arrivalDate',
+        search: false,
+        type: 'input',
+        props: {
+          disabled: true,
+        },
+        transVal(scope) {
+          if ([undefined, null, '', ' '].includes(scope.row.arrivalDate)) return '-';
+          return dayjs(scope.row.arrivalDate).format('YYYY-MM-DD');
+        },
+      },
+      {
+        label: '材料费',
+        prop: 'materialFee',
+        type: 'input',
+        props: {
+          disabled: true,
+        },
+      },
+      {
+        label: '加工费',
+        prop: 'processFee',
+        search: false,
+        type: 'input',
+        props: {
+          disabled: true,
+        },
+      },
+      {
+        label: '表处费',
+        prop: 'surfaceFee',
+        search: false,
+        type: 'input',
+        props: {
+          disabled: true,
+        },
+      },
+      {
+        label: '单件价格',
+        prop: 'currentOutsourcePrice',
         search: false,
         type: 'input',
         props: {
@@ -114,14 +185,15 @@ const options = () => {
               return scope.row?.quotationStatusId === 'DC_WX_VALENCE_STATUS_YHJ';
             },
           },
-          // {
-          //   type: 'button',
-          //   label: '查看详情',
-          //   action: 'his-price',
-          //   showFunc(scope) {
-          //     return scope.row?.quotationStatusId === 'DC_WX_VALENCE_STATUS_YHJ';
-          //   },
-          // },
+
+          {
+            type: 'button',
+            label: '查看详情',
+            action: 'lookdetail',
+            showFunc(scope) {
+              return scope.row?.quotationStatusId === 'DC_WX_VALENCE_STATUS_BHJ' ? false : '';
+            },
+          },
         ],
       },
     ],

@@ -1,141 +1,139 @@
 <template>
-  <basic-container>
-    <div class="content-warp">
-      <div class="header">
-        <dc-search
-          v-model="queryParams"
-          v-bind="searchConfig"
-          @reset="resetQuery"
-          @search="handleQuery"
-        ></dc-search>
-      </div>
-
-      <div class="toolbar">
-        <el-button
-          type="primary"
-          icon="el-icon-plus"
-          v-permission="{ id: 'SUPPLIER_ADD' }"
-          @click="handleAdd"
-          >新增供应商
-        </el-button>
-        <el-button
-          icon="el-icon-delete"
-          plain
-          v-permission="{ id: 'SUPPLIER_BATCH_DEL' }"
-          @click="handleDelete"
-          :disabled="batchDelete.length == 0"
-          >批量删除</el-button
-        >
-      </div>
-
-      <div class="table-container">
-        <el-table
-          v-loading="loading"
-          :data="dataList"
-          @selection-change="handleSelectionChange"
-          @row-dblclick="lookReport"
-        >
-          <el-table-column type="selection" width="55" />
-          <el-table-column label="序号" width="60" type="index" align="center">
-            <template #default="scoped">
-              <span>{{ (queryParams.current - 1) * queryParams.size + scoped.$index + 1 }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column
-            label="供应商名称"
-            width="180"
-            prop="supplierName"
-            align="center"
-            show-overflow-tooltip
-          >
-          </el-table-column>
-          <el-table-column label="组织" align="center" prop="orgId">
-            <template #default="scoped">
-              <dc-dict type="text" :options="SCMORG_LIST_CACHE" :value="scoped.row.orgId" />
-            </template>
-          </el-table-column>
-          <el-table-column label="审核状态" width="160" align="center" prop="flagStatusDict">
-            <template #default="scoped">
-              <dc-dict-key :options="DC_FLAG_STATUS" :value="scoped.row.flagStatusDict" />
-            </template>
-          </el-table-column>
-          <el-table-column label="供应商编码" min-width="110px" align="center" prop="supplierNo">
-          </el-table-column>
-          <el-table-column
-            label="供应商分类"
-            min-width="110px"
-            align="center"
-            prop="supplierClassifyDict"
-          >
-            <template #default="scoped">
-              <dc-dict-key :value="scoped.row.supplierClassifyDict" :options="DC_SCM_SUPPLIER" />
-            </template>
-          </el-table-column>
-          <el-table-column min-width="120" label="签约开始日期" align="center" prop="startDate">
-            <template #default="scoped">
-              {{ scoped.row.startDate || '-' }}
-            </template>
-          </el-table-column>
-          <el-table-column label="签约结束日期" min-width="120px" align="center" prop="endDate">
-            <template #default="scoped">
-              {{ scoped.row.endDate || '-' }}
-            </template>
-          </el-table-column>
-          <el-table-column label="结算方式" align="center" prop="paytermsDict" width="100px">
-            <template #default="scoped">
-              <dc-dict-key :options="DC_SUPPLIER_PAYTERMS" :value="scoped.row.paytermsDict" />
-            </template>
-          </el-table-column>
-          <el-table-column label="供应商地址" align="center" prop="supplierAddress" width="100px">
-            <template #default="scoped">
-              {{ scoped.row.supplierAddress || '-' }}
-            </template>
-          </el-table-column>
-          <el-table-column min-width="100px" label="合同附件" align="center" prop="contractFileId">
-            <template #default="scoped">
-              <span class="fileIdflex">
-                <dc-upload
-                  v-model="scoped.row.contractFileId"
-                  :limit="3"
-                  :isUpload="false"
-                  :isRemove="false"
-                  :targetType="Const.targetType.CUSTOMER"
-              /></span>
-            </template>
-          </el-table-column>
-
-          <el-table-column label="操作" align="center" width="160" fixed="right">
-            <template #default="scoped">
-              <el-button
-                link
-                type="primary"
-                v-permission="{ id: 'SUPPLIER_DETAIL', row: scoped.row }"
-                @click="lookReport(scoped.row)"
-                >查看</el-button
-              >
-              <el-button
-                link
-                type="primary"
-                v-if="scoped.row.flagStatusDict == 0"
-                v-permission="{ id: 'SUPPLIER_EDIT', row: scoped.row }"
-                @click="handleAdd(scoped.row)"
-                >编辑</el-button
-              >
-            </template>
-          </el-table-column>
-        </el-table>
-      </div>
-      <dc-pagination
-        v-show="total > 0"
-        :total="total"
-        v-model:page="queryParams.current"
-        v-model:limit="queryParams.size"
-        @pagination="getData"
-      />
+  <div class="list-page supplier-list-page">
+    <div class="header">
+      <dc-search
+        v-model="queryParams"
+        v-bind="searchConfig"
+        @reset="resetQuery"
+        @search="handleQuery"
+      ></dc-search>
     </div>
-  </basic-container>
+
+    <div class="action-banner">
+      <el-button
+        type="primary"
+        icon="el-icon-plus"
+        v-permission="{ id: 'SUPPLIER_ADD' }"
+        @click="handleAdd"
+        >新增供应商
+      </el-button>
+      <el-button
+        icon="el-icon-delete"
+        plain
+        v-permission="{ id: 'SUPPLIER_BATCH_DEL' }"
+        @click="handleDelete"
+        :disabled="batchDelete.length == 0"
+        >批量删除</el-button
+      >
+    </div>
+
+    <div class="table-container">
+      <el-table
+        v-loading="loading"
+        :data="dataList"
+        @selection-change="handleSelectionChange"
+        @row-dblclick="lookReport"
+      >
+        <el-table-column type="selection" width="55" />
+        <el-table-column label="序号" width="60" type="index" align="center">
+          <template #default="scoped">
+            <span>{{ (queryParams.current - 1) * queryParams.size + scoped.$index + 1 }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="供应商名称"
+          width="180"
+          prop="supplierName"
+          align="center"
+          show-overflow-tooltip
+        >
+        </el-table-column>
+        <el-table-column label="组织" align="center" prop="orgId" show-overflow-tooltip>
+          <template #default="scoped">
+            <dc-dict type="text" :options="SCMORG_LIST_CACHE" :value="scoped.row.orgId" />
+          </template>
+        </el-table-column>
+        <el-table-column label="审核状态" width="100" align="center" prop="flagStatusDict">
+          <template #default="scoped">
+            <dc-dict-key :options="DC_FLAG_STATUS" :value="scoped.row.flagStatusDict" />
+          </template>
+        </el-table-column>
+        <el-table-column label="供应商编码" width="100" align="center" prop="supplierNo">
+        </el-table-column>
+        <el-table-column
+          label="供应商分类"
+          min-width="110px"
+          align="center"
+          prop="supplierClassifyDict"
+        >
+          <template #default="scoped">
+            <dc-dict-key :value="scoped.row.supplierClassifyDict" :options="DC_SCM_SUPPLIER" />
+          </template>
+        </el-table-column>
+        <el-table-column min-width="120" label="签约开始日期" align="center" prop="startDate">
+          <template #default="scoped">
+            {{ scoped.row.startDate || '-' }}
+          </template>
+        </el-table-column>
+        <el-table-column label="签约结束日期" min-width="120px" align="center" prop="endDate">
+          <template #default="scoped">
+            {{ scoped.row.endDate || '-' }}
+          </template>
+        </el-table-column>
+        <el-table-column label="结算方式" align="center" prop="paytermsDict" width="100px">
+          <template #default="scoped">
+            <dc-dict-key :options="DC_SUPPLIER_PAYTERMS" :value="scoped.row.paytermsDict" />
+          </template>
+        </el-table-column>
+        <el-table-column label="供应商地址" align="center" prop="supplierAddress" width="100px">
+          <template #default="scoped">
+            {{ scoped.row.supplierAddress || '-' }}
+          </template>
+        </el-table-column>
+        <el-table-column min-width="100px" label="合同附件" align="center" prop="contractFileId">
+          <template #default="scoped">
+            <span class="fileIdflex">
+              <dc-upload
+                v-model="scoped.row.contractFileId"
+                :limit="3"
+                :isUpload="false"
+                :isRemove="false"
+                :targetType="Const.targetType.CUSTOMER"
+            /></span>
+          </template>
+        </el-table-column>
+
+        <el-table-column label="操作" align="center" width="160" fixed="right">
+          <template #default="scoped">
+            <el-button
+              link
+              type="primary"
+              v-permission="{ id: 'SUPPLIER_DETAIL', row: scoped.row }"
+              @click="lookReport(scoped.row)"
+              >查看</el-button
+            >
+            <el-button
+              link
+              type="primary"
+              v-if="scoped.row.flagStatusDict == 0"
+              v-permission="{ id: 'SUPPLIER_EDIT', row: scoped.row }"
+              @click="handleAdd(scoped.row)"
+              >编辑</el-button
+            >
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
+    <dc-pagination
+      v-show="total > 0"
+      :total="total"
+      v-model:page="queryParams.current"
+      v-model:limit="queryParams.size"
+      @pagination="getData"
+    />
+  </div>
 </template>
-<script setup name="Productiongroup">
+<script setup name="supplier-list-page">
 import { computed, onMounted } from 'vue';
 import Const from '@/const';
 import Api from '@/api/index';
@@ -306,31 +304,15 @@ const resetQuery = () => {
 </script>
 
 <style scoped lang="scss">
-.fileIdflex {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  :deep(.file-list) {
+.supplier-list-page {
+  .fileIdflex {
+    width: 100%;
     display: flex;
+    align-items: center;
     justify-content: center;
-  }
-}
-
-.search {
-  margin-top: 10px;
-}
-
-:deep(.el-card__body) {
-  padding-top: 0px;
-  .content-warp {
-    padding: 0px;
-    position: relative;
-    .header {
-      padding-top: 10px;
-    }
-    .toolbar {
-      padding: 10px 0;
+    :deep(.file-list) {
+      display: flex;
+      justify-content: center;
     }
   }
 }

@@ -1,168 +1,163 @@
 <template>
-  <basic-container>
-    <div class="content-warp page-quality-inspection-bind-index">
-      <!-- 出库单 -->
-      <div class="header">
-        <div class="title">
-          <!-- <el-tabs v-model="applyStatus" @tab-click="handleClick">
+  <div class="list-page approv-node-config-list-page">
+    <!-- 出库单 -->
+    <div class="header">
+      <div class="title">
+        <!-- <el-tabs v-model="applyStatus" @tab-click="handleClick">
             <el-tab-pane label="未指派" name="未指派"></el-tab-pane>
             <el-tab-pane label="已指派" name="已指派"></el-tab-pane>
             <el-tab-pane label="已出货" name="已出货"></el-tab-pane>
             <el-tab-pane label="完工" name="完工"></el-tab-pane>
           </el-tabs> -->
-        </div>
-        <div class="search-area">
-          <dc-search-group :config="searchConfig" @search="handleSearch">
-            <template #default="scoped">
-              <div class="search-select-box">
-                <dc-select
-                  v-if="scoped.item.type === 'dc-select'"
-                  v-bind="scoped.item.props"
-                  @change="
-                    val => {
-                      handleSearchItemChange(scoped, val);
-                    }
-                  "
-                />
-                <dc-select-user
-                  v-else-if="scoped.item.type === 'dc-select-user'"
-                  v-bind="scoped.item.props"
-                  @change="
-                    val => {
-                      handleSearchItemChange(scoped, val);
-                    }
-                  "
-                />
-              </div>
-            </template>
-          </dc-search-group>
-        </div>
       </div>
-      <!-- <div class="action-banner">
-        <el-button type="primary" @click="doAction('add')">新增</el-button>
-      </div> -->
-      <div class="table-container">
-        <el-table v-loading="loading" :data="dataList" @selection-change="handleSelectionChange">
-          <template v-for="(col, i) in columns">
-            <!-- 多选 -->
-            <el-table-column
-              v-if="col.type === 'selection'"
-              :key="i"
-              type="selection"
-              :width="col.width"
-            />
-            <!-- 序号类型 -->
-            <el-table-column
-              v-else-if="col.type === 'index'"
-              :key="'index' + i"
-              label="序号"
-              :width="col.width"
-            >
-              <template #default="{ $index }">
-                {{ $index + 1 }}
-              </template>
-            </el-table-column>
-            <!-- 普通文字类型 -->
-            <el-table-column
-              v-else-if="col.type === 'rowText'"
-              :key="'rowText' + i"
-              :label="col.label"
-              :width="col.width"
-              :prop="col.prop"
-              :align="col.align ? col.align : 'center'"
-              show-overflow-tooltip
-            >
-              <template #default="scoped">
-                {{ scoped.row[col.prop] || '-' }}
-              </template>
-            </el-table-column>
-            <!-- 自定义文字类型 -->
-            <el-table-column
-              v-else-if="col.type === 'rowCustomText'"
-              :key="'rowCustomText' + i"
-              :label="col.label"
-              :width="col.width"
-              :prop="col.prop"
-              :align="col.align ? col.align : 'center'"
-              show-overflow-tooltip
-            >
-              <template #default="scoped">
-                <span v-html="col.render(scoped)"></span>
-              </template>
-            </el-table-column>
-            <!-- 人员类型 -->
-            <el-table-column
-              v-else-if="col.type === 'dc-view'"
-              :key="'dc-view' + i"
-              :label="col.label"
-              :width="col.width"
-              :align="col.align ? col.align : 'center'"
-              :prop="col.prop"
-            >
-              <template #default="scoped">
-                <dc-view
-                  v-model="scoped.row[col.prop]"
-                  :objectName="col.objectName"
-                  :showKey="col.showKey"
-                />
-              </template>
-            </el-table-column>
-            <!-- 字典类型 -->
-            <el-table-column
-              v-else-if="col.type === 'dict'"
-              :key="'dict' + i"
-              :label="col.label"
-              :width="col.width"
-              :prop="col.prop"
-              :align="col.align ? col.align : 'center'"
-              show-overflow-tooltip
-            >
-              <template #default="scoped">
-                <!-- {{ dictCache[col.dictKey].value }} -->
-                <dc-dict-key
-                  :value="scoped.row[col.prop]"
-                  :options="dictCache[col.dictKey].value"
-                />
-              </template>
-            </el-table-column>
-            <el-table-column
-              v-else-if="col.type === 'actions'"
-              :key="'option' + i"
-              :fixed="col.fixed"
-              :label="col.label"
-              :width="col.width ? col.width : 180"
-              :align="col.align ? col.align : 'center'"
-            >
-              <template #default="scoped">
-                <el-button
-                  v-for="(btn, j) in col.children"
-                  :key="j"
-                  link
-                  type="primary"
-                  v-show="!btn.showFunc || (btn.showFunc && btn.showFunc(scoped.row))"
-                  v-permission="
-                    !btn.showFunc || (btn.showFunc && btn.showFunc(scoped.row))
-                      ? { id: btn.permissionId, row: scoped.row }
-                      : undefined
-                  "
-                  @click="doAction(btn.action, scoped)"
-                  >{{ btn.label }}</el-button
-                >
-              </template>
-            </el-table-column>
+      <div class="search-area">
+        <dc-search-group :config="searchConfig" @search="handleSearch">
+          <template #default="scoped">
+            <div class="search-select-box">
+              <dc-select
+                v-if="scoped.item.type === 'dc-select'"
+                v-bind="scoped.item.props"
+                @change="
+                  val => {
+                    handleSearchItemChange(scoped, val);
+                  }
+                "
+              />
+              <dc-select-user
+                v-else-if="scoped.item.type === 'dc-select-user'"
+                v-bind="scoped.item.props"
+                @change="
+                  val => {
+                    handleSearchItemChange(scoped, val);
+                  }
+                "
+              />
+            </div>
           </template>
-        </el-table>
+        </dc-search-group>
       </div>
-      <dc-pagination
-        v-show="total > 0"
-        :total="total"
-        v-model:page="queryParams.current"
-        v-model:limit="queryParams.size"
-        @pagination="getData"
-      />
-      <AddEditeDialog ref="addEditeDialogRef" @success="getData" />
     </div>
-  </basic-container>
+    <div class="action-banner">
+      <!-- <el-button type="primary" @click="doAction('add')">新增</el-button> -->
+    </div>
+    <div class="table-container">
+      <el-table v-loading="loading" :data="dataList" @selection-change="handleSelectionChange">
+        <template v-for="(col, i) in columns">
+          <!-- 多选 -->
+          <el-table-column
+            v-if="col.type === 'selection'"
+            :key="i"
+            type="selection"
+            :width="col.width"
+          />
+          <!-- 序号类型 -->
+          <el-table-column
+            v-else-if="col.type === 'index'"
+            :key="'index' + i"
+            label="序号"
+            :width="col.width"
+          >
+            <template #default="{ $index }">
+              {{ $index + 1 }}
+            </template>
+          </el-table-column>
+          <!-- 普通文字类型 -->
+          <el-table-column
+            v-else-if="col.type === 'rowText'"
+            :key="'rowText' + i"
+            :label="col.label"
+            :width="col.width"
+            :prop="col.prop"
+            :align="col.align ? col.align : 'center'"
+            show-overflow-tooltip
+          >
+            <template #default="scoped">
+              {{ scoped.row[col.prop] || '-' }}
+            </template>
+          </el-table-column>
+          <!-- 自定义文字类型 -->
+          <el-table-column
+            v-else-if="col.type === 'rowCustomText'"
+            :key="'rowCustomText' + i"
+            :label="col.label"
+            :width="col.width"
+            :prop="col.prop"
+            :align="col.align ? col.align : 'center'"
+            show-overflow-tooltip
+          >
+            <template #default="scoped">
+              <span v-html="col.render(scoped)"></span>
+            </template>
+          </el-table-column>
+          <!-- 人员类型 -->
+          <el-table-column
+            v-else-if="col.type === 'dc-view'"
+            :key="'dc-view' + i"
+            :label="col.label"
+            :width="col.width"
+            :align="col.align ? col.align : 'center'"
+            :prop="col.prop"
+          >
+            <template #default="scoped">
+              <dc-view
+                v-model="scoped.row[col.prop]"
+                :objectName="col.objectName"
+                :showKey="col.showKey"
+              />
+            </template>
+          </el-table-column>
+          <!-- 字典类型 -->
+          <el-table-column
+            v-else-if="col.type === 'dict'"
+            :key="'dict' + i"
+            :label="col.label"
+            :width="col.width"
+            :prop="col.prop"
+            :align="col.align ? col.align : 'center'"
+            show-overflow-tooltip
+          >
+            <template #default="scoped">
+              <!-- {{ dictCache[col.dictKey].value }} -->
+              <dc-dict-key :value="scoped.row[col.prop]" :options="dictCache[col.dictKey].value" />
+            </template>
+          </el-table-column>
+          <el-table-column
+            v-else-if="col.type === 'actions'"
+            :key="'option' + i"
+            :fixed="col.fixed"
+            :label="col.label"
+            :width="col.width ? col.width : 180"
+            :align="col.align ? col.align : 'center'"
+          >
+            <template #default="scoped">
+              <el-button
+                v-for="(btn, j) in col.children"
+                :key="j"
+                link
+                type="primary"
+                v-show="!btn.showFunc || (btn.showFunc && btn.showFunc(scoped.row))"
+                v-permission="
+                  !btn.showFunc || (btn.showFunc && btn.showFunc(scoped.row))
+                    ? { id: btn.permissionId, row: scoped.row }
+                    : undefined
+                "
+                @click="doAction(btn.action, scoped)"
+                >{{ btn.label }}</el-button
+              >
+            </template>
+          </el-table-column>
+        </template>
+      </el-table>
+    </div>
+    <dc-pagination
+      v-show="total > 0"
+      :total="total"
+      v-model:page="queryParams.current"
+      v-model:limit="queryParams.size"
+      @pagination="getData"
+    />
+    <AddEditeDialog ref="addEditeDialogRef" @success="getData" />
+  </div>
 </template>
 <script setup name="ApprovNodeConfig">
 import { onMounted, ref } from 'vue';
@@ -335,66 +330,4 @@ const getData = async () => {
   }
   loading.value = false;
 };
-
-/** 搜索按钮操作 */
-// const handleQuery = () => {
-//   queryParams.value.current = 1;
-//   getData();
-// };
-
-/** 重置按钮操作 */
-// const resetQuery = () => {
-//   queryParams.value = {
-//     current: 1,
-//     size: 20,
-//   };
-//   proxy.resetForm('queryRef');
-//   getData();
-// };
 </script>
-
-<style scoped lang="scss">
-.page-quality-inspection-bind-index {
-  .search-area {
-    width: calc(100% - 320px);
-    :deep(.select-param) {
-      min-width: 108px;
-    }
-    .search-select-box {
-      min-width: 200px;
-
-      .el-select {
-        border-top: 1px solid #e5e7eb;
-        border-bottom: 1px solid #e5e7eb;
-      }
-    }
-  }
-  .action-banner {
-    padding: 8px 0;
-  }
-}
-
-:deep(.el-card__body) {
-  padding-top: 0px;
-  .content-warp {
-    padding: 0px;
-    position: relative;
-    .header {
-      height: 50px;
-      display: flex;
-      align-items: center;
-    }
-  }
-  .search-container {
-    margin-top: 20px;
-  }
-}
-
-:deep(.el-tabs__nav-wrap):after {
-  height: 0px !important;
-}
-
-:deep(.el-tabs__item) {
-  height: 52px !important;
-}
-</style>

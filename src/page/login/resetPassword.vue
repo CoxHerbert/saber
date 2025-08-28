@@ -1,7 +1,8 @@
 <template>
   <div class="reset-pw-page-container">
     <div class="reset-pw-container_logo">
-      <img class="logo-icon" src="/img/logo-v2.png" />
+      <img class="logo-icon" src="https://static.eastwinbip.com/static/image/LOGO.png" />
+      <div class="logo-title">联合东创</div>
     </div>
 
     <div class="form-container">

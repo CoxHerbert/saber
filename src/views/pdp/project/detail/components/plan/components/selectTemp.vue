@@ -219,7 +219,7 @@ const getTemplate = async () => {
       item.handleRestrictionPeriod = item.handleRestrictionPeriod
         ? dayjs(item.handleRestrictionPeriod).format('YYYY/MM/DD')
         : '-';
-      item.isMilestone = item.isMilestone === 0 ? true : false;
+      item.isMilestone = item.isMilestone === 1 ? true : false;
       return item;
     });
   }

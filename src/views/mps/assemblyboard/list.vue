@@ -16,8 +16,8 @@
             <span class="rate-value">
               <el-icon class="bottom-icon" v-if="statistics?.otdRate < 0"><Bottom /></el-icon>
               <el-icon class="top-icon" v-else><Top /></el-icon>
-              {{ statistics?.otdRateAbs }}%</span
-            >
+              {{ statistics?.otdRateAbs }}%
+            </span>
           </div>
         </div>
       </div>
@@ -49,6 +49,7 @@
         </div>
       </div>
     </div>
+
     <div class="row">
       <div class="card">
         <div class="card-header">在制专案明细</div>
@@ -63,6 +64,7 @@
         </div>
       </div>
     </div>
+
     <div class="row">
       <div class="card">
         <div class="card-header">延期专案</div>
@@ -94,485 +96,281 @@
   </div>
 </template>
 
-<script setup name="MyClientsList">
-import { onMounted, reactive, toRefs } from 'vue';
+<script>
 import * as echarts from 'echarts';
 import Api from '@/api/index';
 
-const data = reactive({
-  rateOptions: {
-    tooltip: {
-      trigger: 'item',
-    },
-    legend: {
-      type: 'scroll',
-      orient: 'vertical',
-      right: '10%',
-      top: 'center',
-      itemGap: 30,
-      selectedMode: false,
-      data: [],
-      textStyle: {
-        color: '#77899c',
-        rich: {
-          uname: {
-            width: 50,
+export default {
+  name: 'assemblyboard',
+  data() {
+    return {
+      rateOptions: {
+        tooltip: { trigger: 'item' },
+        legend: {
+          type: 'scroll',
+          orient: 'vertical',
+          right: '10%',
+          top: 'center',
+          itemGap: 30,
+          selectedMode: false,
+          data: [],
+          textStyle: {
+            color: '#77899c',
+            rich: { uname: { width: 50 }, unum: { width: 40, align: 'right' } },
           },
-          unum: {
-            width: 40,
-            align: 'right',
+          formatter: name => {
+            let item;
+            this.rateOptions.series.forEach(serie => {
+              item = serie.data.find(d => d.name === name);
+            });
+            const value = item ? item.value : '';
+            return `{uname|${name}}{unum|${value}}`;
           },
         },
-      },
-      formatter: name => {
-        let item;
-        rateOptions.value.series.forEach(serie => {
-          // 根据名称找到对应的数据项
-          item = serie.data.find(d => d.name === name);
-        });
-        // 获取数据项的值
-        const value = item ? item.value : '';
-        // 返回格式化的字符串
-        return `{uname|${name}}{unum|${value}}`;
-      },
-    },
-    color: ['#F78431', '#1D65F3'],
-    series: [
-      {
-        type: 'pie',
-        radius: ['75%', '90%'],
-        center: ['18%', '50%'],
-        avoidLabelOverlap: false,
-        label: {
-          show: true,
-          position: 'center',
-          formatter: params => {
-            const total = params.value;
-            return `{a|${total}}`;
+        color: ['#F78431', '#1D65F3'],
+        series: [
+          {
+            type: 'pie',
+            radius: ['75%', '90%'],
+            center: ['18%', '50%'],
+            avoidLabelOverlap: false,
+            label: {
+              show: true,
+              position: 'center',
+              formatter: params => `{a|${params.value}}`,
+              rich: { a: { color: '#333', fontSize: 20, lineHeight: 30 } },
+            },
+            labelLine: { show: false },
+            data: [],
           },
-          rich: {
-            a: {
-              color: '#333',
-              fontSize: 20,
-              lineHeight: 30,
+        ],
+      },
+      materialsOption: {
+        grid: { top: '10%', left: '6%', right: '3%', bottom: '10%' },
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: { type: 'shadow' },
+          formatter: params => {
+            const data = params[0];
+            return `<div><div>日期: ${data.name}</div><br /><div>数量: ${data.value}</div></div>`;
+          },
+          backgroundColor: '#fff',
+          borderColor: '#ccc',
+          borderWidth: 1,
+          textStyle: { color: '#333' },
+        },
+        xAxis: {
+          type: 'category',
+          data: [],
+          axisLine: { show: true, lineStyle: { color: '#ccc', width: 1 } },
+          axisTick: { show: false },
+          axisLabel: { color: '#666', fontSize: 10 },
+          boundaryGap: true,
+        },
+        yAxis: {
+          type: 'value',
+          interval: 100,
+          splitLine: { lineStyle: { type: 'dashed' } },
+        },
+        series: [
+          {
+            data: [],
+            type: 'bar',
+            barWidth: 16,
+            itemStyle: {
+              normal: {
+                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                  { offset: 0, color: '#F29346' },
+                  { offset: 1, color: '#FFDFAF' },
+                ]),
+              },
             },
           },
+        ],
+      },
+      resourcesOption: {
+        grid: { top: '10%', left: '6%', right: '3%', bottom: '10%' },
+        xAxis: {
+          type: 'category',
+          data: [],
+          axisLine: { show: true, lineStyle: { color: '#ccc', width: 1 } },
+          axisTick: { show: false },
+          axisLabel: { color: '#666', fontSize: 10 },
         },
-        labelLine: {
-          show: false,
-        },
-        data: [],
-      },
-    ],
-  },
-  materialsOption: {
-    grid: {
-      top: '10%', // 距离容器顶部的距离
-      left: '6%',
-      right: '3%',
-      bottom: '10%',
-    },
-    tooltip: {
-      trigger: 'axis', // 触发类型，'axis' 表示按轴显示详情
-      axisPointer: {
-        type: 'shadow', // 指示器类型，'shadow' 为阴影指示器
-      },
-      formatter: params => {
-        // 自定义提示内容
-        const data = params[0]; // 获取柱状图的数据
-        return `
-            <div>
-              <div>日期:  ${data.name}</div><br />
-              <div>数量:  ${data.value}</div>
-            </div>
-          `;
-      },
-      backgroundColor: '#fff', // 背景色
-      borderColor: '#ccc', // 边框颜色
-      borderWidth: 1, // 边框宽度
-      textStyle: {
-        color: '#333', // 字体颜色
-      },
-    },
-    xAxis: {
-      type: 'category',
-      data: [],
-      axisLine: {
-        show: true, // 显示 X 轴的轴线
-        lineStyle: {
-          color: '#ccc', // 设置线条颜色为 #ccc
-          width: 1, // 设置线条粗细
-        },
-      },
-      axisTick: {
-        show: false, // 隐藏刻度线
-      },
-      axisLabel: {
-        color: '#666', // 设置文字颜色
-        fontSize: 10, // 设置文字大小（可选）
-      },
-      boundaryGap: true, // 柱子是否留有空隙，默认 true
-    },
-    yAxis: {
-      type: 'value',
-      // max: 1000,
-      interval: 100, // 设置刻度间隔为 200
-      splitLine: {
-        lineStyle: {
-          type: 'dashed', // 设置网格线为虚线
-        },
-      },
-    },
-    series: [
-      {
-        data: [],
-        type: 'bar',
-        barWidth: 16, // 柱子宽度
-        itemStyle: {
-          normal: {
-            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-              { offset: 0, color: '#F29346' }, // 顶部颜色
-              { offset: 1, color: '#FFDFAF' }, // 底部颜色
-            ]),
-          },
-        },
-      },
-    ],
-  },
-  resourcesOption: {
-    grid: {
-      top: '10%', // 距离容器顶部的距离
-      left: '6%',
-      right: '3%',
-      bottom: '10%',
-    },
-    xAxis: {
-      type: 'category',
-      data: [],
-      axisLine: {
-        show: true, // 显示 X 轴的轴线
-        lineStyle: {
-          color: '#ccc', // 设置线条颜色为 #ccc
-          width: 1, // 设置线条粗细
-        },
-      },
-
-      axisTick: {
-        show: false, // 隐藏刻度线
-      },
-      axisLabel: {
-        color: '#666', // 设置文字颜色
-        fontSize: 10, // 设置文字大小（可选）
-      },
-    },
-    tooltip: {
-      trigger: 'axis', // 触发类型为'axis'，意味着鼠标悬停时显示整条折线的数据
-      axisPointer: {
-        type: 'line', // 鼠标悬浮时显示的指示器为线条
-      },
-      backgroundColor: '#fff', // 提示框的背景颜色
-      borderColor: '#ccc', // 提示框边框颜色
-      borderWidth: 1, // 边框宽度
-      padding: [10, 15], // 提示框内边距
-      textStyle: {
-        color: '#333', // 文字颜色
-      },
-      formatter: params => {
-        // 自定义格式化提示框内容
-        const data = params[0]; // 获取第一条系列的数据
-        return `
-            <div>
-              <div>日期:  ${data.name}</div><br />
-              <div>数量:  ${data.value}</div>
-            </div>
-          `;
-      },
-    },
-    yAxis: {
-      type: 'value',
-      // interval: 0.25, // 设置刻度间隔
-      axisLabel: {
-        color: '#666',
-        formatter: value => {
-          return value.toFixed(2); // 强制显示两位小数
-        },
-      },
-      splitLine: {
-        lineStyle: {
-          type: 'dashed', // 设置网格线为虚线
-        },
-      },
-    },
-    series: [
-      {
-        data: [],
-        type: 'line',
-        symbol: 'none', // 隐藏小圆点
-        lineStyle: {
-          width: 3, // 线条宽度
-          color: '#F29346', // 线条颜色
-          shadowBlur: 10, // 阴影模糊度
-          shadowColor: 'rgba(242, 147, 70)', // 阴影颜色
-          shadowOffsetX: 0, // 阴影 X 偏移
-          shadowOffsetY: 8, // 阴影 Y 偏移
-        },
-      },
-    ],
-  },
-  processOption: {
-    tooltip: {
-      trigger: 'item',
-    },
-    legend: {
-      type: 'scroll',
-      orient: 'vertical',
-      right: '10%',
-      top: 'center',
-      itemGap: 30,
-      selectedMode: false,
-      data: [],
-      textStyle: {
-        color: '#000',
-        rich: {
-          uname: {
-            width: 100,
-            color: '#000', // 文字颜色
-          },
-          unum: {
-            width: 30,
-            align: 'right',
-            color: '#000', // 数值颜色
-            fontWeight: 'bold', // 数值加粗
-          },
-        },
-      },
-      icon: 'none', // 不显示图标，只显示文字和值
-    },
-    color: ['#BBBBBB', '#E12137'],
-    series: [
-      {
-        type: 'pie',
-        radius: ['65%', '80%'],
-        center: ['20%', '50%'],
-        avoidLabelOverlap: true,
-        label: {
-          show: true, // 显示标签
-          position: 'center', // 标签显示在圆心
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: { type: 'line' },
+          backgroundColor: '#fff',
+          borderColor: '#ccc',
+          borderWidth: 1,
+          padding: [10, 15],
+          textStyle: { color: '#333' },
           formatter: params => {
-            const total = processOption.value.series[0].data.reduce(
-              (acc, item) => acc + item.value,
-              0
-            ); // 计算总值
-            const percentage = ((params.value / total) * 100).toFixed(2); // 计算百分比
-            return `${percentage}%`; // 返回百分比
-          },
-          fontSize: 10, // 字体大小
-          fontWeight: 'bold', // 字体加粗
-          color: '#333', // 字体颜色
-        },
-        emphasis: {
-          label: {
-            show: true,
-            fontSize: 10,
-            fontWeight: 'bold',
+            const data = params[0];
+            return `<div><div>日期: ${data.name}</div><br /><div>数量: ${data.value}</div></div>`;
           },
         },
-        labelLine: {
-          show: false,
+        yAxis: {
+          type: 'value',
+          axisLabel: {
+            color: '#666',
+            formatter: value => value.toFixed(2),
+          },
+          splitLine: { lineStyle: { type: 'dashed' } },
         },
-        data: [],
+        series: [
+          {
+            data: [],
+            type: 'line',
+            symbol: 'none',
+            lineStyle: {
+              width: 3,
+              color: '#F29346',
+              shadowBlur: 10,
+              shadowColor: 'rgba(242, 147, 70)',
+              shadowOffsetY: 8,
+            },
+          },
+        ],
       },
-    ],
+      processOption: {
+        tooltip: { trigger: 'item' },
+        legend: {
+          type: 'scroll',
+          orient: 'vertical',
+          right: '10%',
+          top: 'center',
+          itemGap: 30,
+          selectedMode: false,
+          data: [],
+          textStyle: {
+            color: '#000',
+            rich: {
+              uname: { width: 100, color: '#000' },
+              unum: { width: 30, align: 'right', color: '#000', fontWeight: 'bold' },
+            },
+          },
+          icon: 'none',
+        },
+        color: ['#BBBBBB', '#E12137'],
+        series: [
+          {
+            type: 'pie',
+            radius: ['65%', '80%'],
+            center: ['20%', '50%'],
+            label: {
+              show: true,
+              position: 'center',
+              formatter: params => {
+                const total = this.processOption.series[0].data.reduce(
+                  (acc, item) => acc + item.value,
+                  0
+                );
+                const percentage = ((params.value / total) * 100).toFixed(2);
+                return `${percentage}%`;
+              },
+              fontSize: 10,
+              fontWeight: 'bold',
+              color: '#333',
+            },
+            labelLine: { show: false },
+            data: [],
+          },
+        ],
+      },
+      hoursOption: {
+        grid: {
+          top: '5%',
+          left: '8%',
+          right: '5%',
+          bottom: '8%',
+          borderColor: '#ccc',
+          borderWidth: 2,
+        },
+        tooltip: { trigger: 'axis' },
+        xAxis: {
+          type: 'category',
+          boundaryGap: false,
+          data: [],
+          axisLine: { show: true, lineStyle: { color: '#ccc', width: 1 } },
+          axisTick: { show: false },
+          axisLabel: { color: '#666', fontSize: 12 },
+          splitLine: { show: true, lineStyle: { type: 'dashed', color: '#ccc' } },
+        },
+        yAxis: {
+          type: 'value',
+          min: 0,
+          axisLine: { show: true, lineStyle: { color: '#ccc', width: 1 } },
+          axisLabel: { color: '#666', fontSize: 12 },
+          splitLine: { show: true, lineStyle: { type: 'dashed', color: '#ccc' } },
+        },
+        series: [{ data: [] }],
+      },
+      statistics: {},
+      tableData: [],
+      processList: [],
+      extension: {
+        columns: [
+          { label: '专案号', prop: 'projectNumber', width: '120px', align: 'center' },
+          { label: '专案名称', prop: 'materialName' },
+          { label: '计划达成日', prop: 'planCompleteTime', width: '100px', align: 'center' },
+          { label: '延期天数', prop: 'description', width: '100px', align: 'center' },
+        ],
+        tableData: [],
+      },
+      making: {
+        columns: [
+          { label: '专案号', prop: 'projectNumber', width: '120px', align: 'center' },
+          { label: '专案名称', prop: 'materialName' },
+          { label: '计划达成日', prop: 'planCompleteTime', width: '100px', align: 'center' },
+          { label: '进度', prop: 'description', width: '100px', align: 'center' },
+        ],
+        tableData: [],
+      },
+    };
   },
-  hoursOption: {
-    grid: {
-      top: '5%', // 距离容器顶部的距离
-      left: '8%',
-      right: '5%',
-      bottom: '8%',
-      borderColor: '#ccc', // 设置边框颜色
-      borderWidth: 2, // 设置边框宽度
-    },
-    tooltip: {
-      trigger: 'axis',
-    },
-    xAxis: {
-      type: 'category',
-      boundaryGap: false,
-      data: [],
-      axisLine: {
-        show: true, // 显示 X 轴的轴线
-        lineStyle: {
-          color: '#ccc', // 设置线条颜色为 #ccc
-          width: 1, // 设置线条粗细
-        },
-      },
-      axisTick: {
-        show: false, // 隐藏刻度线
-      },
-      axisLabel: {
-        color: '#666', // 设置文字颜色
-        fontSize: 12, // 设置文字大小（可选）
-      },
-      splitLine: {
-        show: true,
-        lineStyle: {
-          type: 'dashed', // 设置X轴为虚线
-          color: '#ccc', // 设置虚线颜色
-        },
-      },
-    },
-    yAxis: {
-      type: 'value',
-      min: 0, // 设置Y轴从0开始
-      // max: 1000,
-      // interval: 100, // 设置刻度间隔为 200
-      axisLine: {
-        show: true, // 确保显示Y轴线
-        lineStyle: {
-          color: '#ccc', // 设置Y轴的实线颜色
-          type: 'solid', // 设置实线
-          width: 1, // 设置实线宽度
-        },
-      },
-      nameTextStyle: {
-        color: '#666666', // 设置Y轴名称文字颜色
-        fontSize: 14, // 设置文字大小
-        fontWeight: 'normal', // 设置文字粗细
-      },
-      axisLabel: {
-        color: '#666', // 设置文字颜色
-        fontSize: 12, // 设置文字大小（可选）
-      },
-      splitLine: {
-        show: true,
-        lineStyle: {
-          type: 'dashed', // 设置虚线
-          color: '#ccc', // 设置虚线颜色
-        },
-      },
-    },
-    series: [
-      {
-        data: [],
-      },
-    ],
+  mounted() {
+    this.getData();
   },
-  statistics: [],
-  tableData: [],
-  processList: [],
-  extension: {
-    columns: [
-      {
-        label: '专案号',
-        prop: 'projectNumber',
-        width: '120px',
-        align: 'center',
-      },
-      {
-        label: '专案名称',
-        prop: 'materialName',
-      },
-      {
-        label: '计划达成日',
-        prop: 'planCompleteTime',
-        width: '100px',
-        align: 'center',
-      },
-      {
-        label: '延期天数',
-        prop: 'description',
-        width: '100px',
-        align: 'center',
-      },
-    ],
-    tableData: [],
+  methods: {
+    async getData() {
+      const res = await Api.mps.assemblyboard.list();
+      const { code, data } = res.data;
+      if (code === 200) {
+        this.statistics = data.statistics;
+        this.statistics.otdRateAbs = Math.abs(data.statistics?.otdRate);
+
+        this.tableData = data.Extension;
+
+        this.rateOptions.series[0].data = data.optionList;
+        this.rateOptions.legend.data = data.optionList;
+
+        this.materialsOption.series[0].data = data.materialsList.value;
+        this.materialsOption.xAxis.data = data.materialsList.x;
+
+        this.resourcesOption.series[0].data = data.resourcesList.value;
+        this.resourcesOption.xAxis.data = data.resourcesList.x;
+
+        this.processOption.series[0].data = data.processList;
+        this.processOption.legend.data = data.processList;
+        this.processList = data.processList;
+
+        this.hoursOption.series = Object.keys(data.hoursList)
+          .filter(key => key !== 'x')
+          .map(key => ({
+            name: data.hoursList[key].label,
+            type: 'line',
+            data: data.hoursList[key].value,
+            color: ['#F29346'],
+            symbol: 'none',
+          }));
+        this.hoursOption.xAxis.data = data.hoursList.x;
+
+        this.extension.tableData = data.Extension;
+        this.making.tableData = data.Making;
+      }
+    },
   },
-  making: {
-    columns: [
-      {
-        label: '专案号',
-        prop: 'projectNumber',
-        width: '120px',
-        align: 'center',
-      },
-      {
-        label: '专案名称',
-        prop: 'materialName',
-      },
-      {
-        label: '计划达成日',
-        prop: 'planCompleteTime',
-        width: '100px',
-        align: 'center',
-      },
-      {
-        label: '进度',
-        prop: 'description',
-        width: '100px',
-        align: 'center',
-      },
-    ],
-    tableData: [],
-  },
-});
-
-const {
-  tableData,
-  rateOptions,
-  materialsOption,
-  resourcesOption,
-  processOption,
-  hoursOption,
-  statistics,
-  processList,
-  extension,
-  making,
-} = toRefs(data);
-
-onMounted(async () => {
-  await getData();
-});
-
-const getData = async () => {
-  const res = await Api.mps.assemblyboard.list();
-  const { code, data } = res.data;
-  if (code == 200) {
-    // OTD
-    statistics.value = data.statistics;
-    statistics.value.otdRateAbs = Math.abs(data.statistics?.otdRate);
-    // 延期专案
-    tableData.value = data.Extension;
-    // 在制产品数量
-    rateOptions.value.series[0].data = data.optionList;
-    rateOptions.value.legend.data = data.optionList;
-    // 物料入库
-    materialsOption.value.series[0].data = data.materialsList.value;
-    materialsOption.value.xAxis.data = data.materialsList.x;
-    // 生产组
-    resourcesOption.value.series[0].data = data.resourcesList.value;
-    resourcesOption.value.xAxis.data = data.resourcesList.x;
-    // 各组品质制程不良情况
-    processOption.value.series[0].data = data.processList;
-    processOption.value.legend.data = data.processList;
-    processList.value = data.processList;
-    // 各组
-    hoursOption.value.series = Object.keys(data.hoursList)
-      .filter(key => key !== 'x') // 排除 x 轴的数据
-      .map(key => {
-        return {
-          name: data.hoursList[key].label, // 小组的名称
-          type: 'line', // 设置为折线图
-          data: data.hoursList[key].value, // 小组的数值数据
-          color: ['#F29346'], // 为每个小组设置颜色
-          symbol: 'none', // 隐藏小圆点
-        };
-      });
-    hoursOption.value.xAxis.data = data.hoursList.x;
-
-    extension.value.tableData = data.Extension;
-    making.value.tableData = data.Making;
-  }
 };
 </script>
 <style lang="scss" scoped>

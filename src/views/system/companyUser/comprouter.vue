@@ -171,6 +171,7 @@ export default {
       // 更新当前节点状态
       this.queryParams.id = node.id;
       this.currentNode = node;
+      console.log(this.currentNode);
       // 解析节点path中的路径和参数（关键：拆分path和query）
       const { purePath, templateId } = this.parsePathWithParams(node.path);
       // 正确跳转：拆分path和query，避免直接使用带参数的path字符串
@@ -178,6 +179,7 @@ export default {
         path: purePath,
         query: {
           templateId: templateId,
+          routName: this.currentNode.name,
           parentMenuId: '1948179894740680706', // 保留必要的父菜单ID参数
         },
       });

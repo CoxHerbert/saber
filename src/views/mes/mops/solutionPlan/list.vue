@@ -1,5 +1,5 @@
 <template>
-  <div class="list-page">
+  <div class="list-page solution-plan-list-page">
     <div class="header">
       <dc-search
         v-model="queryParams"
@@ -23,6 +23,14 @@
         @click="doAction('materialLabel')"
         >物料标签</el-button
       >
+      <el-button
+        v-if="['DC_MOPS_PROCESS_STATUS_DXD'].includes(queryParams.workStatus)"
+        icon="Position"
+        type="primary"
+        :disabled="batchActionDisabled"
+        @click="doAction('push-erp')"
+        >ERP下达</el-button
+      >
     </div>
     <div class="table-container">
       <el-table
@@ -33,52 +41,18 @@
         @select="handleSelect"
         @select-all="handleSelectAll"
         @selection-change="handleSelectionChange"
+        border
       >
-        <template v-for="(col, i) in columns">
-          <!-- 多选 -->
+        <!-- 多选 -->
+        <el-table-column type="selection" align="center" width="40" />
+        <!-- 序号类型 -->
+        <el-table-column label="序号" align="center" width="55">
+          <template #default="{ $index }">
+            {{ $index + 1 }}
+          </template>
+        </el-table-column>
+        <template v-for="(col, i) in columns" :key="i">
           <el-table-column
-            v-if="col.type === 'selection'"
-            :key="i"
-            type="selection"
-            :align="col.align"
-            :width="col.width"
-          />
-          <!-- 序号类型 -->
-          <el-table-column
-            v-else-if="col.type === 'index'"
-            :key="'index' + i"
-            label="序号"
-            :align="col.align"
-            :width="col.width"
-          >
-            <template #default="{ $index }">
-              {{ $index + 1 }}
-            </template>
-          </el-table-column>
-          <el-table-column
-            v-else-if="col.type === 'actions'"
-            :key="'option' + i"
-            :fixed="col.fixed"
-            :label="col.label"
-            :width="col.width ? col.width : 180"
-            :min-width="col.minWidth"
-            :align="col.align ? col.align : 'center'"
-          >
-            <template #default="scoped">
-              <el-button
-                v-for="(btn, j) in col.children"
-                :key="j"
-                link
-                v-show="!btn.showFunc || (btn.showFunc && btn.showFunc(scoped))"
-                type="primary"
-                @click="doAction(btn.action, scoped)"
-                >{{ btn.label }}</el-button
-              >
-            </template>
-          </el-table-column>
-          <el-table-column
-            v-else
-            :key="col.type + i"
             :label="col.label"
             :width="col.width"
             :min-width="col.minWidth"
@@ -95,6 +69,33 @@
             </template>
           </el-table-column>
         </template>
+        <el-table-column label="工单进度条" align="center" width="350">
+          <template #default="scoped">
+            <div class="progress-wrap" v-drag-scroll="'.progress-wrap'">
+              <workOrderProgress :nodes="scoped.row.processList" />
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column
+          :key="'option' + i"
+          :fixed="action.fixed"
+          :label="action.label"
+          :width="action.width ? action.width : 180"
+          :min-width="action.minWidth"
+          :align="action.align ? action.align : 'center'"
+        >
+          <template #default="scoped">
+            <el-button
+              v-for="(btn, j) in action.children"
+              :key="j"
+              link
+              v-show="!btn.showFunc || (btn.showFunc && btn.showFunc(scoped))"
+              type="primary"
+              @click="doAction(btn.action, scoped)"
+              >{{ btn.label }}</el-button
+            >
+          </template>
+        </el-table-column>
       </el-table>
     </div>
     <dc-pagination
@@ -111,9 +112,12 @@
 import listPage from '@/mixins/list-page';
 import options from './list';
 import materialLabelDialog from './cpns/materialLabelDialog.vue';
+import workOrderProgress from './cpns/workOrderProgress.vue';
+import BigNumber from 'bignumber.js';
+
 export default {
   mixins: [listPage],
-  components: { materialLabelDialog },
+  components: { materialLabelDialog, workOrderProgress },
   name: 'solution-plan-list',
   data() {
     return {
@@ -123,18 +127,94 @@ export default {
         current: 1,
         size: 20,
       },
+      action: {
+        label: '操作',
+        prop: 'action',
+        type: 'actions',
+        slotName: 'action',
+        fixed: 'right',
+        width: 240,
+        children: [
+          {
+            type: 'button',
+            label: '编辑',
+            action: 'edit',
+            showFunc(scope) {
+              return ['DC_MOPS_PROCESS_STATUS_DXD'].includes(scope.row.workStatus);
+            },
+          },
+          {
+            type: 'button',
+            label: '工艺卡',
+            action: 'pdfView',
+          },
+          {
+            type: 'button',
+            label: '取消计划',
+            action: 'delete',
+            showFunc(scope) {
+              return ['DC_MOPS_PROCESS_STATUS_DXD'].includes(scope.row.workStatus);
+            },
+          },
+          {
+            type: 'button',
+            label: '图纸',
+            action: 'row-drawe',
+          },
+        ],
+      },
     };
   },
   created() {
     this.columns = options().columns;
     this.handleDictKeys();
     this.getDictData().then(() => {
+      this.dictMaps.isPrintDict = [
+        {
+          dictValue: '已打印',
+          dictKey: true,
+        },
+        {
+          dictValue: '未打印',
+          dictKey: false,
+        },
+      ];
       this.initSearchConfig();
+      this.searchConfig.searchItemConfig.paramType.isPrint = {
+        label: '是否打印',
+        type: 'select',
+        options: [
+          {
+            dictValue: '已打印',
+            dictKey: true,
+          },
+          {
+            dictValue: '未打印',
+            dictKey: false,
+          },
+        ],
+        labelKey: 'dictValue',
+        placeholder: `请选择是否打印`,
+        valueKey: 'dictKey', // 'id', // 'dictKey',
+        paramKey: 'isPrint',
+      };
+      this.searchConfig.resetExcludeKeys = ['page', 'current', 'workStatus'];
+
+      this.searchConfig.tabConfig = {
+        prop: 'workStatus',
+        items: [
+          { label: '全部', value: '' },
+          ...this.dictMaps.DC_MOPS_PROCESS_STATUS.map(item => ({
+            label: item.dictValue,
+            value: item.dictKey,
+          })),
+        ],
+      };
+      this.queryParams.workStatus = 'DC_MOPS_PROCESS_STATUS_DXD';
+      this.getData();
     });
   },
-  mounted() {
-    this.getData();
-  },
+  mounted() {},
   methods: {
     /** 获取列表数据 **/
     getData() {
@@ -144,7 +224,27 @@ export default {
         .then(res => {
           const { code, data } = res.data;
           if (code === 200) {
-            this.tableData = data.records;
+            this.tableData = data.records.map((row, i) => {
+              return {
+                ...row,
+                processList: row.processList.map((process, j) => {
+                  const { percent } = process;
+                  const len = row.processList.length;
+                  return {
+                    ...process,
+                    props: {
+                      is: 'el-progress',
+                      type: 'circle',
+                      percentage: new BigNumber(percent).toNumber(),
+                      width: 40,
+                      'stroke-width': 3,
+                      'show-text': true,
+                      color: j === len - 1 ? '#f26c0c' : '#4dc799',
+                    },
+                  };
+                }),
+              };
+            });
             this.total = data.total;
           }
           this.loading = false;
@@ -177,7 +277,33 @@ export default {
         window.open(`${this.pdfViewURL}?entryIds=${scope.row.entryId}`, 'target');
       } else if (action === 'row-drawe') {
         window.open(`https://www.eastwinbip.com/drawing/${row.materialNumber}`, 'target');
+      } else if (action === 'push-erp') {
+        this.handlePushErp();
       }
+    },
+    handlePushErp() {
+      const billNos = this.batchSelectRows.map(item => item.billNo).join(',');
+      const ids = this.batchSelectRows.map(item => item.id);
+      this.$confirm(`确定将单据编号为‘${billNos}’下达ERP吗?`, {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+      })
+        .then(() => {
+          this.loading = true;
+          return this.api.mes.mops.updateRrpStatus(ids);
+        })
+        .then(res => {
+          const { code, data } = res.data;
+          if (code === 200) {
+            this.handleReset();
+            this.$message.success('操作成功！');
+          }
+          this.loading = false;
+        })
+        .catch(err => {
+          this.loading = false;
+        });
     },
     /** 处理删除 **/
     deleteData(ids) {
@@ -192,33 +318,36 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.page-processing-outsourcing {
-  .action-banner {
-    padding: 8px 0;
-    display: flex;
-    flex-flow: row wrap;
+.solution-plan-list-page {
+  .progress-wrap {
+    padding-top: 2px;
     width: 100%;
-  }
-}
-.pass {
-  color: #23c69f;
-}
-.notpass {
-  color: #e12137;
-}
+    overflow-x: auto;
+    overflow-y: hidden;
+    user-select: none;
+    cursor: grab;
 
-:deep(.el-card__body) {
-  padding-top: 0px;
-  .content-warp {
-    padding: 0px;
-    position: relative;
-    .header {
-      padding-top: 6px;
-      padding-bottom: 0;
+    &.is-grabbing {
+      cursor: grabbing;
     }
-  }
-  .search-container {
-    margin-top: 20px;
+
+    // 你的滚动条样式
+    &::-webkit-scrollbar {
+      height: 2px;
+      background-color: transparent;
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color: transparent;
+      border-radius: 4px;
+    }
+    &:hover {
+      &::-webkit-scrollbar-thumb {
+        background-color: rgba(0, 0, 0, 0.3);
+      }
+      &::-webkit-scrollbar-track {
+        background-color: rgba(0, 0, 0, 0.05);
+      }
+    }
   }
 }
 </style>

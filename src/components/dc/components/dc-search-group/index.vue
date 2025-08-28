@@ -306,13 +306,11 @@ const search = () => {
 
   .search-btn {
     height: 100%;
-    border: 1px solid #f26c0c;
-    min-height: 34px;
+    border: 2px solid #f26c0c;
     border-radius: 0 4px 4px 0;
   }
 
   .param-group {
-    height: 34px;
     min-width: 300px;
     box-sizing: border-box;
     display: flex;

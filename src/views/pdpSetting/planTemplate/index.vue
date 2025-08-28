@@ -51,6 +51,13 @@
           v-permission="{ id: 'DC_PDP_PLAN_TEMPLATE_ADD' }"
           >新增</el-button
         >
+        <el-button
+          type="primary"
+          icon="Plus"
+          @click="handleClone"
+          v-permission="{ id: 'DC_PDP_PLAN_TEMPLATE_ADD' }"
+          >克隆</el-button
+        >
       </div>
       <div class="table-container">
         <el-table v-loading="loading" :data="dataList">
@@ -190,6 +197,11 @@ const getData = async () => {
 const handleSubmit = row => {
   // 处理新增或编辑逻辑
   proxy.getRef('submitRef').openDrawer(row);
+};
+
+const handleClone = row => {
+  // 处理克隆逻辑
+  proxy.getRef('submitRef').openDrawer(row, { isClone: true }, dataList.value);
 };
 
 const handleTempDetails = row => {

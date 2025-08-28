@@ -83,7 +83,7 @@
                       >
                         <el-input
                           v-if="col.type === 'input'"
-                          :placeholder="col.props?.placholder || `请输入${col.label}`"
+                          :placeholder="col.props?.placeholder || `请输入${col.label}`"
                           v-bind="col.props"
                           v-model="detailData[col.prop]"
                           clearable
@@ -92,7 +92,7 @@
                           class="param-value"
                           v-else-if="col.type === 'dict'"
                           v-model="detailData[col.prop]"
-                          :placeholder="col.props?.placholder || `请选择${col.label}`"
+                          :placeholder="col.props?.placeholder || `请选择${col.label}`"
                           v-bind="col.props"
                           clearable
                           @change="
@@ -128,7 +128,7 @@
                         <el-date-picker
                           v-else-if="col.type === 'date'"
                           v-model="detailData[col.prop]"
-                          :placeholder="col.props?.placholder || `请选择${col.label}`"
+                          :placeholder="col.props?.placeholder || `请选择${col.label}`"
                           v-bind="col.props"
                           value-format="YYYY-MM-DD"
                           format="YYYY-MM-DD"
@@ -138,7 +138,7 @@
                           v-else-if="col.type === 'number'"
                           v-model="detailData[col.prop]"
                           v-bind="col.props"
-                          :placeholder="col.props?.placholder || `请输入${col.label}`"
+                          :placeholder="col.props?.placeholder || `请输入${col.label}`"
                         />
                         <UserRemoteQuery
                           v-else-if="col.type === 'select-user'"
@@ -260,7 +260,7 @@
                                   }"
                                   v-if="col.type === 'dict'"
                                   v-model="scoped.row[col.prop]"
-                                  :placeholder="col.props?.placholder || `请选择${col.label}`"
+                                  :placeholder="col.props?.placeholder || `请选择${col.label}`"
                                   v-bind="col.props"
                                   clearable
                                   @change="
@@ -295,7 +295,7 @@
                                 </el-select>
                                 <el-input
                                   v-else-if="col.type === 'input'"
-                                  :placeholder="col.props?.placholder || `请输入${col.label}`"
+                                  :placeholder="col.props?.placeholder || `请输入${col.label}`"
                                   v-bind="col.props"
                                   v-model="scoped.row[col.prop]"
                                   clearable
@@ -324,7 +324,7 @@
                                   v-else-if="col.type === 'number'"
                                   v-model="scoped.row[col.prop]"
                                   v-bind="col.props"
-                                  :placeholder="col.props?.placholder || `请输入${col.label}`"
+                                  :placeholder="col.props?.placeholder || `请输入${col.label}`"
                                   @change="
                                     val => {
                                       handleTableItemChange(val, scoped, col);
@@ -862,7 +862,9 @@ const saveData = () => {
       loading.value = true;
       const formDataSend = {
         ...JSON.parse(JSON.stringify(detailData.value)),
-        attachmentId: detailData.value?.attachmentId?.map(at => at.id)?.join(','),
+        attachmentId: Array.isArray(detailData.value?.attachmentId)
+          ? detailData.value?.attachmentId?.map(at => at.id)?.join(',')
+          : '',
       };
       Api.system.erpProcessOutsourc
         .proSubmit(formDataSend)

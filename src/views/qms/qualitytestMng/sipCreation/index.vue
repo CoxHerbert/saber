@@ -1,6 +1,6 @@
 <template>
   <basic-container>
-    <div class="content-warp list-page">
+    <div class="list-page">
       <div class="header">
         <dc-search
           v-model="queryParams"
@@ -266,27 +266,4 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-.list-page {
-  .action-banner {
-    padding: 8px 0;
-    display: flex;
-    flex-flow: row wrap;
-    width: 100%;
-  }
-}
-:deep(.el-card__body) {
-  padding-top: 0px;
-  .content-warp {
-    padding: 0px;
-    position: relative;
-    .header {
-      padding-top: 6px;
-      padding-bottom: 0;
-    }
-  }
-  .search-container {
-    margin-top: 20px;
-  }
-}
-</style>
+<style lang="scss" scoped></style>

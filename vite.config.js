@@ -6,55 +6,96 @@ import tailwindcss from 'tailwindcss';
 import autoprefixer from 'autoprefixer';
 import { updateVendorCache } from './build/vendor';
 import versionUpdatePlugin from './src/utils/versionUpdatePlugin';
+import importToCDN from 'vite-plugin-cdn-import';
 
-// https://vitejs.dev/config/
 export default ({ mode, command }) => {
   const env = loadEnv(mode, process.cwd());
   const { VITE_APP_BASE_URL, VITE_WEIGHT, VITE_APP_API, VITE_APP_ENV, VITE_APP_BASE } = env;
-  // 判断是打生产环境包
+
   const isProd = VITE_APP_ENV === 'production';
-  // 判断是打本地环境包
   const isLocal = VITE_APP_ENV === 'localhost';
-  // 当前时间
-  const currentTimeVersion = new Date().getTime();
-  let plugins = [createVitePlugins(env, command === 'build')];
-  if (!isLocal) {
-    plugins = [
-      ...plugins,
-      versionUpdatePlugin({
-        version: currentTimeVersion,
-      }),
-    ];
+  const isBuild = command === 'build';
+  const currentTimeVersion = Date.now();
+
+  const plugins = [createVitePlugins(env, isBuild)];
+
+  if (isBuild && !isLocal) {
+    plugins.push(
+      versionUpdatePlugin({ version: currentTimeVersion }),
+      importToCDN({
+        injectTo: 'head',
+        modules: [
+          // 以下依旧用 UMD，就无需改（它们不会被 import 成命名导出）
+          {
+            name: 'axios',
+            var: 'axios',
+            path: 'https://cdn.staticfile.org/axios/0.21.1/axios.min.js',
+          },
+          {
+            name: 'dayjs',
+            var: 'dayjs',
+            path: 'https://cdn.staticfile.org/dayjs/1.11.13/dayjs.min.js',
+          },
+          {
+            name: 'crypto-js',
+            var: 'CryptoJS',
+            path: 'https://cdn.staticfile.org/crypto-js/4.1.1/crypto-js.min.js',
+          },
+          {
+            name: 'js-cookie',
+            var: 'Cookies',
+            path: 'https://cdn.staticfile.org/js-cookie/3.0.0/js.cookie.min.js',
+          },
+          {
+            name: 'bignumber.js',
+            var: 'BigNumber',
+            path: 'https://cdn.staticfile.org/bignumber.js/9.1.2/bignumber.min.js',
+          },
+          {
+            name: 'nprogress',
+            var: 'NProgress',
+            path: 'https://cdn.staticfile.org/nprogress/0.2.0/nprogress.js',
+          },
+          {
+            name: 'echarts',
+            var: 'echarts',
+            path: 'https://cdn.staticfile.net/echarts/5.4.3/echarts.common.min.js',
+          },
+          {
+            name: 'codemirror',
+            var: 'CodeMirror',
+            path: 'https://cdn.staticfile.org/codemirror/5.65.18/codemirror.js',
+          },
+        ],
+      })
+    );
   }
 
   const proxyObj = {
     [VITE_APP_API]: {
       target: VITE_APP_BASE_URL,
-      //target: 'https://saber3.bladex.cn/api',
       changeOrigin: true,
-      rewrite: path => path.replace(VITE_APP_API, ''),
+      rewrite: p => p.replace(VITE_APP_API, ''),
     },
     '/graphql/wiki': {
       target: 'https://wiki.eastwinbip.com/graphql',
       changeOrigin: true,
-      rewrite: path => path.replace('/graphql/wiki', ''),
+      rewrite: p => p.replace('/graphql/wiki', ''),
     },
     '/weight': {
       target: `${VITE_WEIGHT}/weight`,
       changeOrigin: true,
-      rewrite: path => path.replace('^/weight', ''),
+      rewrite: p => p.replace('^/weight', ''),
     },
     '/socket.io': {
       target: `${VITE_WEIGHT}/socket.io`,
       changeOrigin: true,
     },
     '/pdf-printing': {
-      target: `https://www.eastwinbip.com/pdf-printing`,
+      target: 'https://www.eastwinbip.com/pdf-printing',
       changeOrigin: true,
     },
   };
-
-  console.log('proxyObj====>', proxyObj);
 
   return defineConfig({
     base: VITE_APP_BASE,
@@ -67,33 +108,7 @@ export default ({ mode, command }) => {
     server: {
       port: 2888,
       open: true,
-      proxy: {
-        [VITE_APP_API]: {
-          target: VITE_APP_BASE_URL,
-          //target: 'https://saber3.bladex.cn/api',
-          changeOrigin: true,
-          rewrite: path => path.replace(VITE_APP_API, ''),
-        },
-        '/graphql/wiki': {
-          target: 'https://wiki.eastwinbip.com/graphql',
-          changeOrigin: true,
-          rewrite: path => path.replace('/graphql/wiki', ''),
-        },
-        '/weight': {
-          target: `${VITE_WEIGHT}/weight`,
-          changeOrigin: true,
-          rewrite: path => path.replace('^/weight', ''),
-        },
-        '/socket.io': {
-          target: `${VITE_WEIGHT}/socket.io`,
-          changeOrigin: true,
-        },
-        '/pdf-printing': {
-          target: `https://www.eastwinbip.com/pdf-printing`,
-          changeOrigin: true,
-          rewrite: path => path.replace('/pdf-printing', ''),
-        },
-      },
+      proxy: proxyObj,
     },
     resolve: {
       alias: {
@@ -107,26 +122,51 @@ export default ({ mode, command }) => {
       },
     },
     plugins,
-    // 根据是否生产环境，动态设置压缩配置
     build: {
       target: 'esnext',
-      minify: isProd ? 'terser' : 'esbuild', // 根据环境选择压缩工具
+      minify: isProd ? 'terser' : 'esbuild',
       rollupOptions: {
+        external: isBuild
+          ? [
+              'axios',
+              'dayjs',
+              'crypto-js',
+              'js-cookie',
+              'bignumber.js',
+              'nprogress',
+              'echarts',
+              'codemirror',
+            ]
+          : [],
         output: {
-          entryFileNames: '[name].[hash].js', // 入口文件带 hash
-          chunkFileNames: chunkInfo => {
-            if (chunkInfo.name === 'vendor') {
-              return `vendor-${updateVendorCache(mode)}.js`;
-            } else {
-              return 'chunks/[name].[hash].js';
-            }
+          // 把裸导入重写到 CDN ESM/UMD 地址
+          paths: {
+            axios: 'https://cdn.staticfile.org/axios/0.21.1/axios.min.js',
+            dayjs: 'https://cdn.staticfile.org/dayjs/1.11.13/dayjs.min.js',
+            'crypto-js': 'https://cdn.staticfile.org/crypto-js/4.1.1/crypto-js.min.js',
+            'js-cookie': 'https://cdn.staticfile.org/js-cookie/3.0.0/js.cookie.min.js',
+            'bignumber.js': 'https://cdn.staticfile.org/bignumber.js/9.1.2/bignumber.min.js',
+            nprogress: 'https://cdn.staticfile.org/nprogress/0.2.0/nprogress.js',
+            echarts: 'https://cdn.staticfile.net/echarts/5.4.3/echarts.common.min.js',
+            codemirror: 'https://cdn.staticfile.org/codemirror/5.65.18/codemirror.js',
           },
-          assetFileNames: 'assets/[name].[hash].[ext]', // 静态资源文件带 hash
-          manualChunks: id => {
-            if (id.includes('node_modules')) {
-              return 'vendor'; // vendor.js 不带 hash
-            }
+          globals: {
+            axios: 'axios',
+            dayjs: 'dayjs',
+            'crypto-js': 'CryptoJS',
+            'js-cookie': 'Cookies',
+            'bignumber.js': 'BigNumber',
+            nprogress: 'NProgress',
+            echarts: 'echarts',
+            codemirror: 'CodeMirror',
           },
+          entryFileNames: '[name].[hash].js',
+          chunkFileNames: chunkInfo =>
+            chunkInfo.name === 'vendor'
+              ? `vendor-${updateVendorCache(mode)}.js`
+              : 'chunks/[name].[hash].js',
+          assetFileNames: 'assets/[name].[hash].[ext]',
+          manualChunks: id => (id.includes('node_modules') ? 'vendor' : undefined),
         },
       },
       outDir: `${dayjs().format('YYYY-MM-DD-HH-mm')}-${VITE_APP_ENV}-dist`,
@@ -140,7 +180,6 @@ export default ({ mode, command }) => {
       preprocessorOptions: {
         scss: {
           api: 'modern-compiler',
-          // additionalData: `@use './root.scss';`,
         },
       },
       postcss: {

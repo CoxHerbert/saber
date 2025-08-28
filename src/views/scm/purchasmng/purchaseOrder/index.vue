@@ -1,164 +1,159 @@
 <template>
-  <basic-container>
-    <div class="content-warp page-purchase-order-index">
-      <!-- 采购订单 -->
-      <div class="header">
-        <dc-search
-          v-model="queryParams"
-          v-bind="searchConfig"
-          @reset="handleReset"
-          @search="handleSearch"
-        />
-      </div>
-      <div class="action-banner">
-        <el-button
-          type="primary"
-          v-permission="{ id: 'PURCHASE_ORDER_ADD' }"
-          icon="el-icon-plus"
-          @click="doAction('add')"
-          >新增采购订单
-        </el-button>
-        <!-- <el-button icon="el-icon-download" @click="handleClickExport">导出</el-button> -->
-      </div>
-      <div class="table-container">
-        <el-table
-          v-loading="loading"
-          :data="dataList"
-          @selection-change="handleSelectionChange"
-          @row-dblclick="handleRowDblClick"
-        >
-          <template v-for="(col, i) in columns">
-            <!-- 多选 -->
-            <el-table-column
-              v-if="col.type === 'selection'"
-              :key="i"
-              type="selection"
-              :width="col.width"
-            />
-            <!-- 序号类型 -->
-            <el-table-column
-              v-else-if="col.type === 'index'"
-              :key="'index' + i"
-              label="序号"
-              :width="col.width"
-            >
-              <template #default="{ $index }">
-                {{ $index + 1 }}
-              </template>
-            </el-table-column>
-            <!-- 普通文字类型 -->
-            <el-table-column
-              v-else-if="col.type === 'rowText'"
-              :key="'rowText' + i"
-              :label="col.label"
-              :width="col.width"
-              :prop="col.prop"
-              :align="col.align ? col.align : 'center'"
-              show-overflow-tooltip
-            >
-              <template #default="scoped">
-                {{ scoped.row[col.prop] || '-' }}
-              </template>
-            </el-table-column>
-            <!-- 自定义文字类型 -->
-            <el-table-column
-              v-else-if="col.type === 'rowCustomText'"
-              :key="'rowCustomText' + i"
-              :label="col.label"
-              :width="col.width"
-              :prop="col.prop"
-              :align="col.align ? col.align : 'center'"
-              show-overflow-tooltip
-            >
-              <template #default="scoped">
-                <span v-html="col.render(scoped)"></span>
-              </template>
-            </el-table-column>
-            <!-- 人员类型 -->
-            <el-table-column
-              v-else-if="col.type === 'dc-view'"
-              :key="'dc-view' + i"
-              :label="col.label"
-              :width="col.width"
-              :align="col.align ? col.align : 'center'"
-              :prop="col.prop"
-            >
-              <template #default="scoped">
-                <dc-view
-                  v-model="scoped.row[col.prop]"
-                  :objectName="col.objectName"
-                  :showKey="col.showKey"
-                />
-              </template>
-            </el-table-column>
-            <!-- 字典类型 -->
-            <el-table-column
-              v-else-if="col.type === 'dc-dict'"
-              :key="'dc-dict' + i"
-              :label="col.label"
-              :width="col.width"
-              :prop="col.prop"
-              :align="col.align ? col.align : 'center'"
-              show-overflow-tooltip
-            >
-              <template #default="scoped">
-                <dc-dict :value="scoped.row[col.prop]" :options="dictCache[col.dictKey].value" />
-              </template>
-            </el-table-column>
-            <!-- 字典类型 -->
-            <el-table-column
-              v-else-if="col.type === 'dc-dict-key'"
-              :key="'dc-dict-key' + i"
-              :label="col.label"
-              :width="col.width"
-              :prop="col.prop"
-              :align="col.align ? col.align : 'center'"
-              show-overflow-tooltip
-            >
-              <template #default="scoped">
-                <dc-dict-key
-                  :value="scoped.row[col.prop]"
-                  :options="dictCache[col.dictKey].value"
-                />
-              </template>
-            </el-table-column>
-            <el-table-column
-              v-else-if="col.type === 'actions'"
-              :key="'option' + i"
-              :fixed="col.fixed"
-              :label="col.label"
-              :width="col.width ? col.width : 180"
-              :align="col.align ? col.align : 'center'"
-            >
-              <template #default="scoped">
-                <el-button
-                  v-for="(btn, j) in col.children"
-                  :key="j"
-                  link
-                  type="primary"
-                  v-permission="
-                    !btn.showFunc || (btn.showFunc && btn.showFunc(scoped.row, userId))
-                      ? { id: btn.permissionId, row: scoped.row }
-                      : undefined
-                  "
-                  v-show="!btn.showFunc || (btn.showFunc && btn.showFunc(scoped.row, userId))"
-                  @click="doAction(btn.action, scoped)"
-                  >{{ btn.label }}</el-button
-                >
-              </template>
-            </el-table-column>
-          </template>
-        </el-table>
-      </div>
-      <dc-pagination
-        v-show="total > 0"
-        :total="total"
-        v-model:page="queryParams.current"
-        v-model:limit="queryParams.size"
-        @pagination="getData"
+  <div class="list-page purchase-order-list-page">
+    <!-- 采购订单 -->
+    <div class="header">
+      <dc-search
+        v-model="queryParams"
+        v-bind="searchConfig"
+        @reset="handleReset"
+        @search="handleSearch"
       />
     </div>
-  </basic-container>
+    <div class="action-banner">
+      <el-button
+        type="primary"
+        v-permission="{ id: 'PURCHASE_ORDER_ADD' }"
+        icon="el-icon-plus"
+        @click="doAction('add')"
+        >新增采购订单
+      </el-button>
+      <!-- <el-button icon="el-icon-download" @click="handleClickExport">导出</el-button> -->
+    </div>
+    <div class="table-container">
+      <el-table
+        v-loading="loading"
+        :data="dataList"
+        @selection-change="handleSelectionChange"
+        @row-dblclick="handleRowDblClick"
+      >
+        <template v-for="(col, i) in columns">
+          <!-- 多选 -->
+          <el-table-column
+            v-if="col.type === 'selection'"
+            :key="i"
+            type="selection"
+            :width="col.width"
+          />
+          <!-- 序号类型 -->
+          <el-table-column
+            v-else-if="col.type === 'index'"
+            :key="'index' + i"
+            label="序号"
+            :width="col.width"
+          >
+            <template #default="{ $index }">
+              {{ $index + 1 }}
+            </template>
+          </el-table-column>
+          <!-- 普通文字类型 -->
+          <el-table-column
+            v-else-if="col.type === 'rowText'"
+            :key="'rowText' + i"
+            :label="col.label"
+            :width="col.width"
+            :prop="col.prop"
+            :align="col.align ? col.align : 'center'"
+            show-overflow-tooltip
+          >
+            <template #default="scoped">
+              {{ scoped.row[col.prop] || '-' }}
+            </template>
+          </el-table-column>
+          <!-- 自定义文字类型 -->
+          <el-table-column
+            v-else-if="col.type === 'rowCustomText'"
+            :key="'rowCustomText' + i"
+            :label="col.label"
+            :width="col.width"
+            :prop="col.prop"
+            :align="col.align ? col.align : 'center'"
+            show-overflow-tooltip
+          >
+            <template #default="scoped">
+              <span v-html="col.render(scoped)"></span>
+            </template>
+          </el-table-column>
+          <!-- 人员类型 -->
+          <el-table-column
+            v-else-if="col.type === 'dc-view'"
+            :key="'dc-view' + i"
+            :label="col.label"
+            :width="col.width"
+            :align="col.align ? col.align : 'center'"
+            :prop="col.prop"
+          >
+            <template #default="scoped">
+              <dc-view
+                v-model="scoped.row[col.prop]"
+                :objectName="col.objectName"
+                :showKey="col.showKey"
+              />
+            </template>
+          </el-table-column>
+          <!-- 字典类型 -->
+          <el-table-column
+            v-else-if="col.type === 'dc-dict'"
+            :key="'dc-dict' + i"
+            :label="col.label"
+            :width="col.width"
+            :prop="col.prop"
+            :align="col.align ? col.align : 'center'"
+            show-overflow-tooltip
+          >
+            <template #default="scoped">
+              <dc-dict :value="scoped.row[col.prop]" :options="dictCache[col.dictKey].value" />
+            </template>
+          </el-table-column>
+          <!-- 字典类型 -->
+          <el-table-column
+            v-else-if="col.type === 'dc-dict-key'"
+            :key="'dc-dict-key' + i"
+            :label="col.label"
+            :width="col.width"
+            :prop="col.prop"
+            :align="col.align ? col.align : 'center'"
+            show-overflow-tooltip
+          >
+            <template #default="scoped">
+              <dc-dict-key :value="scoped.row[col.prop]" :options="dictCache[col.dictKey].value" />
+            </template>
+          </el-table-column>
+          <el-table-column
+            v-else-if="col.type === 'actions'"
+            :key="'option' + i"
+            :fixed="col.fixed"
+            :label="col.label"
+            :width="col.width ? col.width : 180"
+            :align="col.align ? col.align : 'center'"
+          >
+            <template #default="scoped">
+              <el-button
+                v-for="(btn, j) in col.children"
+                :key="j"
+                link
+                type="primary"
+                v-permission="
+                  !btn.showFunc || (btn.showFunc && btn.showFunc(scoped.row, userId))
+                    ? { id: btn.permissionId, row: scoped.row }
+                    : undefined
+                "
+                v-show="!btn.showFunc || (btn.showFunc && btn.showFunc(scoped.row, userId))"
+                @click="doAction(btn.action, scoped)"
+                >{{ btn.label }}</el-button
+              >
+            </template>
+          </el-table-column>
+        </template>
+      </el-table>
+    </div>
+    <dc-pagination
+      v-show="total > 0"
+      :total="total"
+      v-model:page="queryParams.current"
+      v-model:limit="queryParams.size"
+      @pagination="getData"
+    />
+  </div>
 </template>
 <script setup name="PurchaseOrder">
 import { onMounted, ref, computed } from 'vue';
@@ -351,38 +346,6 @@ const getData = async () => {
 </script>
 
 <style scoped lang="scss">
-.page-purchase-order-index {
-  .search-area {
-    :deep(.select-param) {
-      width: 108px;
-    }
-  }
-  .action-banner {
-    padding: 8px 0;
-  }
-}
-
-:deep(.el-card__body) {
-  padding-top: 0px;
-  .content-warp {
-    padding: 0px;
-    position: relative;
-    .header {
-      height: 50px;
-      display: flex;
-      align-items: center;
-    }
-  }
-  .search-container {
-    margin-top: 20px;
-  }
-}
-
-:deep(.el-tabs__nav-wrap):after {
-  height: 0px !important;
-}
-
-:deep(.el-tabs__item) {
-  height: 52px !important;
+.purchase-order-list-page {
 }
 </style>

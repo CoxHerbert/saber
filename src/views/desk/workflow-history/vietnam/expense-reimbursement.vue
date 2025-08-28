@@ -1,6 +1,6 @@
 <template>
   <basic-container>
-    <div class="content-warp page-expense-reimbursement">
+    <div class="list-page">
       <div class="header">
         <dc-search
           v-if="searchConfig"
@@ -11,7 +11,7 @@
           @itemChange="handleSearItemChange"
         />
       </div>
-      <div class="toolbar">
+      <div class="action-banner">
         <el-button type="primary" @click="doAction('add')" icon="plus">发起流程</el-button>
       </div>
       <div class="table-container">
@@ -134,7 +134,7 @@
     <!-- <AddOrEdit ref="addOrEditRef" @close="handleQuery" /> -->
   </basic-container>
 </template>
-<script setup name="Productiongroup">
+<script setup name="page-expense-reimbursement">
 import { onMounted } from 'vue';
 import Api from '@/api/index';
 import options from './utils/expense-reimbursement';
@@ -325,62 +325,3 @@ const doAction = async (action, scoped = {}) => {
   }
 };
 </script>
-
-<style scoped lang="scss">
-.page-expense-reimbursement {
-  padding-left: 16px;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-flow: column nowrap;
-
-  .table-container {
-    flex: 1;
-    position: relative;
-    overflow: hidden;
-
-    :deep(.el-table) {
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-    }
-  }
-
-  .toolbar {
-    padding-bottom: 8px;
-  }
-  .search-area {
-    :deep(.select-param) {
-      width: 108px;
-    }
-  }
-  .header {
-    padding-top: 4px;
-    margin-bottom: 10px;
-  }
-  .search-container {
-    margin-top: 0 !important;
-  }
-  .action-banner {
-    padding: 8px 0;
-  }
-}
-
-:deep(.el-card__body) {
-  padding-top: 0px;
-  .content-warp {
-    padding: 0px;
-    position: relative;
-    .header {
-      height: 50px;
-      display: flex;
-      align-items: center;
-    }
-  }
-  .search-container {
-    margin-top: 20px;
-  }
-}
-</style>

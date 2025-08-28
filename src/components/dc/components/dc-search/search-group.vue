@@ -376,13 +376,12 @@ const search = () => {
 
   .search-btn {
     height: 100%;
-    border: 1px solid #f26c0c;
-    min-height: 34px;
+    border: 2px solid #f26c0c;
     border-radius: 0 4px 4px 0;
   }
 
   .param-group {
-    height: 34px;
+    min-height: 24px;
     min-width: 300px;
     box-sizing: border-box;
     display: flex;
@@ -408,8 +407,8 @@ const search = () => {
         right: 0;
         top: 0;
         font-size: 10px;
-        height: 34px;
-        line-height: 34px;
+        min-height: 24px;
+        line-height: 24px;
         display: flex;
         flex-flow: row nowrap;
         align-content: center;
@@ -421,16 +420,15 @@ const search = () => {
       .render-box {
         padding-left: 5px;
         box-sizing: border-box;
-        padding-top: 3px;
         position: absolute;
         max-width: 100%;
         width: 100%;
         height: auto;
         text-align: right;
         z-index: 200;
-        min-height: 34px;
+        min-height: 24px;
         background: #fff;
-        height: 34px;
+        height: 24px;
         transition: height ease-in 0.3s;
         transform-origin: center top;
         overflow: hidden;
@@ -452,7 +450,7 @@ const search = () => {
           width: 100%;
           height: auto;
           text-align: right;
-          min-height: 34px;
+          min-height: 24px;
           padding-right: 5px;
           z-index: 205;
 
@@ -463,7 +461,6 @@ const search = () => {
       }
 
       .search-tag {
-        margin: 3px 0 3px 3px;
         max-width: 100%;
         :deep(.el-tag__content) {
           white-space: nowrap;
@@ -474,7 +471,6 @@ const search = () => {
       }
       .search-item-tag {
         box-sizing: border-box;
-        margin: 3px 0 3px 3px;
         max-width: 100%;
         padding: 5px 6px;
         border: 1px solid var(--el-color-primary-light-8);
@@ -511,7 +507,6 @@ const search = () => {
   .control-box {
     display: flex;
     text-align: left;
-    height: 34px;
   }
 }
 </style>

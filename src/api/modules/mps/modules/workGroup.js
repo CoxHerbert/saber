@@ -30,4 +30,13 @@ export default {
       data,
     });
   },
+
+  // 生产退料查询
+  queryErpMoList(data) {
+    return request({
+      url: '/blade-bip/DcReturn/queryErpMoList',
+      method: 'post',
+      data,
+    });
+  },
 };

@@ -1,5 +1,5 @@
 <template>
-  <div class="content-warp">
+  <div class="list-page">
     <div class="search">
       <div class="search-left">
         <el-form
@@ -161,7 +161,6 @@
 import { computed, getCurrentInstance, reactive, toRefs } from 'vue';
 import Api from '@/api/index'; // 根据实际路径调整导入
 import { onMounted } from 'vue';
-import store from '@/store/index';
 import { subColumns } from './utils';
 import { useRoute } from 'vue-router';
 const { proxy } = getCurrentInstance();

@@ -540,6 +540,7 @@ export default {
       return wfFormAssociationList;
     },
     async handleDesign(row) {
+      console.log(row);
       this.handleDesignConfig(row);
       if (row.content) this.isNewVersion = false;
       else this.isNewVersion = true;

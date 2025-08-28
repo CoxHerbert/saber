@@ -33,7 +33,6 @@ const options = pageMode => {
               label: '计划开始',
               type: 'date',
               props: {
-                disabled: true,
                 format: 'YYYY-MM-DD',
                 valueFormat: 'YYYY-MM-DD',
                 clearable: true,
@@ -64,7 +63,6 @@ const options = pageMode => {
               label: '计划结束',
               type: 'date',
               props: {
-                disabled: true,
                 format: 'YYYY-MM-DD',
                 valueFormat: 'YYYY-MM-DD',
                 clearable: true,
@@ -103,7 +101,7 @@ const options = pageMode => {
             },
             {
               label: '描述',
-              prop: 'unit',
+              prop: 'description',
               type: 'input',
               props: {
                 placeholder: '描述',
@@ -206,7 +204,6 @@ const options = pageMode => {
             label: '计划开始',
             type: 'date',
             props: {
-              disabled: true,
               format: 'YYYY-MM-DD',
               valueFormat: 'YYYY-MM-DD',
               clearable: true,
@@ -237,7 +234,6 @@ const options = pageMode => {
             label: '计划结束',
             type: 'date',
             props: {
-              disabled: true,
               format: 'YYYY-MM-DD',
               valueFormat: 'YYYY-MM-DD',
               clearable: true,
@@ -274,7 +270,14 @@ const options = pageMode => {
               placeholder: '名称',
             },
           },
-
+          {
+            label: '描述',
+            prop: 'description',
+            type: 'input',
+            props: {
+              placeholder: '描述',
+            },
+          },
           {
             label: '委外',
             prop: 'isOutSource',
@@ -319,14 +322,7 @@ const options = pageMode => {
               placeholder: '总(分)',
             },
           },
-          {
-            label: '描述',
-            prop: 'unit',
-            type: 'input',
-            props: {
-              placeholder: '描述',
-            },
-          },
+
           {
             label: '操作',
             prop: 'action',

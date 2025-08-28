@@ -1,6 +1,6 @@
 <template>
-  <basic-container v-loading="loading">
-    <div class="content-warp page-processing-outsourcing list-edit-page">
+  <basic-container>
+    <div class="list-edit-page mrp-list-page" v-loading="loading">
       <div class="toolbar">
         <div class="title-info-container">
           <h3 class="section-title">员工绩效考核表</h3>
@@ -10,7 +10,8 @@
             <span class="info-item">考核人: {{ route.query.assessor }}</span>
           </div>
         </div>
-        <div class="button-wrapper">
+        <div></div>
+        <div class="button-wrapper" v-if="!isRouterEdit">
           <el-button type="primary" @click="saveAll('draft')">保存草稿</el-button>
           <el-button type="primary" @click="saveAll('all')">发布</el-button>
         </div>
@@ -68,10 +69,23 @@
                 <template v-slot:default="{ row, $index }">
                   <!-- 编辑标记 - 放在正确的容器内 -->
                   <div v-if="row.editedCells?.[employee]" class="edited-marker"></div>
+                  <!-- 角标 -->
+                  <div
+                    class="corner-badge"
+                    @mouseenter="handleBadgeMouseEnter(row, employee, $event)"
+                    @mouseleave="handleBadgeMouseLeave"
+                  >
+                    <el-icon><InfoFilled /></el-icon>
+                  </div>
                   <div class="editable-cell">
                     <!-- 非编辑状态 -->
                     <template v-if="!row.isEditing">
-                      <span class="cell-text" @click="startRowEditing($index)">
+                      <span
+                        class="cell-text"
+                        @click="startRowEditing($index, employee)"
+                        :data-row-index="$index"
+                        :data-employee="employee"
+                      >
                         {{ row[employee] !== undefined ? row[employee] : '-' }}
                       </span>
                     </template>
@@ -79,13 +93,18 @@
                     <!-- 编辑状态 -->
                     <template v-else>
                       <el-input
+                        ref="inputRef"
                         v-model.number="row[employee]"
                         :min="0"
                         :max="row.权重分值"
                         @blur="validateRowScore(row, employee, $index)"
+                        @keydown.enter="handleEnterKey($index, employee)"
+                        @keydown.esc="handleEscapeKey($index)"
                         type="number"
                         style="text-align: center"
                         placeholder="请输入数字"
+                        :data-row-index="$index"
+                        :data-employee="employee"
                       />
                     </template>
                   </div>
@@ -96,20 +115,45 @@
         </el-form>
       </div>
     </div>
+
+    <!-- 全局popover组件 -->
+    <el-popover
+      ref="globalPopover"
+      placement="top"
+      width="200"
+      trigger="manual"
+      :content="currentTooltipContent"
+      :visible="popoverVisible"
+      :virtual-ref="currentTargetElement"
+      popper-class="custom-popover"
+    >
+    </el-popover>
   </basic-container>
 </template>
 
 <script setup>
-import { ref, reactive, watch, onMounted } from 'vue';
+import { ref, reactive, watch, onMounted, nextTick } from 'vue';
 import Api from '@/api/index';
 import { ElMessage } from 'element-plus';
 import { useRoute } from 'vue-router';
+import { InfoFilled } from '@element-plus/icons-vue';
 const route = useRoute();
 
 // 响应式数据
 const employees = ref([]);
 const tableData = ref([]);
 const loading = ref(false);
+const inputRef = ref(null);
+const currentEditingRow = ref(null);
+const currentEditingEmployee = ref(null);
+const inputRefs = new Map(); // 存储input引用
+const showTooltip = ref(false);
+const isRouterEdit = ref(false);
+// 新增的全局popover相关数据
+const globalPopover = ref(null);
+const currentTooltipContent = ref('');
+const popoverVisible = ref(false);
+const currentTargetElement = ref(null);
 
 // 初始化表格数据
 const initTableData = async () => {
@@ -120,11 +164,25 @@ const initTableData = async () => {
       department: route.query.department,
       assessmentPeriod: route.query.assessmentPeriod,
       employeeNames: null,
+      label: route.query.label,
     };
 
     const res = await Api.system.po.fillAssessment(params);
     const { code, data } = res.data;
     if (code === 200) {
+      // let mock = {
+      //   权重分值: 15,
+      //   分类: '一、工作态度与纪律',
+      //   考核维度: '工作态度',
+      //   计分规则:
+      //     '1）积极主动承担工作任务，认真负责，团队协作良好（13-15分）。<br/>2）能够完成工作任务，但主动性、责任心或团队协作能力一般（8-12分）。<br/>3）工作态度消极，缺乏责任心，团队协作差（0-7分）。',
+      //   徐刚: {
+      //     fraction: 110,
+      //     tip: 1122,//可以是数组 根据当前人弹框内容决定
+      //
+      //   },
+      //...Api
+      // };
       // 初始化时为每行添加isEditing、isEdited和editedCells属性
       tableData.value = data.tableData.map(row => ({
         ...row,
@@ -159,18 +217,96 @@ const cellClassNameFunc = ({ row, column, rowIndex }) => {
 };
 
 // 开始编辑行
-const startRowEditing = rowIndex => {
-  // 先取消其他行的编辑状态
-  tableData.value.forEach((row, index) => {
-    if (index !== rowIndex && row.isEditing) {
-      cancelRowEditing(index);
+const startRowEditing = (rowIndex, employee) => {
+  if (isRouterEdit.value) {
+    return;
+  }
+  console.log(rowIndex, employee);
+
+  // 避免重复处理同一行
+  if (currentEditingRow.value === rowIndex && currentEditingEmployee.value === employee) {
+    return;
+  }
+
+  // 使用requestAnimationFrame优化渲染时序
+  requestAnimationFrame(() => {
+    // 只检查当前编辑的行，避免全量遍历
+    const currentEditingIndex = tableData.value.findIndex(row => row.isEditing);
+    if (currentEditingIndex !== -1 && currentEditingIndex !== rowIndex) {
+      cancelRowEditing(currentEditingIndex);
     }
+
+    // 优化深拷贝 - 只拷贝必要字段
+    const row = tableData.value[rowIndex];
+    const essentialData = {};
+    employees.value.forEach(emp => {
+      essentialData[emp] = row[emp];
+    });
+    essentialData.权重分值 = row.权重分值;
+    row.originalData = essentialData;
+
+    // 记录当前编辑状态
+    currentEditingRow.value = rowIndex;
+    currentEditingEmployee.value = employee;
+
+    // 使用nextTick确保DOM更新
+    nextTick(() => {
+      row.isEditing = true;
+
+      // 双重nextTick确保DOM完全更新
+      nextTick(() => {
+        focusInput(rowIndex, employee);
+      });
+    });
   });
-  // 保存原始数据（使用深拷贝）
-  const row = tableData.value[rowIndex];
-  row.originalData = JSON.parse(JSON.stringify(row));
-  // 开启编辑状态
-  row.isEditing = true;
+};
+
+// 聚焦到指定input
+const focusInput = (rowIndex, employee) => {
+  try {
+    // 使用DOM选择器
+    setTimeout(() => {
+      const inputElement = document.querySelector(
+        `input[data-row-index="${rowIndex}"][data-employee="${employee}"]`
+      );
+      if (inputElement) {
+        inputElement.focus();
+        inputElement.select();
+      }
+    }, 50);
+  } catch (error) {
+    console.error('聚焦input失败:', error);
+  }
+};
+
+// 处理Enter键
+const handleEnterKey = (rowIndex, employee) => {
+  // 阻止默认行为
+  event.preventDefault();
+
+  // 找到当前员工的索引
+  const currentIndex = employees.value.indexOf(employee);
+  if (currentIndex === -1) return;
+
+  // 计算下一个员工的索引
+  const nextIndex = (currentIndex + 1) % employees.value.length;
+  const nextEmployee = employees.value[nextIndex];
+
+  // 聚焦到下一个input
+  focusInput(rowIndex, nextEmployee);
+};
+
+// 处理Escape键
+const handleEscapeKey = rowIndex => {
+  // 阻止默认行为
+  event.preventDefault();
+
+  // 取消编辑状态
+  cancelRowEditing(rowIndex);
+
+  // 清理状态
+  currentEditingRow.value = null;
+  currentEditingEmployee.value = null;
 };
 
 // 取消编辑行
@@ -234,6 +370,43 @@ const validateRowData = rowData => {
   return true;
 };
 
+// 获取角标提示内容
+const getTooltipContent = (row, employee) => {
+  const score = row[employee] !== undefined ? row[employee] : 0;
+  const maxScore = row.权重分值 || 0;
+  const percentage = maxScore > 0 ? Math.round((score / maxScore) * 100) : 0;
+
+  return `员工: ${employee}\n当前分数: ${score}\n当前分数: ${row[employee].tip}\n权重分值: ${maxScore}\n完成度: ${percentage}%`;
+};
+
+// 处理角标鼠标进入事件
+const handleBadgeMouseEnter = (row, employee, event) => {
+  currentTooltipContent.value = getTooltipContent(row, employee);
+  currentTargetElement.value = event.target.closest('.corner-badge');
+  popoverVisible.value = true;
+
+  // 使用nextTick确保popover已经渲染
+  nextTick(() => {
+    if (globalPopover.value) {
+      // 手动设置popover的位置
+      const popover = globalPopover.value;
+      if (popover && popover.popperRef) {
+        const popperInstance = popover.popperRef;
+        if (popperInstance && popperInstance.popperInstanceRef) {
+          popperInstance.popperInstanceRef.update();
+        }
+      }
+    }
+  });
+};
+
+// 处理角标鼠标离开事件
+const handleBadgeMouseLeave = () => {
+  popoverVisible.value = false;
+  currentTooltipContent.value = '';
+  currentTargetElement.value = null;
+};
+
 // 保存全部数据
 const saveAll = async type => {
   try {
@@ -282,10 +455,13 @@ const saveAll = async type => {
 const handleHeaderClick = employee => {
   console.log('点击了:', employee);
 };
+
 // 生命周期钩子
 onMounted(() => {
+  if (route.query.label === '已考核') {
+    isRouterEdit.value = true;
+  }
   initTableData();
-
   // 监听员工列表变化，初始化新增员工的分数
   watch(
     () => employees.value,
@@ -311,7 +487,14 @@ onMounted(() => {
 });
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+.mrp-list-page {
+  :deep(.form-main) {
+    width: 100%;
+    height: 100%;
+  }
+}
+
 /* 编辑标记（左上角小三角） */
 .edited-marker {
   position: absolute;
@@ -333,6 +516,7 @@ onMounted(() => {
 ::v-deep .el-table .editing-row {
   background-color: #e6f7ff !important; /* 更浅的蓝色背景 */
 }
+
 .header-with-icon {
   display: flex;
   align-items: center;
@@ -340,11 +524,39 @@ onMounted(() => {
   color: #409eff;
   cursor: pointer;
 }
+
+/* 角标样式 */
+/* 角标样式 - 改为三角形 */
+.corner-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 0;
+  height: 0;
+  border-top: 10px solid var(--el-color-primary); /* 上边框形成三角形的底边 */
+  border-left: 10px solid transparent; /* 左边框形成三角形的斜边 */
+  cursor: pointer;
+  z-index: 2;
+  transition: all 0.2s ease;
+  transform-origin: top right;
+}
+
+.corner-badge:hover {
+  border-bottom-color: var(--el-color-primary);
+  transform: scale(1.1);
+}
+
+/* 移除原来的图标样式，因为三角形不需要图标 */
+.corner-badge .el-icon {
+  display: none;
+}
+
 /* 单元格样式 */
 .editable-cell {
   position: relative;
-  padding: 5px 0;
+  padding: 5px 20px 5px 0; /* 右侧留出角标空间 */
   height: 100%;
+  contain: content; /* 限制重绘范围 */
 }
 
 .cell-text {
@@ -362,39 +574,6 @@ onMounted(() => {
   border-radius: 4px;
 }
 
-/* 布局样式 */
-.page-processing-outsourcing {
-  :deep(.form-main) {
-    width: 100%;
-    height: 100%;
-  }
-}
-:deep(.el-card__body) {
-  padding-top: 0px;
-  .content-warp {
-    padding: 0px;
-    position: relative;
-    .header {
-      padding-top: 6px;
-      padding-bottom: 0;
-    }
-  }
-  .search-container {
-    margin-top: 20px;
-  }
-}
-
-.toolbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-/* .score-table-container {
-  overflow-x: scroll;
-} */
-
 .el-table__body tr:hover > td {
   background-color: #f5f7fa !important;
 }
@@ -402,6 +581,7 @@ onMounted(() => {
 .el-input-number {
   width: 100%;
 }
+
 .toolbar {
   display: flex;
   justify-content: space-between;
@@ -445,5 +625,29 @@ onMounted(() => {
   border-radius: 4px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   white-space: nowrap;
+}
+
+/* 性能优化：减少重绘 */
+.el-table {
+  will-change: transform; /* GPU加速 */
+}
+
+.el-input {
+  will-change: transform; /* GPU加速 */
+}
+
+/* 自定义popover样式 */
+::v-deep .custom-popover {
+  z-index: 3000 !important;
+
+  .el-popover__title {
+    font-weight: 600;
+    color: #303133;
+  }
+
+  .el-popover__content {
+    line-height: 1.6;
+    white-space: pre-line;
+  }
 }
 </style>

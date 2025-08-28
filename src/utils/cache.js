@@ -133,7 +133,7 @@ export const getKeyObject = (maps, key, valueKey) => {
 
 // 获取数组中的某一项
 export const findItem = ({ list, id, key }) => {
-  if (!(list instanceof Array)) return;
+  if (!Array.isArray(list)) return;
   const item = list.find(item => item.id === id);
   if (item) {
     return item[key] || id;
