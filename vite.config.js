@@ -25,6 +25,21 @@ const cdnModules = [
     path: 'https://cdn.staticfile.org/dayjs/1.11.13/plugin/advancedFormat.min.js',
   },
   {
+    name: 'dayjs/plugin/weekOfYear.js',
+    var: 'dayjs_plugin_weekOfYear',
+    path: 'https://cdn.staticfile.org/dayjs/1.11.13/plugin/weekOfYear.min.js',
+  },
+  {
+    name: 'dayjs/plugin/weekYear.js',
+    var: 'dayjs_plugin_weekYear',
+    path: 'https://cdn.staticfile.org/dayjs/1.11.13/plugin/weekYear.min.js',
+  },
+  {
+    name: 'dayjs/plugin/dayOfYear.js',
+    var: 'dayjs_plugin_dayOfYear',
+    path: 'https://cdn.staticfile.org/dayjs/1.11.13/plugin/dayOfYear.min.js',
+  },
+  {
     name: 'crypto-js',
     var: 'CryptoJS',
     path: 'https://cdn.staticfile.org/crypto-js/4.1.1/crypto-js.min.js',
@@ -136,6 +151,30 @@ export default ({ mode, command }) => {
           replacement: resolve(__dirname, './src/cdn/dayjs-plugin-advancedFormat.js'),
         },
         {
+          find: 'dayjs/plugin/weekOfYear.js',
+          replacement: resolve(__dirname, './src/cdn/dayjs-plugin-weekOfYear.js'),
+        },
+        {
+          find: 'dayjs/plugin/weekOfYear',
+          replacement: resolve(__dirname, './src/cdn/dayjs-plugin-weekOfYear.js'),
+        },
+        {
+          find: 'dayjs/plugin/weekYear.js',
+          replacement: resolve(__dirname, './src/cdn/dayjs-plugin-weekYear.js'),
+        },
+        {
+          find: 'dayjs/plugin/weekYear',
+          replacement: resolve(__dirname, './src/cdn/dayjs-plugin-weekYear.js'),
+        },
+        {
+          find: 'dayjs/plugin/dayOfYear.js',
+          replacement: resolve(__dirname, './src/cdn/dayjs-plugin-dayOfYear.js'),
+        },
+        {
+          find: 'dayjs/plugin/dayOfYear',
+          replacement: resolve(__dirname, './src/cdn/dayjs-plugin-dayOfYear.js'),
+        },
+        {
           find: 'dayjs/plugin/localeData.js',
           replacement: resolve(__dirname, './src/cdn/dayjs-plugin-localeData.js'),
         },
@@ -166,6 +205,12 @@ export default ({ mode, command }) => {
           'dayjs/plugin/customParseFormat',
           'dayjs/plugin/advancedFormat.js',
           'dayjs/plugin/advancedFormat',
+          'dayjs/plugin/weekOfYear.js',
+          'dayjs/plugin/weekOfYear',
+          'dayjs/plugin/weekYear.js',
+          'dayjs/plugin/weekYear',
+          'dayjs/plugin/dayOfYear.js',
+          'dayjs/plugin/dayOfYear',
           'crypto-js',
           'js-cookie',
           'bignumber.js',
@@ -189,6 +234,12 @@ export default ({ mode, command }) => {
               'https://cdn.staticfile.org/dayjs/1.11.13/plugin/customParseFormat.min.js',
             'dayjs/plugin/advancedFormat.js':
               'https://cdn.staticfile.org/dayjs/1.11.13/plugin/advancedFormat.min.js',
+            'dayjs/plugin/weekOfYear.js':
+              'https://cdn.staticfile.org/dayjs/1.11.13/plugin/weekOfYear.min.js',
+            'dayjs/plugin/weekYear.js':
+              'https://cdn.staticfile.org/dayjs/1.11.13/plugin/weekYear.min.js',
+            'dayjs/plugin/dayOfYear.js':
+              'https://cdn.staticfile.org/dayjs/1.11.13/plugin/dayOfYear.min.js',
           },
           globals: {
             dayjs: 'dayjs',
@@ -201,6 +252,9 @@ export default ({ mode, command }) => {
             'dayjs/plugin/localeData.js': 'dayjs_plugin_localeData',
             'dayjs/plugin/customParseFormat.js': 'dayjs_plugin_customParseFormat',
             'dayjs/plugin/advancedFormat.js': 'dayjs_plugin_advancedFormat',
+            'dayjs/plugin/weekOfYear.js': 'dayjs_plugin_weekOfYear',
+            'dayjs/plugin/weekYear.js': 'dayjs_plugin_weekYear',
+            'dayjs/plugin/dayOfYear.js': 'dayjs_plugin_dayOfYear',
           },
           entryFileNames: '[name].[hash].js',
           assetFileNames: 'assets/[name].[hash].[ext]',
@@ -221,6 +275,12 @@ export default ({ mode, command }) => {
         'dayjs/plugin/customParseFormat',
         'dayjs/plugin/advancedFormat.js',
         'dayjs/plugin/advancedFormat',
+        'dayjs/plugin/weekOfYear.js',
+        'dayjs/plugin/weekOfYear',
+        'dayjs/plugin/weekYear.js',
+        'dayjs/plugin/weekYear',
+        'dayjs/plugin/dayOfYear.js',
+        'dayjs/plugin/dayOfYear',
         'crypto-js',
         'js-cookie',
         'bignumber.js',
