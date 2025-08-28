@@ -14,7 +14,12 @@ const cdnModules = [
   { name: 'crypto-js', var: 'CryptoJS', path: 'https://cdn.staticfile.org/crypto-js/4.1.1/crypto-js.min.js' },
   { name: 'js-cookie', var: 'Cookies', path: 'https://cdn.staticfile.org/js-cookie/3.0.0/js.cookie.min.js' },
   { name: 'bignumber.js', var: 'BigNumber', path: 'https://cdn.staticfile.org/bignumber.js/9.1.2/bignumber.min.js' },
-  { name: 'nprogress', var: 'NProgress', path: 'https://cdn.staticfile.org/nprogress/0.2.0/nprogress.js' },
+  {
+    name: 'nprogress',
+    var: 'NProgress',
+    path: 'https://cdn.staticfile.org/nprogress/0.2.0/nprogress.js',
+    css: 'https://cdn.staticfile.org/nprogress/0.2.0/nprogress.min.css',
+  },
   { name: 'echarts', var: 'echarts', path: 'https://cdn.staticfile.net/echarts/5.4.3/echarts.common.min.js' },
   { name: 'codemirror', var: 'CodeMirror', path: 'https://cdn.staticfile.org/codemirror/5.65.18/codemirror.js' },
 ];
@@ -86,6 +91,17 @@ export default ({ mode, command }) => {
         styles: resolve(__dirname, './src/styles'),
         utils: resolve(__dirname, './src/utils'),
         axios: resolve(__dirname, './src/axios.js'),
+        dayjs: resolve(__dirname, './src/cdn/dayjs.js'),
+        'crypto-js': resolve(__dirname, './src/cdn/crypto-js.js'),
+        'js-cookie': resolve(__dirname, './src/cdn/js-cookie.js'),
+        nprogress: resolve(__dirname, './src/cdn/nprogress.js'),
+        'nprogress/nprogress.css': resolve(
+          __dirname,
+          './src/cdn/nprogress.css'
+        ),
+        echarts: resolve(__dirname, './src/cdn/echarts.js'),
+        'bignumber.js': resolve(__dirname, './src/cdn/bignumber.js'),
+        codemirror: resolve(__dirname, './src/cdn/codemirror.js'),
       },
     },
     plugins,

@@ -17,7 +17,7 @@
 </template>
 
 <script setup>
-import * as echarts from 'echarts';
+import echarts from 'echarts';
 import MapFloatcomponent from './mapFloatcomponent.vue';
 import vietnamGeoJSON from '../js/vietnam.json';
 import chinaGeoJSON from '../js/china.json';

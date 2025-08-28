@@ -4,7 +4,7 @@
 
 <script setup>
 import { ref, watch, onMounted, onBeforeUnmount } from 'vue';
-import * as echarts from 'echarts';
+import echarts from 'echarts';
 
 const props = defineProps({
   options: {

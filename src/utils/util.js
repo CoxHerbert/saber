@@ -1,6 +1,5 @@
 import { validatenull } from './validate';
-import sha256 from 'crypto-js/sha256';
-import Base64 from 'crypto-js/enc-base64';
+import CryptoJS from 'crypto-js';
 import Const from '@/const';
 
 //表单序列化
@@ -97,11 +96,13 @@ export const encryption = params => {
   let result = JSON.parse(JSON.stringify(data));
   if (type == 'Base64') {
     param.forEach(ele => {
-      result[ele] = Base64.stringify(result[ele]);
+      result[ele] = CryptoJS.enc.Base64.stringify(
+        CryptoJS.enc.Utf8.parse(result[ele])
+      );
     });
   } else if (type == 'Aes') {
     param.forEach(ele => {
-      result[ele] = sha256(result[ele], key);
+      result[ele] = CryptoJS.SHA256(result[ele], key);
     });
   }
   return result;
