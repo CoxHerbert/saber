@@ -85,6 +85,7 @@ export default ({ mode, command }) => {
         components: resolve(__dirname, './src/components'),
         styles: resolve(__dirname, './src/styles'),
         utils: resolve(__dirname, './src/utils'),
+        axios: resolve(__dirname, './src/axios.js'),
       },
     },
     plugins,

@@ -4,8 +4,8 @@
  * axios参数说明
  * isSerialize是否开启form表单提交
  * isToken是否需要token
- */
-import axios from 'axios';
+*/
+const axios = window.axios;
 import store from '@/store/';
 import router from '@/router/';
 import { serialize, tansParams, generateCurlCommand } from '@/utils/util';
