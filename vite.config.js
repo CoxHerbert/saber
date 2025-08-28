@@ -4,8 +4,6 @@ import createVitePlugins from './vite/plugins';
 import dayjs from 'dayjs';
 import tailwindcss from 'tailwindcss';
 import autoprefixer from 'autoprefixer';
-import { updateVendorCache } from './build/vendor';
-import versionUpdatePlugin from './src/utils/versionUpdatePlugin';
 import importToCDN from 'vite-plugin-cdn-import';
 
 const cdnModules = [
@@ -26,17 +24,37 @@ const cdnModules = [
     var: 'dayjs_plugin_advancedFormat',
     path: 'https://cdn.staticfile.org/dayjs/1.11.13/plugin/advancedFormat.min.js',
   },
-  { name: 'crypto-js', var: 'CryptoJS', path: 'https://cdn.staticfile.org/crypto-js/4.1.1/crypto-js.min.js' },
-  { name: 'js-cookie', var: 'Cookies', path: 'https://cdn.staticfile.org/js-cookie/3.0.0/js.cookie.min.js' },
-  { name: 'bignumber.js', var: 'BigNumber', path: 'https://cdn.staticfile.org/bignumber.js/9.1.2/bignumber.min.js' },
+  {
+    name: 'crypto-js',
+    var: 'CryptoJS',
+    path: 'https://cdn.staticfile.org/crypto-js/4.1.1/crypto-js.min.js',
+  },
+  {
+    name: 'js-cookie',
+    var: 'Cookies',
+    path: 'https://cdn.staticfile.org/js-cookie/3.0.0/js.cookie.min.js',
+  },
+  {
+    name: 'bignumber.js',
+    var: 'BigNumber',
+    path: 'https://cdn.staticfile.org/bignumber.js/9.1.2/bignumber.min.js',
+  },
   {
     name: 'nprogress',
     var: 'NProgress',
     path: 'https://cdn.staticfile.org/nprogress/0.2.0/nprogress.js',
     css: 'https://cdn.staticfile.org/nprogress/0.2.0/nprogress.min.css',
   },
-  { name: 'echarts', var: 'echarts', path: 'https://cdn.staticfile.net/echarts/5.4.3/echarts.common.min.js' },
-  { name: 'codemirror', var: 'CodeMirror', path: 'https://cdn.staticfile.org/codemirror/5.65.18/codemirror.js' },
+  {
+    name: 'echarts',
+    var: 'echarts',
+    path: 'https://cdn.staticfile.net/echarts/5.4.3/echarts.common.min.js',
+  },
+  {
+    name: 'codemirror',
+    var: 'CodeMirror',
+    path: 'https://cdn.staticfile.org/codemirror/5.65.18/codemirror.js',
+  },
 ];
 
 export default ({ mode, command }) => {
@@ -50,12 +68,8 @@ export default ({ mode, command }) => {
 
   const plugins = [
     createVitePlugins(env, isBuild),
-    importToCDN({ injectTo: 'head', modules: cdnModules })
+    importToCDN({ injectTo: 'head', modules: cdnModules }),
   ];
-
-  if (isBuild && !isLocal) {
-    plugins.push(versionUpdatePlugin({ version: currentTimeVersion }));
-  }
 
   const proxyObj = {
     [VITE_APP_API]: {
@@ -105,12 +119,30 @@ export default ({ mode, command }) => {
         { find: 'components', replacement: resolve(__dirname, './src/components') },
         { find: 'styles', replacement: resolve(__dirname, './src/styles') },
         { find: 'utils', replacement: resolve(__dirname, './src/utils') },
-        { find: 'dayjs/plugin/customParseFormat.js', replacement: resolve(__dirname, './src/cdn/dayjs-plugin-customParseFormat.js') },
-        { find: 'dayjs/plugin/customParseFormat', replacement: resolve(__dirname, './src/cdn/dayjs-plugin-customParseFormat.js') },
-        { find: 'dayjs/plugin/advancedFormat.js', replacement: resolve(__dirname, './src/cdn/dayjs-plugin-advancedFormat.js') },
-        { find: 'dayjs/plugin/advancedFormat', replacement: resolve(__dirname, './src/cdn/dayjs-plugin-advancedFormat.js') },
-        { find: 'dayjs/plugin/localeData.js', replacement: resolve(__dirname, './src/cdn/dayjs-plugin-localeData.js') },
-        { find: 'dayjs/plugin/localeData', replacement: resolve(__dirname, './src/cdn/dayjs-plugin-localeData.js') },
+        {
+          find: 'dayjs/plugin/customParseFormat.js',
+          replacement: resolve(__dirname, './src/cdn/dayjs-plugin-customParseFormat.js'),
+        },
+        {
+          find: 'dayjs/plugin/customParseFormat',
+          replacement: resolve(__dirname, './src/cdn/dayjs-plugin-customParseFormat.js'),
+        },
+        {
+          find: 'dayjs/plugin/advancedFormat.js',
+          replacement: resolve(__dirname, './src/cdn/dayjs-plugin-advancedFormat.js'),
+        },
+        {
+          find: 'dayjs/plugin/advancedFormat',
+          replacement: resolve(__dirname, './src/cdn/dayjs-plugin-advancedFormat.js'),
+        },
+        {
+          find: 'dayjs/plugin/localeData.js',
+          replacement: resolve(__dirname, './src/cdn/dayjs-plugin-localeData.js'),
+        },
+        {
+          find: 'dayjs/plugin/localeData',
+          replacement: resolve(__dirname, './src/cdn/dayjs-plugin-localeData.js'),
+        },
         { find: 'axios', replacement: resolve(__dirname, './src/cdn/axios.js') },
         { find: 'dayjs', replacement: resolve(__dirname, './src/cdn/dayjs.js') },
         { find: 'crypto-js', replacement: resolve(__dirname, './src/cdn/crypto-js.js') },
@@ -171,10 +203,6 @@ export default ({ mode, command }) => {
             'dayjs/plugin/advancedFormat.js': 'dayjs_plugin_advancedFormat',
           },
           entryFileNames: '[name].[hash].js',
-          chunkFileNames: chunkInfo =>
-            chunkInfo.name === 'vendor'
-              ? `vendor-${updateVendorCache(mode)}.js`
-              : 'chunks/[name].[hash].js',
           assetFileNames: 'assets/[name].[hash].[ext]',
           manualChunks: id => (id.includes('node_modules') ? 'vendor' : undefined),
         },
