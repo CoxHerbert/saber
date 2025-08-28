@@ -100,7 +100,7 @@
 <script>
 import { index, bar } from '../../api/statistics/index';
 import { getList } from '../../api/ops/ops';
-import * as echarts from 'echarts';
+import echarts from 'echarts';
 
 export default {
   data() {

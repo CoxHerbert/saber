@@ -96,7 +96,7 @@
 
 <script setup name="MyClientsList">
 import { onMounted, reactive, toRefs } from 'vue';
-import * as echarts from 'echarts';
+import echarts from 'echarts';
 import Api from '@/api/index';
 
 const data = reactive({

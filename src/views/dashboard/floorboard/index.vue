@@ -69,7 +69,7 @@ import { useResponsiveResize } from './hooks/useResponsiveResize';
 import logo from './image/logo.png';
 import dayjs from 'dayjs';
 import Api from '@/api/index';
-import 'dayjs/locale/zh-cn'; // 确保导入中文语言包
+dayjs.locale('zh-cn'); // 确保导入中文语言包
 import { useRoute } from 'vue-router';
 const apiSlides = ref([]);
 const route = useRoute();

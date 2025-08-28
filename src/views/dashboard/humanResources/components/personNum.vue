@@ -9,7 +9,7 @@
 </template>
 
 <script setup>
-import * as echarts from 'echarts';
+import echarts from 'echarts';
 import { onUnmounted, nextTick, watch, ref } from 'vue';
 const emit = defineEmits(['clickPersonNum']);
 
