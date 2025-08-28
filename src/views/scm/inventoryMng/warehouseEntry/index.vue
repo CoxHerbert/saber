@@ -1,161 +1,156 @@
 <template>
-  <basic-container>
-    <div class="content-warp page-warehous-entry-index">
-      <!-- 入库单 -->
-      <div class="header">
-        <div class="title">
-          <el-tabs v-model="applyStatus" @tab-click="handleClick">
-            <el-tab-pane label="全部" name=""> </el-tab-pane>
-            <el-tab-pane
-              :label="item.label"
-              :name="item.dictKey"
-              v-for="(item, index) in DC_WMS_IN_STATUS"
-              :key="index"
-            ></el-tab-pane>
-          </el-tabs>
-        </div>
-        <div class="search-area">
-          <dc-search-group :config="searchConfig" @search="handleSearch">
-            <template #btn-sub="scoped">
-              <el-button @click="handleReset(scoped)">重置</el-button></template
-            >
-          </dc-search-group>
-        </div>
+  <div class="list-page page-warehous-entry-index">
+    <!-- 入库单 -->
+    <div class="header">
+      <div class="title">
+        <el-tabs v-model="applyStatus" @tab-click="handleClick">
+          <el-tab-pane label="全部" name=""> </el-tab-pane>
+          <el-tab-pane
+            :label="item.label"
+            :name="item.dictKey"
+            v-for="(item, index) in DC_WMS_IN_STATUS"
+            :key="index"
+          ></el-tab-pane>
+        </el-tabs>
       </div>
-      <div class="action-banner">
-        <el-button
-          type="primary"
-          icon="el-icon-plus"
-          v-permission="{ id: 'WAREHOUSE_ENTRY_ADD' }"
-          @click="handleClickAdd"
-          >新增入库单</el-button
-        >
+      <div class="search-area">
+        <dc-search-group :config="searchConfig" @search="handleSearch">
+          <template #btn-sub="scoped">
+            <el-button @click="handleReset(scoped)">重置</el-button></template
+          >
+        </dc-search-group>
       </div>
-      <div class="table-container">
-        <el-table
-          v-loading="loading"
-          :data="dataList"
-          @selection-change="handleSelectionChange"
-          @row-dblclick="handleRowDblClick"
-        >
-          <template v-for="(col, i) in columns">
-            <!-- 多选 -->
-            <el-table-column
-              v-if="col.type === 'selection'"
-              :key="i"
-              type="selection"
-              :width="col.width"
-            />
-            <!-- 序号类型 -->
-            <el-table-column
-              v-else-if="col.type === 'index'"
-              :key="'index' + i"
-              label="序号"
-              :width="col.width"
-            >
-              <template #default="{ $index }">
-                {{ $index + 1 }}
-              </template>
-            </el-table-column>
-            <!-- 普通文字类型 -->
-            <el-table-column
-              v-else-if="col.type === 'rowText'"
-              :key="'rowText' + i"
-              :label="col.label"
-              :width="col.width"
-              :prop="col.prop"
-              :align="col.align ? col.align : 'center'"
-              show-overflow-tooltip
-            >
-            </el-table-column>
-            <!-- 人员类型 -->
-            <el-table-column
-              v-else-if="col.type === 'dc-view'"
-              :label="col.label"
-              :align="col.align ? col.align : 'center'"
-              prop="purchaserId"
-            >
-              <template #default="scoped">
-                <dc-view
-                  :modelValue="
-                    [null, undefined, ''].includes(scoped.row[col.prop])
-                      ? undefined
-                      : `${scoped.row[col.prop]}`
-                  "
-                  :objectName="col.objectName"
-                  :showKey="col.showKey"
-                />
-              </template>
-            </el-table-column>
-            <el-table-column
-              v-else-if="col.type === 'dc-dict'"
-              :key="'dc-dict' + i"
-              :label="col.label"
-              :width="col.width"
-              :prop="col.prop"
-              :align="col.align ? col.align : 'center'"
-              show-overflow-tooltip
-            >
-              <template #default="scoped">
-                <dc-dict :value="scoped.row[col.prop]" :options="dictCache[col.dictKey].value" />
-              </template>
-            </el-table-column>
-            <!-- 字典类型 -->
-            <el-table-column
-              v-else-if="col.type === 'dict'"
-              :key="'dict' + i"
-              :label="col.label"
-              :width="col.width"
-              :prop="col.prop"
-              :align="col.align ? col.align : 'center'"
-              show-overflow-tooltip
-            >
-              <template #default="scoped">
-                <dc-dict-key
-                  :value="scoped.row[col.prop]"
-                  :options="dictCache[col.dictKey].value"
-                />
-              </template>
-            </el-table-column>
-            <el-table-column
-              v-else-if="col.type === 'actions'"
-              :key="'option' + i"
-              :fixed="col.fixed"
-              :label="col.label"
-              :width="col.width ? col.width : 180"
-              :align="col.align ? col.align : 'center'"
-            >
-              <template #default="scoped">
-                <el-button
-                  v-for="(btn, j) in col.children"
-                  :key="j"
-                  link
-                  v-show="!btn.showFunc || (btn.showFunc && btn.showFunc(scoped))"
-                  v-permission="
-                    !btn.showFunc || (btn.showFunc && btn.showFunc(scoped))
-                      ? { id: btn.permissionId, row: scoped.row }
-                      : undefined
-                  "
-                  type="primary"
-                  @click="doAction(btn.action, scoped)"
-                  >{{ btn.label }}</el-button
-                >
-              </template>
-            </el-table-column>
-          </template>
-        </el-table>
-      </div>
-      <dc-pagination
-        v-show="total > 0"
-        :total="total"
-        v-model:page="queryParams.current"
-        v-model:limit="queryParams.size"
-        @pagination="getData"
-      />
     </div>
-  </basic-container>
+    <div class="action-banner">
+      <el-button
+        type="primary"
+        icon="el-icon-plus"
+        v-permission="{ id: 'WAREHOUSE_ENTRY_ADD' }"
+        @click="handleClickAdd"
+        >新增入库单</el-button
+      >
+    </div>
+    <div class="table-container">
+      <el-table
+        v-loading="loading"
+        :data="dataList"
+        @selection-change="handleSelectionChange"
+        @row-dblclick="handleRowDblClick"
+      >
+        <template v-for="(col, i) in columns">
+          <!-- 多选 -->
+          <el-table-column
+            v-if="col.type === 'selection'"
+            :key="i"
+            type="selection"
+            :width="col.width"
+          />
+          <!-- 序号类型 -->
+          <el-table-column
+            v-else-if="col.type === 'index'"
+            :key="'index' + i"
+            label="序号"
+            :width="col.width"
+          >
+            <template #default="{ $index }">
+              {{ $index + 1 }}
+            </template>
+          </el-table-column>
+          <!-- 普通文字类型 -->
+          <el-table-column
+            v-else-if="col.type === 'rowText'"
+            :key="'rowText' + i"
+            :label="col.label"
+            :width="col.width"
+            :prop="col.prop"
+            :align="col.align ? col.align : 'center'"
+            show-overflow-tooltip
+          >
+          </el-table-column>
+          <!-- 人员类型 -->
+          <el-table-column
+            v-else-if="col.type === 'dc-view'"
+            :label="col.label"
+            :align="col.align ? col.align : 'center'"
+            prop="purchaserId"
+          >
+            <template #default="scoped">
+              <dc-view
+                :modelValue="
+                  [null, undefined, ''].includes(scoped.row[col.prop])
+                    ? undefined
+                    : `${scoped.row[col.prop]}`
+                "
+                :objectName="col.objectName"
+                :showKey="col.showKey"
+              />
+            </template>
+          </el-table-column>
+          <el-table-column
+            v-else-if="col.type === 'dc-dict'"
+            :key="'dc-dict' + i"
+            :label="col.label"
+            :width="col.width"
+            :prop="col.prop"
+            :align="col.align ? col.align : 'center'"
+            show-overflow-tooltip
+          >
+            <template #default="scoped">
+              <dc-dict :value="scoped.row[col.prop]" :options="dictCache[col.dictKey].value" />
+            </template>
+          </el-table-column>
+          <!-- 字典类型 -->
+          <el-table-column
+            v-else-if="col.type === 'dict'"
+            :key="'dict' + i"
+            :label="col.label"
+            :width="col.width"
+            :prop="col.prop"
+            :align="col.align ? col.align : 'center'"
+            show-overflow-tooltip
+          >
+            <template #default="scoped">
+              <dc-dict-key :value="scoped.row[col.prop]" :options="dictCache[col.dictKey].value" />
+            </template>
+          </el-table-column>
+          <el-table-column
+            v-else-if="col.type === 'actions'"
+            :key="'option' + i"
+            :fixed="col.fixed"
+            :label="col.label"
+            :width="col.width ? col.width : 180"
+            :align="col.align ? col.align : 'center'"
+          >
+            <template #default="scoped">
+              <el-button
+                v-for="(btn, j) in col.children"
+                :key="j"
+                link
+                v-show="!btn.showFunc || (btn.showFunc && btn.showFunc(scoped))"
+                v-permission="
+                  !btn.showFunc || (btn.showFunc && btn.showFunc(scoped))
+                    ? { id: btn.permissionId, row: scoped.row }
+                    : undefined
+                "
+                type="primary"
+                @click="doAction(btn.action, scoped)"
+                >{{ btn.label }}</el-button
+              >
+            </template>
+          </el-table-column>
+        </template>
+      </el-table>
+    </div>
+    <dc-pagination
+      v-show="total > 0"
+      :total="total"
+      v-model:page="queryParams.current"
+      v-model:limit="queryParams.size"
+      @pagination="getData"
+    />
+  </div>
 </template>
-<script setup name="Productiongroup">
+<script setup name="page-warehous-entry-index">
 import { onMounted, ref } from 'vue';
 import Api from '@/api/index';
 import options from './utils';
@@ -330,47 +325,3 @@ const getData = async () => {
   loading.value = false;
 };
 </script>
-
-<style scoped lang="scss">
-.page-warehous-entry-index {
-  .search-area {
-    width: calc(100% - 320px);
-    :deep(.select-param) {
-      width: 108px;
-    }
-  }
-  .action-banner {
-    padding: 8px 0;
-  }
-}
-.pass {
-  color: #23c69f;
-}
-.notpass {
-  color: #e12137;
-}
-
-:deep(.el-card__body) {
-  padding-top: 0px;
-  .content-warp {
-    padding: 0px;
-    position: relative;
-    .header {
-      height: 50px;
-      display: flex;
-      align-items: center;
-    }
-  }
-  .search-container {
-    margin-top: 20px;
-  }
-}
-
-:deep(.el-tabs__nav-wrap):after {
-  height: 0px !important;
-}
-
-:deep(.el-tabs__item) {
-  height: 52px !important;
-}
-</style>

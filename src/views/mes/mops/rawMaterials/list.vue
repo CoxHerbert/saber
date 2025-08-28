@@ -364,19 +364,4 @@ export default {
 <style lang="scss" scoped>
 .raw-materials-list-page {
 }
-
-:deep(.el-card__body) {
-  padding-top: 0px;
-  .content-warp {
-    padding: 0px;
-    position: relative;
-    .header {
-      padding-top: 6px;
-      padding-bottom: 0;
-    }
-  }
-  .search-container {
-    margin-top: 20px;
-  }
-}
 </style>

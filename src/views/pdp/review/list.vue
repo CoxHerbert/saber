@@ -1,6 +1,6 @@
 <template>
-  <div class="content-warp">
-    <div class="header none-border ht">
+  <div class="list-page pdp-review-list-page">
+    <div class="header">
       <div class="title w-full">
         <el-tabs v-model="activeName" @tab-change="handleClick">
           <el-tab-pane label="全部" name=""></el-tab-pane>
@@ -278,9 +278,9 @@ const handleRouterAdd = () => {
 };
 </script>
 <style lang="scss" scoped>
-.content-warp {
-  .ht {
-    height: 70px;
+.pdp-review-list-page {
+  .search-container {
+    width: 100%;
   }
 }
 </style>

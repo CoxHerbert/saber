@@ -204,9 +204,9 @@ onBeforeUnmount(() => {
 });
 
 /** 递归寻找匹配的数据 */
-const findMatches = (items, condition) => {
-  const results = [];
-  const search = arr => {
+function findMatches(items, condition) {
+  let results = [];
+  function search(arr) {
     arr.forEach(item => {
       if (condition(item)) {
         results.push(item);
@@ -215,10 +215,10 @@ const findMatches = (items, condition) => {
         search(item.children); // 递归调用
       }
     });
-  };
+  }
   search(items);
   return results;
-};
+}
 
 const getSelectLabel = key => {
   const itemConfig = props.config.paramType[key];
@@ -306,13 +306,11 @@ const search = () => {
 
   .search-btn {
     height: 100%;
-    border: 1px solid #f26c0c;
-    min-height: 34px;
+    border: 2px solid #f26c0c;
     border-radius: 0 4px 4px 0;
   }
 
   .param-group {
-    height: 34px;
     min-width: 300px;
     box-sizing: border-box;
     display: flex;

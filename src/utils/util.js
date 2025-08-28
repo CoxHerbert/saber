@@ -248,7 +248,7 @@ export const findByvalue = (dic, value) => {
     } else {
       result = value;
     }
-  } else if (value instanceof Array) {
+  } else if (Array.isArray(value)) {
     result = [];
     let index = 0;
     value.forEach(ele => {
@@ -754,7 +754,7 @@ export const hourToSecond = (time, unit = 'hour') => {
 
 // 数组转字符串
 export const arrayToIdsString = ({ array, key = 'id' }) => {
-  if (array && array instanceof Array) return array.map(item => item[key]).join(',');
+  if (Array.isArray(array)) return array.map(item => item[key]).join(',');
   return '';
 };
 

@@ -65,7 +65,7 @@ const options = () => {
         search: true,
         width: 170,
         searchProps: {
-          is: 'el-input',
+          is: 'input',
         },
         props: {
           disabled: true,

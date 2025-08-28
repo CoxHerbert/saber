@@ -66,7 +66,7 @@ const options = {
 
     {
       prop: 'options',
-      width: 200,
+      width: 180,
       label: '操作',
       slot: '',
       type: 'actions',

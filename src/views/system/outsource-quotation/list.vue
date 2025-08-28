@@ -1,175 +1,186 @@
 <template>
-  <basic-container>
-    <div class="content-warp page-processing-outsourcing list-edit-page">
-      <div class="header">
-        <dc-search
-          v-model="queryParams"
-          v-bind="searchConfig"
-          @reset="handleReset"
-          @search="handleSearch"
-        />
-      </div>
-      <!-- <div class="action-banner">
-        <el-button
+  <div class="page-processing-outsourcing list-edit-page">
+    <div class="header">
+      <dc-search
+        v-model="queryParams"
+        v-bind="searchConfig"
+        @reset="handleReset"
+        @search="handleSearch"
+      />
+    </div>
+    <div class="action-banner">
+      <!-- <el-button
           icon="Upload"
           type="primary"
           @click="doAction('submitErp')"
           :disabled="isSubmitErp"
           v-if="queryParams.queryPriceStatus === 'DC_WX_VALENCE_STATUS_WHJ'"
           >提交ERP</el-button
-        >
-      </div> -->
-      <div class="table-container">
-        <el-form ref="formRef" class="form-main" :model="tableData">
-          <!-- :rules="getTableRule(group.items)" -->
-          <el-form-item class="form-item-table" :label-width="0">
-            <el-table
-              ref="tableRef"
-              v-loading="loading"
-              :data="tableData"
-              row-key="id"
-              @select="handleSelect"
-              @select-all="handleSelectAll"
-              @selection-change="handleSelectionChange"
-              :row-class-name="tableRowClassName"
-              border
-            >
-              <template v-for="(col, i) in columns">
-                <!-- 多选 -->
-                <el-table-column
-                  v-if="col.type === 'selection'"
-                  :key="i"
-                  type="selection"
-                  :align="col.align"
-                  :width="col.width"
-                  :fixed="col?.fixed || ''"
-                />
-                <!-- 序号类型 -->
-                <el-table-column
-                  v-else-if="col.type === 'index'"
-                  :key="'index' + i"
-                  label="序号"
-                  :align="col.align"
-                  :width="col.width"
-                >
-                  <template #default="{ $index }">
-                    {{ $index + 1 }}
-                  </template>
-                </el-table-column>
-                <el-table-column
-                  v-else-if="col.type === 'actions'"
-                  :key="'option' + i"
-                  :fixed="col.fixed"
-                  :label="col.label"
-                  :width="col.width ? col.width : 180"
-                  :min-width="col.minWidth"
-                  :align="col.align ? col.align : 'center'"
-                >
-                  <template #default="scoped">
-                    <el-button
-                      v-for="(btn, j) in col.children"
-                      :key="j"
-                      link
-                      v-show="!btn.showFunc || (btn.showFunc && btn.showFunc(scoped, queryParams))"
-                      type="primary"
-                      @click="doAction(btn.action, scoped)"
-                      >{{ btn.label }}</el-button
-                    >
-                  </template>
-                </el-table-column>
-                <el-table-column
-                  v-else
-                  :key="col.type + i"
-                  :label="col.label"
-                  :width="col.width"
-                  :min-width="col.minWidth"
-                  :prop="col.prop"
-                  :align="col.align ? col.align : 'center'"
-                  show-overflow-tooltip
-                >
-                  <template #header><span v-html="getLabelCode(col)"> </span></template>
-                  <template #default="scoped">
-                    <div
-                      class="cell-box"
-                      :class="getCellBoxClass(scoped, col)"
-                      @click.stop="handleCellClick(scoped, col)"
-                    >
-                      <template
-                        v-if="
-                          coordinate?.rowIndex === scoped.$index &&
-                          scoped.cellIndex === coordinate?.cellIndex
-                        "
-                      >
-                        <el-form-item
-                          :prop="`${scoped.$index}.${col.prop}`"
-                          :label-width="0"
-                          :rules="getColumnRules(col, scoped)"
-                        >
-                          <dc-widget
-                            v-model="scoped.row[col.prop]"
-                            :data="col"
-                            :dictMaps="dictMaps"
-                            @change="
-                              val => {
-                                handleTableItemChange(val, scoped, col);
-                              }
-                            "
-                          >
-                          </dc-widget>
-                        </el-form-item>
-                      </template>
-                      <template v-else>
-                        <dc-view
-                          v-if="['dc-select-user'].includes(col.type)"
-                          v-model="scoped.row[col.prop]"
-                          objectName="user"
-                        />
-                        <dc-view
-                          v-if="['wf-select-dialog', 'dc-select-dialog'].includes(col.type)"
-                          v-model="scoped.row[col.prop]"
-                          :objectName="col.props.objectName"
-                        />
-                        <dc-dict-key
-                          v-if="['dict'].includes(col.type)"
-                          :value="scoped.row[col.prop]"
-                          :options="dictMaps?.[col.dictKey]"
-                        />
-                        <span v-else>
-                          {{
-                            [undefined, null, ''].includes(scoped.row[col.prop])
-                              ? '-'
-                              : scoped.row[col.prop]
-                          }}
-                        </span>
-                      </template>
-                    </div>
-                  </template>
-                </el-table-column>
-              </template>
-            </el-table>
-          </el-form-item>
-        </el-form>
-      </div>
-      <dc-pagination
-        v-show="total > 0"
-        :total="total"
-        v-model:page="queryParams.current"
-        v-model:limit="queryParams.size"
-        @pagination="getData"
-      />
+        > -->
     </div>
-    <his-price ref="hisPriceRef" />
-  </basic-container>
+    <div class="table-container">
+      <el-form ref="formRef" class="form-main" :model="tableData">
+        <!-- :rules="getTableRule(group.items)" -->
+        <el-form-item class="form-item-table" :label-width="0">
+          <el-table
+            ref="tableRef"
+            v-loading="loading"
+            :data="tableData"
+            :row-key="rowKey"
+            @select="handleSelect"
+            @select-all="handleSelectAll"
+            @selection-change="handleSelectionChange"
+            :row-class-name="tableRowClassName"
+            border
+          >
+            <template v-for="(col, i) in columns">
+              <!-- 多选 -->
+              <el-table-column
+                v-if="col.type === 'selection'"
+                :key="i"
+                type="selection"
+                :align="col.align"
+                :width="col.width"
+                :fixed="col?.fixed || ''"
+              />
+              <!-- 序号类型 -->
+              <el-table-column
+                v-else-if="col.type === 'index'"
+                :key="'index' + i"
+                label="序号"
+                :align="col.align"
+                :width="col.width"
+              >
+                <template #default="{ $index }">
+                  {{ $index + 1 }}
+                </template>
+              </el-table-column>
+
+              <el-table-column
+                v-else-if="col.type === 'actions'"
+                :key="'option' + i"
+                :fixed="col.fixed"
+                :label="col.label"
+                :width="col.width ? col.width : 180"
+                :min-width="col.minWidth"
+                :align="col.align ? col.align : 'center'"
+              >
+                <template #default="scoped">
+                  <el-button
+                    v-for="(btn, j) in col.children"
+                    :key="j"
+                    link
+                    v-show="!btn.showFunc || (btn.showFunc && btn.showFunc(scoped, queryParams))"
+                    type="primary"
+                    @click="doAction(btn.action, scoped)"
+                    >{{ btn.label }}</el-button
+                  >
+                </template>
+              </el-table-column>
+              <el-table-column
+                v-else
+                :key="col.type + i"
+                :label="col.label"
+                :width="col.width"
+                :min-width="col.minWidth"
+                :prop="col.prop"
+                :align="col.align ? col.align : 'center'"
+                show-overflow-tooltip
+              >
+                <template #header><span v-html="getLabelCode(col)"> </span></template>
+                <template #default="scoped">
+                  <div
+                    class="cell-box"
+                    :class="getCellBoxClass(scoped, col)"
+                    @click.stop="handleCellClick(scoped, col)"
+                  >
+                    <template
+                      v-if="
+                        coordinate?.rowIndex === scoped.$index &&
+                        scoped.cellIndex === coordinate?.cellIndex
+                      "
+                    >
+                      <el-form-item
+                        :prop="`${scoped.$index}.${col.prop}`"
+                        :label-width="0"
+                        :rules="getColumnRules(col, scoped)"
+                      >
+                        <dc-widget
+                          v-model="scoped.row[col.prop]"
+                          :data="col"
+                          :dictMaps="dictMaps"
+                          @change="
+                            val => {
+                              handleTableItemChange(val, scoped, col);
+                            }
+                          "
+                        >
+                        </dc-widget>
+                      </el-form-item>
+                    </template>
+                    <template v-else>
+                      <span v-if="!!col?.transVal">
+                        {{ col.transVal(scoped) }}
+                      </span>
+                      <dc-view
+                        v-else-if="['dc-select-user'].includes(col.type)"
+                        v-model="scoped.row[col.prop]"
+                        objectName="user"
+                      />
+                      <dc-view
+                        v-else-if="['wf-select-dialog', 'dc-select-dialog'].includes(col.type)"
+                        v-model="scoped.row[col.prop]"
+                        :objectName="col.props.objectName"
+                      />
+                      <dc-dict-key
+                        v-else-if="['dict'].includes(col.type)"
+                        :value="scoped.row[col.prop]"
+                        :options="dictMaps?.[col.dictKey]"
+                      />
+                      <span v-else>
+                        {{
+                          [undefined, null, ''].includes(scoped.row[col.prop])
+                            ? '-'
+                            : scoped.row[col.prop]
+                        }}
+                      </span>
+                    </template>
+                  </div>
+                </template>
+              </el-table-column>
+            </template>
+            <el-table-column
+              prop="updateUser"
+              label="核价人"
+              align="center"
+              min-width="80"
+              v-if="queryParams.queryPriceStatus !== 'DC_WX_VALENCE_STATUS_WHJ'"
+              show-overflow-tooltip
+            >
+              <template #default="scoped">
+                <dc-view v-model="scoped.row.updateUser" objectName="user" showKey="realName" />
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-form-item>
+      </el-form>
+    </div>
+    <dc-pagination
+      v-show="total > 0"
+      :total="total"
+      v-model:page="queryParams.current"
+      v-model:limit="queryParams.size"
+      @pagination="getData"
+    />
+  </div>
 </template>
 <script>
 import unsavedChanges from '@/mixins/unsaved-changes';
 import listEditPage from '@/mixins/list-edit-page';
 import options from './list';
-import hisPrice from './cpns/his-price.vue';
 import BigNumber from 'bignumber.js';
 
 export default {
-  components: { hisPrice },
   mixins: [listEditPage, unsavedChanges],
   name: 'outsource-quotation-list',
   data() {
@@ -180,6 +191,7 @@ export default {
         datasourceId: '1879454467050659841',
       },
       editRow: {},
+      rowKey: 'id',
     };
   },
   computed: {
@@ -212,17 +224,15 @@ export default {
   },
   mounted() {
     const cachedStatus = sessionStorage.getItem('queryPriceStatus');
-    this.queryParams.queryPriceStatus = cachedStatus || '';
+    this.queryParams.queryPriceStatus = cachedStatus || 'DC_WX_VALENCE_STATUS_WHJ';
 
     this.getData();
   },
   methods: {
     handleSearch(data) {
-      console.log(data);
       this.queryParams.queryPriceStatus = data.queryPriceStatus;
       sessionStorage.setItem('queryPriceStatus', this.queryParams.queryPriceStatus);
       this.getData();
-      // console.log(data);
     },
     /** 获取列表数据 **/
     getData() {
@@ -266,8 +276,6 @@ export default {
             },
           });
         }
-      } else if (action === 'his-price') {
-        this.$refs.hisPriceRef.openDialog(row);
       } else if (action === 'lookdetail') {
         this.$router.push({
           path: '/system/outsource-quotation/pricingdetail',
@@ -478,41 +486,6 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-.page-processing-outsourcing {
-  .action-banner {
-    padding: 8px 0;
-    display: flex;
-    flex-flow: row wrap;
-    width: 100%;
-  }
-  :deep(.form-main) {
-    width: 100%;
-    height: 100%;
-  }
-}
-
-:deep(.el-card__body) {
-  padding-top: 0px;
-  .content-warp {
-    padding: 0px;
-    position: relative;
-    .header {
-      padding-top: 6px;
-      padding-bottom: 0;
-    }
-  }
-  .search-container {
-    margin-top: 20px;
-  }
-}
-:deep(.label-suffix) {
-  color: #f56c6c;
-}
-:deep(.el-table) {
-  .warning-row {
-    --el-table-tr-bg-color: var(--el-color-warning-light-9);
-  }
-}
 :deep(.highlight-row) {
   background-color: var(--el-table-row-active-bg-color); /* 浅绿色背景 */
 }

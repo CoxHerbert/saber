@@ -31,7 +31,7 @@
             <el-select
               v-else-if="item.type === 'el-select'"
               v-model="formData[item.prop]"
-              :placeholder="item.props?.placholder || `请选择${item.label}`"
+              :placeholder="item.props?.placeholder || `请选择${item.label}`"
               v-bind="item.props"
               @change="
                 val => {

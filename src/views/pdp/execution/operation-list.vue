@@ -1,6 +1,6 @@
 <template>
   <basic-container>
-    <div class="content-warp page-operation-list">
+    <div class="list-page page-operation-list">
       <!-- 入库单 -->
       <div class="header">
         <dc-search
@@ -571,27 +571,6 @@ const handleQuery = () => {
     display: flex;
     flex-flow: row wrap;
     width: 100%;
-  }
-}
-.pass {
-  color: #23c69f;
-}
-.notpass {
-  color: #e12137;
-}
-
-:deep(.el-card__body) {
-  padding-top: 0px;
-  .content-warp {
-    padding: 0px;
-    position: relative;
-    .header {
-      padding-top: 6px;
-      padding-bottom: 0;
-    }
-  }
-  .search-container {
-    margin-top: 20px;
   }
 }
 </style>

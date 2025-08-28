@@ -7,29 +7,31 @@
           <div><el-button type="primary" icon="Plus" @click="handleAdd">批量维护</el-button></div>
         </div>
       </div>
+
       <div class="Manpower">
+        <!-- 左侧树 -->
         <div class="ManpowerLeft">
           <el-tree
             :data="treeData"
-            :props="{
-              children: 'children',
-              label: 'label',
-            }"
+            :props="{ children: 'children', label: 'label' }"
             :default-expanded-keys="defaultExpandedKeys"
-            @node-click="handleNodeClick"
             node-key="id"
             :current-node-key="defaultCheckedKeys"
             :highlight-current="true"
+            @node-click="handleNodeClick"
             ref="tree"
           />
         </div>
-        <div class="ManpowerRight" ref="myElement">
+
+        <!-- 右侧日历 -->
+        <div class="ManpowerRight" ref="rightPane">
           <el-calendar
+            v-loading="loading"
+            class="rightCalender"
             v-model="calendarParams.calendarYearMonth"
             ref="calendar"
-            class="rightCalender"
           >
-            <template #header="{ date }">
+            <template #header>
               <el-button-group>
                 <el-select
                   v-model="calendarParams.year"
@@ -58,54 +60,49 @@
                     :value="item.value"
                   />
                 </el-select>
+
                 <button class="SverchBtn" @click="selectDate('today')">今天</button>
               </el-button-group>
+
               <div class="type-hints">
-                <div class="hint-item">
-                  <span class="hint-dot dot-bz"></span>
-                  编制人力
-                </div>
-                <div class="hint-item">
-                  <span class="hint-dot dot-jy"></span>
-                  借用人力
-                </div>
-                <div class="hint-item">
-                  <span class="hint-dot dot-mr"></span>
-                  默认人力
-                </div>
+                <div class="hint-item"><span class="hint-dot dot-bz"></span>编制人力</div>
+                <div class="hint-item"><span class="hint-dot dot-jy"></span>借用人力</div>
+                <div class="hint-item"><span class="hint-dot dot-mr"></span>默认人力</div>
               </div>
             </template>
+
             <template #date-cell="{ data }">
               <div
                 class="day-content"
                 @click="handleUpdate(data.day)"
                 :class="data.isSelected ? 'is-selected' : ''"
                 :style="{
-                  backgroundColor: scheduleData[data.day]?.colorCode,
+                  backgroundColor: scheduleDataMap[data.day]?.colorCode || '',
                   height: elementHeight + 'px',
                 }"
               >
                 <div class="day-content-warp">
-                  <div class="manpower-count" v-if="scheduleData[data.day]">
-                    <span>●</span>
-                    {{ scheduleData[data.day].manpowerQuantity }}
+                  <div class="manpower-count" v-if="scheduleDataMap[data.day]">
+                    <span>●</span>{{ scheduleDataMap[data.day].manpowerQuantity }}
                   </div>
-                  <div class="manpower-count-labor" v-if="scheduleData[data.day]">
-                    <span>●</span>
-                    {{ scheduleData[data.day].laborManpowerQuantity }}
+                  <div class="manpower-count-labor" v-if="scheduleDataMap[data.day]">
+                    <span>●</span>{{ scheduleDataMap[data.day].laborManpowerQuantity }}
                   </div>
-                  <div class="manpower-count-default" v-if="!scheduleData[data.day]">
-                    <span>●</span>
-                    {{ treeOnly.manpowerQuantity + treeOnly.laborManpowerQuantity }}
+
+                  <div class="manpower-count-default" v-if="!scheduleDataMap[data.day] && treeOnly">
+                    <span>●</span
+                    >{{ (treeOnly.manpowerQuantity || 0) + (treeOnly.laborManpowerQuantity || 0) }}
                   </div>
-                  <div class="total-count" v-if="scheduleData[data.day]">
+
+                  <div class="total-count" v-if="scheduleDataMap[data.day]">
                     <span>总计:</span>
                     {{
-                      scheduleData[data.day].manpowerQuantity +
-                      scheduleData[data.day].laborManpowerQuantity
+                      (scheduleDataMap[data.day].manpowerQuantity || 0) +
+                      (scheduleDataMap[data.day].laborManpowerQuantity || 0)
                     }}
                   </div>
-                  <div class="day-label">{{ data.day.split('-').slice(2).join('-') }}</div>
+
+                  <div class="day-label">{{ (data.day || '').split('-').slice(2).join('-') }}</div>
                 </div>
               </div>
             </template>
@@ -114,21 +111,22 @@
       </div>
     </div>
 
+    <!-- 抽屉 -->
     <el-drawer v-model="open" size="600px" :title="title" @close="cancel">
-      <div v-if="infoDate && Object.keys(infoDate).length">
+      <div v-if="Object.keys(infoDate).length">
         <el-descriptions title="当前人力计划" :column="1">
           <el-descriptions-item label="编制人力：">{{
             infoDate.manpowerQuantity
           }}</el-descriptions-item>
-          <el-descriptions-item label="借用人力：">
-            {{ infoDate.laborManpowerQuantity }}</el-descriptions-item
-          >
+          <el-descriptions-item label="借用人力：">{{
+            infoDate.laborManpowerQuantity
+          }}</el-descriptions-item>
           <el-descriptions-item label="总人力：">
-            {{ infoDate.manpowerQuantity + infoDate.laborManpowerQuantity }}</el-descriptions-item
-          >
+            {{ (infoDate.manpowerQuantity || 0) + (infoDate.laborManpowerQuantity || 0) }}
+          </el-descriptions-item>
           <el-descriptions-item label="当前计划时间：">
-            {{ infoDate.workStartDate }} - {{ infoDate.workEndDate }}</el-descriptions-item
-          >
+            {{ infoDate.workStartDate }} - {{ infoDate.workEndDate }}
+          </el-descriptions-item>
         </el-descriptions>
       </div>
 
@@ -136,18 +134,16 @@
       <el-form :model="formData">
         <el-form-item label="编制人力">
           <el-input-number v-model="formData.manpowerQuantity" :min="0" placeholder="请输入">
-            <template #suffix>
-              <span>人</span>
-            </template>
+            <template #suffix><span>人</span></template>
           </el-input-number>
         </el-form-item>
+
         <el-form-item label="借用人力">
           <el-input-number v-model="formData.laborManpowerQuantity" :min="0" placeholder="请输入">
-            <template #suffix>
-              <span>人</span>
-            </template>
+            <template #suffix><span>人</span></template>
           </el-input-number>
         </el-form-item>
+
         <el-form-item label="计划日期" class="el-form-item-timer">
           <el-date-picker
             v-model="formData.timers"
@@ -158,9 +154,10 @@
           />
         </el-form-item>
       </el-form>
+
       <template #footer>
         <div class="dialog-footer">
-          <el-button type="primary" @click="submitForm">提交</el-button>
+          <el-button type="primary" :loading="submitting" @click="submitForm">提交</el-button>
           <el-button @click="cancel">取消</el-button>
         </div>
       </template>
@@ -168,270 +165,288 @@
   </basic-container>
 </template>
 
-<script setup>
-import { onMounted, reactive, toRefs } from 'vue';
-import Api from '@/api/index';
+<script>
 import dayjs from 'dayjs';
-import { ref } from 'vue';
+import Api from '@/api/index';
 
-const calendar = ref(null);
-const { proxy } = getCurrentInstance();
+export default {
+  name: 'ManpowerMaintenance',
+  data() {
+    return {
+      // 左侧树
+      treeData: [],
+      defaultExpandedKeys: [],
+      defaultCheckedKeys: '',
 
-const data = reactive({
-  treeData: [], // 树状数据
-  formData: {},
-  queryParams: {
-    workGroupCode: '',
-    workStartDate: '2024-01-01',
-    workEndDate: '2027-01-01',
-    current: 1,
-    size: 10000,
+      // 查询参数
+      queryParams: {
+        workGroupCode: '',
+        workStartDate: '2024-01-01',
+        workEndDate: '2027-01-01',
+        current: 1,
+        size: 10000,
+      },
+
+      // 日历
+      calendarParams: {
+        year: dayjs().format('YYYY'),
+        month: dayjs().format('MM'),
+        calendarYearMonth: new Date(), // 始终是 Date
+      },
+
+      // UI 状态
+      loading: false,
+      submitting: false,
+      open: false,
+      title: '',
+
+      // 数据容器
+      scheduleDataMap: {}, // { 'YYYY-MM-DD': item }
+      treeOnly: null, // 当前树节点默认人力
+      infoDate: {}, // 当前编辑项
+      formData: {},
+
+      // 选项
+      yearOptions: [
+        { value: '2024', label: '2024年' },
+        { value: '2025', label: '2025年' },
+        { value: '2026', label: '2026年' },
+        { value: '2027', label: '2027年' },
+      ],
+      monthOptions: [
+        { label: '1月', value: '01' },
+        { label: '2月', value: '02' },
+        { label: '3月', value: '03' },
+        { label: '4月', value: '04' },
+        { label: '5月', value: '05' },
+        { label: '6月', value: '06' },
+        { label: '7月', value: '07' },
+        { label: '8月', value: '08' },
+        { label: '9月', value: '09' },
+        { label: '10月', value: '10' },
+        { label: '11月', value: '11' },
+        { label: '12月', value: '12' },
+      ],
+
+      // 计算日格高度
+      elementHeight: 120,
+
+      // 观察器
+      resizeObserver: null,
+    };
   },
-  // 日历参数
-  calendarParams: {
-    year: dayjs().format('YYYY'),
-    month: dayjs().format('MM'),
-    calendarYearMonth: dayjs().toDate('YYYY-MM-DD'),
+
+  mounted() {
+    this.bootstrap();
+    this.installResizeObserver();
   },
-  title: '',
-  loading: true,
-  scheduleData: {}, // 日历数据
-  open: false,
-  timerQueryParams: {
-    laborManpowerQuantity: 0,
-    manpowerQuantity: 0,
-  },
-  defaultExpandedKeys: [],
-  defaultCheckedKeys: '',
-  yearOptions: [
-    {
-      value: '2024',
-      label: '2024年',
-    },
-    {
-      value: '2025',
-      label: '2025年',
-    },
-    {
-      value: '2026',
-      label: '2026年',
-    },
-    {
-      value: '2027',
-      label: '2027年',
-    },
-  ],
-  monthOptions: [
-    { label: '1月', value: '01' },
-    { label: '2月', value: '02' },
-    { label: '3月', value: '03' },
-    { label: '4月', value: '04' },
-    { label: '5月', value: '05' },
-    { label: '6月', value: '06' },
-    { label: '7月', value: '07' },
-    { label: '8月', value: '08' },
-    { label: '9月', value: '09' },
-    { label: '10月', value: '10' },
-    { label: '11月', value: '11' },
-    { label: '12月', value: '12' },
-  ],
-  treeOnly: '',
-  infoDate: {},
-});
 
-const {
-  treeData,
-  queryParams,
-  calendarParams,
-  loading,
-  scheduleData,
-  open,
-  formData,
-  title,
-  defaultExpandedKeys,
-  defaultCheckedKeys,
-  yearOptions,
-  monthOptions,
-  treeOnly,
-  infoDate,
-} = toRefs(data);
-
-const myElement = ref(null); // 用于获取 DOM 元素的引用
-const elementHeight = ref(0); // 存储高度
-
-onMounted(async () => {
-  // getData();
-  await getList();
-  await getWorkGroupInfo();
-  if (myElement.value) {
-    elementHeight.value = (myElement.value.offsetHeight - '130') / 5; // 获取元素高度
-  }
-});
-
-const getWorkGroupInfo = async () => {
-  const res = await Api.common.workGroup.getWorkGroupInfo();
-  const { code, data } = res.data;
-  if (code === 200) {
-    // 默认展开的节点：展开第一个根节点
-    defaultExpandedKeys.value = [data?.id];
-    // 默认选中的节点：选中第一个根节点的第一个子节点
-    defaultCheckedKeys.value = data?.id;
-    queryParams.value.workGroupCode = data?.workGroupCode;
-  }
-};
-
-// 获取日历列表
-const getData = async () => {
-  try {
-    loading.value = true;
-    const res = await Api.mps.manpowermaintenance.getWorkManpowerList(queryParams.value);
-    const { code, data } = res.data;
-    if (code === 200) {
-      scheduleData.value = {}; // 清空之前的数据，重新加载
-      data.records.forEach(item => {
-        scheduleData.value[dayjs(item.workDate).format('YYYY-MM-DD')] = item;
-      });
+  beforeUnmount() {
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect();
+      this.resizeObserver = null;
     }
-    loading.value = false;
-  } catch (err) {
-    loading.value = false;
-  }
-};
+  },
 
-// 获取右侧树状列表
-const getList = async () => {
-  try {
-    loading.value = true;
-    const res = await Api.mps.manpowermaintenance.getWorkManpowerTreeGroup();
-    const { code, data } = res.data;
-    if (code === 200) {
-      // 结构化数据处理
-      treeData.value = data.map(item => ({
+  methods: {
+    async bootstrap() {
+      this.loading = true;
+      try {
+        // 右侧树 & 默认选中组
+        await this.getList();
+        await this.getWorkGroupInfo(); // 覆盖/补齐默认选中
+        await this.getData();
+        // 根据当前日期设置 header 下拉
+        this.calendarParams.year = dayjs(this.calendarParams.calendarYearMonth).format('YYYY');
+        this.calendarParams.month = dayjs(this.calendarParams.calendarYearMonth).format('MM');
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    installResizeObserver() {
+      const el = this.$refs.rightPane;
+      if (!el) return;
+      const compute = () => {
+        // 顶部 header + 星期行等大致占用空间：约 130px（可按需调整）
+        const H = el.offsetHeight || 0;
+        const safe = Math.max(0, H - 130);
+        // 一周 5 行或 6 行：大多数月份 5 行，按 5 行更紧凑；如需更稳妥可按 6 行
+        this.elementHeight = Math.floor(safe / 5);
+      };
+      this.resizeObserver = new ResizeObserver(compute);
+      this.resizeObserver.observe(el);
+      // 初始算一次
+      this.$nextTick(compute);
+    },
+
+    // 获取当前用户所在工作组信息（默认展开/选中）
+    async getWorkGroupInfo() {
+      const res = await Api.common.workGroup.getWorkGroupInfo();
+      const { code, data } = res.data || {};
+      if (code === 200 && data) {
+        this.defaultExpandedKeys = [data.id];
+        this.defaultCheckedKeys = data.id;
+        if (!this.queryParams.workGroupCode) {
+          this.queryParams.workGroupCode = data.workGroupCode;
+        }
+      }
+    },
+
+    // 获取树
+    async getList() {
+      const res = await Api.mps.manpowermaintenance.getWorkManpowerTreeGroup();
+      const { code, data } = res.data || {};
+      if (code !== 200 || !Array.isArray(data)) return;
+
+      this.treeData = data.map(item => ({
         id: item.processCategoryCode,
         label: item.category,
-        children: item.children.map(childItem => {
-          if (!queryParams.value.workGroupCode) {
-            queryParams.value.workGroupCode = childItem.workGroupCode;
-            // 默认展开的节点：展开第一个根节点
-            defaultExpandedKeys.value = [childItem.id];
-            // 默认选中的节点：选中第一个根节点的第一个子节点
-            defaultCheckedKeys.value = childItem.id;
-            // 所有的树状
-            treeOnly.value = childItem;
+        children: (item.children || []).map(child => {
+          // 首次进入时，设置默认组
+          if (!this.queryParams.workGroupCode) {
+            this.queryParams.workGroupCode = child.workGroupCode;
+            this.defaultExpandedKeys = [child.id];
+            this.defaultCheckedKeys = child.id;
+            this.treeOnly = child;
           }
           return {
-            label: childItem.workGroupName,
-            ...childItem,
+            label: child.workGroupName,
+            ...child,
           };
         }),
       }));
+    },
 
-      getData();
-    }
-    loading.value = false;
-  } catch (err) {
-    loading.value = false;
-  }
-};
+    // 获取日历数据
+    async getData() {
+      if (!this.queryParams.workGroupCode) return;
+      this.loading = true;
+      try {
+        const res = await Api.mps.manpowermaintenance.getWorkManpowerList(this.queryParams);
+        const { code, data } = res.data || {};
+        if (code === 200 && data?.records) {
+          const map = {};
+          data.records.forEach(it => {
+            const key = dayjs(it.workDate).format('YYYY-MM-DD');
+            map[key] = it;
+          });
+          this.scheduleDataMap = map;
+        } else {
+          this.scheduleDataMap = {};
+        }
+      } catch (e) {
+        this.scheduleDataMap = {};
+      } finally {
+        this.loading = false;
+      }
+    },
 
-// 打开添加弹窗
-const handleAdd = () => {
-  initAddData();
-};
+    // 切换年月
+    handleChangeDate() {
+      const d = dayjs(`${this.calendarParams.year}-${this.calendarParams.month}-01`).toDate();
+      this.calendarParams.calendarYearMonth = d;
+    },
 
-const initAddData = date => {
-  // const [year, month] = date.split('-');
-  // calendarParams.value = {
-  //   year: year,
-  //   month: month,
-  // };
+    // 树点击
+    async handleNodeClick(node) {
+      if (!node?.workGroupCode) return;
+      if (this.queryParams.workGroupCode === node.workGroupCode) return; // 无变化不请求
 
-  formData.value = {
-    workGroupCode: queryParams.value.workGroupCode,
-    manpowerQuantity: treeOnly.value.manpowerQuantity,
-    laborManpowerQuantity: treeOnly.value.laborManpowerQuantity,
-    timers: [date, date],
-  };
-  title.value = '新增人力计划';
-  open.value = true;
-};
+      this.treeOnly = node;
+      this.queryParams = {
+        workGroupCode: node.workGroupCode,
+        workStartDate: '2024-01-01',
+        workEndDate: '2027-01-01',
+        current: 1,
+        size: 10000,
+      };
+      await this.getData();
+    },
 
-const initUpdateData = date => {
-  // 编辑
-  infoDate.value = scheduleData.value[date];
-  formData.value = {
-    laborManpowerQuantity: infoDate.value.laborManpowerQuantity,
-    manpowerQuantity: infoDate.value.manpowerQuantity,
-    timers: [infoDate.value.workStartDate, infoDate.value.workEndDate],
-    workGroupCode: infoDate.value.workGroupCode,
-  };
-  title.value = '调整人力计划';
-  open.value = true;
-};
+    // 打开新增
+    handleAdd() {
+      this.initAddData(dayjs(this.calendarParams.calendarYearMonth).format('YYYY-MM-DD'));
+    },
 
-const initCancelData = () => {
-  open.value = false;
-  formData.value = {};
-  infoDate.value = {};
-};
+    initAddData(date) {
+      const baseQty = {
+        manpowerQuantity: this.treeOnly?.manpowerQuantity || 0,
+        laborManpowerQuantity: this.treeOnly?.laborManpowerQuantity || 0,
+      };
+      this.formData = {
+        workGroupCode: this.queryParams.workGroupCode,
+        ...baseQty,
+        timers: [date, date],
+      };
+      this.infoDate = {};
+      this.title = '新增人力计划';
+      this.open = true;
+    },
 
-// 新增提交
-const submitForm = async () => {
-  if (!formData.value.timers.length) return proxy.$message.error('请选择日期');
-  const form = {
-    ...formData.value,
-    workStartDate: dayjs(formData.value.timers[0]).format('YYYY-MM-DD'),
-    workEndDate: dayjs(formData.value.timers[1]).format('YYYY-MM-DD'),
-  };
-  delete form.timers;
-  const res = await Api.mps.manpowermaintenance.postWorkManpowerInsert(form);
-  const { code, msg } = res.data;
-  if (code === 200) {
-    getData();
-    proxy.$message.success(msg);
-    open.value = false;
-  }
-};
+    initUpdateData(date) {
+      this.infoDate = this.scheduleDataMap[date] || {};
+      this.formData = {
+        laborManpowerQuantity: this.infoDate.laborManpowerQuantity || 0,
+        manpowerQuantity: this.infoDate.manpowerQuantity || 0,
+        timers: [this.infoDate.workStartDate, this.infoDate.workEndDate],
+        workGroupCode: this.infoDate.workGroupCode,
+      };
+      this.title = '调整人力计划';
+      this.open = true;
+    },
 
-// 选择框变化
-const handleChangeDate = () => {
-  calendarParams.value.calendarYearMonth = dayjs(
-    `${calendarParams.value.year}-${calendarParams.value.month}-1`
-  ).toDate();
-};
+    cancel() {
+      this.open = false;
+      this.formData = {};
+      this.infoDate = {};
+    },
 
-// 树状点击事件
-const handleNodeClick = data => {
-  if (data.workGroupCode) {
-    queryParams.value = {
-      workGroupCode: data.workGroupCode,
-      workStartDate: '2024-01-01',
-      workEndDate: '2027-01-01',
-      current: 1,
-      size: 10000,
-    };
-    getData();
-    treeOnly.value = data;
-  }
-};
+    async submitForm() {
+      if (!Array.isArray(this.formData.timers) || this.formData.timers.length < 2) {
+        this.$message.error('请选择日期');
+        return;
+      }
+      const payload = {
+        ...this.formData,
+        workStartDate: dayjs(this.formData.timers[0]).format('YYYY-MM-DD'),
+        workEndDate: dayjs(this.formData.timers[1]).format('YYYY-MM-DD'),
+      };
+      delete payload.timers;
 
-// 取消
-const cancel = () => {
-  initCancelData();
-};
+      this.submitting = true;
+      try {
+        const res = await Api.mps.manpowermaintenance.postWorkManpowerInsert(payload);
+        const { code, msg } = res.data || {};
+        if (code === 200) {
+          this.$message.success(msg || '提交成功');
+          this.open = false;
+          await this.getData();
+        }
+      } finally {
+        this.submitting = false;
+      }
+    },
 
-// 点击日历出现弹窗
-const handleUpdate = async date => {
-  if (scheduleData.value[date]) {
-    initUpdateData(date);
-  } else {
-    initAddData(date);
-  }
-};
+    // 点击日历格
+    handleUpdate(date) {
+      if (this.scheduleDataMap[date]) {
+        this.initUpdateData(date);
+      } else {
+        this.initAddData(date);
+      }
+    },
 
-const selectDate = val => {
-  if (!calendar.value) return;
-  calendar.value.selectDate(val);
+    // 今天
+    selectDate(val) {
+      const cal = this.$refs.calendar;
+      if (cal?.selectDate) cal.selectDate(val);
+      // 同步下拉年/月
+      const now = new Date();
+      this.calendarParams.year = dayjs(now).format('YYYY');
+      this.calendarParams.month = dayjs(now).format('MM');
+    },
+  },
 };
 </script>
 
@@ -452,8 +467,6 @@ const selectDate = val => {
         line-height: 30px;
       }
       .rightCalenderItem {
-        // display: flex;
-        // flex-direction: column;
         justify-content: space-between;
         height: 100%;
         .CalenderItem {
@@ -488,6 +501,7 @@ const selectDate = val => {
   }
 }
 </style>
+
 <style scoped lang="scss">
 .Manpower-maintenance {
   width: 100%;
@@ -499,10 +513,12 @@ const selectDate = val => {
     flex-direction: column;
     justify-content: center;
     border-bottom: 1px solid #e1e2e5;
+
     .ManpowerTopTitle {
       display: flex;
       justify-content: space-between;
       align-items: center;
+
       .manpowe-top-text {
         font-weight: bold;
         font-size: 16px;
@@ -511,14 +527,17 @@ const selectDate = val => {
       }
     }
   }
+
   .Manpower {
     display: flex;
     height: calc(100% - 50px);
+
     .ManpowerLeft {
       width: 240px;
       height: 100%;
       border-right: 1px solid #e1e2e5;
     }
+
     .ManpowerRight {
       width: 100%;
       height: 100%;
@@ -527,6 +546,7 @@ const selectDate = val => {
         .day-content {
           padding: 0px;
           position: relative;
+
           .day-content-warp {
             padding: 5px;
           }
@@ -554,10 +574,10 @@ const selectDate = val => {
             font-size: 26px;
             color: #bbbbbb;
           }
+
           .total-count {
             height: 24px;
           }
-
           .total-count span {
             font-size: 16px;
           }
@@ -576,10 +596,12 @@ const selectDate = val => {
         .el-calendar__header {
           height: 36px;
         }
+
         .type-hints {
           display: flex;
           align-items: center;
           gap: 10px;
+
           .hint-item {
             display: inline-flex;
             align-items: center;
@@ -611,46 +633,47 @@ const selectDate = val => {
             width: 64px;
             height: 32px;
             background: #f78431;
-            border-radius: 3px 3px 3px 3px;
+            border-radius: 3px;
             border: none;
             font-weight: 400;
             font-size: 15px;
             color: #fff;
             line-height: 24px;
             text-align: center;
+            cursor: pointer;
           }
         }
       }
     }
   }
 }
+
 .el-form-item-timer {
   width: 400px;
 }
+
 .demo-date-picker {
   display: flex;
   width: 100%;
   padding: 0;
   flex-wrap: wrap;
 }
-
 .demo-date-picker .block {
   padding: 30px 0;
   text-align: center;
-  border-right: solid 1px var(--el-border-color);
+  border-right: 1px solid var(--el-border-color);
   flex: 1;
 }
-
 .demo-date-picker .block:last-child {
   border-right: none;
 }
-
 .demo-date-picker .demonstration {
   display: block;
   color: var(--el-text-color-secondary);
   font-size: 14px;
   margin-bottom: 20px;
 }
+
 :deep(.el-select) {
   width: 92px;
   padding-right: 12px;

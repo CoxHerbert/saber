@@ -54,8 +54,8 @@ const option = computed(() => {
       result || {
         value: props.value,
         label: props.value,
-        textColor: 'var(--el-color-text-placeholder)',
-        bgColor: 'var(--el-fill-color-light)',
+        textColor: '#666',
+        bgColor: '#ebeef5',
       }
     );
   }
@@ -63,8 +63,8 @@ const option = computed(() => {
   return {
     value: props.value,
     label: props.value,
-    textColor: 'var(--el-color-text-placeholder)',
-    bgColor: 'var(--el-fill-color-light)',
+    textColor: '#666',
+    bgColor: '#ebeef5',
   };
 });
 </script>

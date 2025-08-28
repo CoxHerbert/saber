@@ -81,17 +81,12 @@ const options = () => {
         type: 'actions',
         slotName: 'action',
         fixed: 'right',
-        width: 120,
+        width: 80,
         children: [
           {
             type: 'button',
             label: '编辑',
             action: 'edit',
-          },
-          {
-            type: 'button',
-            label: '删除',
-            action: 'delete',
           },
         ],
       },

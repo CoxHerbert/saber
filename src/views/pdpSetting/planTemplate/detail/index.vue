@@ -296,7 +296,7 @@ const handleDelete = row => {
       cancelButtonText: '取消',
       type: 'warning',
     })
-    .then(() => Api.pdp.planTempItemremove({ ids }))
+    .then(() => Api.pdp.planTempItem.remove({ ids }))
     .then(() => {
       proxy.$message({
         type: 'success',

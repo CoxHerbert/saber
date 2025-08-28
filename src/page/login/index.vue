@@ -1,7 +1,8 @@
 <template>
   <div class="login-page-container">
     <div class="login-container_logo">
-      <img class="logo-icon" src="/img/logo-v2.png" />
+      <img class="logo-icon" src="https://static.eastwinbip.com/static/image/LOGO.png" />
+      <div class="logo-title">深圳联合东创科技有限公司</div>
       <!-- <div class="logo-title">深圳联合东创科技有限公司</div> -->
     </div>
 

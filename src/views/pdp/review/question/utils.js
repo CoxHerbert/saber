@@ -80,7 +80,7 @@ export default {
               prop: 'reviewProblem',
               type: 'text',
               props: {
-                placholder: '请输入问题描述',
+                placeholder: '请输入问题描述',
                 disabled: true,
               },
             },

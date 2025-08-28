@@ -553,7 +553,7 @@ const deleteRow = (index, rows) => {
 <style scoped lang="scss">
 .addorEdite {
   background-color: #fff;
-  padding: 0px 19px  19px;
+  padding: 0px 19px 19px;
   box-sizing: border-box;
   .title {
     display: flex;

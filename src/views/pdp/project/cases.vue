@@ -594,30 +594,3 @@ export default {
   },
 };
 </script>
-<style>
-/* 定义不同状态的行样式 */
-/* .el-table .warning-row {
-  background-color: #fff2f0;
-} */
-</style>
-<style lang="scss" scoped>
-:deep(.el-card__body) {
-  padding-top: 0px;
-  .content-warp {
-    padding: 0px;
-    position: relative;
-    .header {
-      padding-top: 6px;
-      padding-bottom: 0;
-    }
-  }
-  .search-container {
-    margin-top: 20px;
-  }
-}
-
-.tip {
-  color: red;
-  font-size: 16px;
-}
-</style>

@@ -65,7 +65,7 @@ const options = () => {
         prop: 'planOrderCode',
         label: '计划单号',
         type: 'rowText',
-        width: '220px',
+        minWidth: '220px',
       },
       {
         prop: 'handlePersonId',

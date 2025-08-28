@@ -1,6 +1,6 @@
 <template>
   <basic-container>
-    <div class="content-warp page-warehous-entry-index">
+    <div class="list-page page-warehous-entry-index">
       <!-- 出库单 -->
       <div class="header">
         <div class="title">
@@ -339,64 +339,4 @@ const getData = async () => {
   }
   loading.value = false;
 };
-
-/** 搜索按钮操作 */
-const handleQuery = () => {
-  queryParams.value.current = 1;
-  getData();
-};
-
-/** 重置按钮操作 */
-const resetQuery = () => {
-  queryParams.value = {
-    current: 1,
-    size: 10,
-  };
-  proxy.resetForm('queryRef');
-  getData();
-};
 </script>
-
-<style scoped lang="scss">
-.page-warehous-entry-index {
-  .search-area {
-    width: calc(100% - 320px);
-    :deep(.select-param) {
-      width: 108px;
-    }
-  }
-  .action-banner {
-    padding: 8px 0;
-  }
-}
-.pass {
-  color: #23c69f;
-}
-.notpass {
-  color: #e12137;
-}
-
-:deep(.el-card__body) {
-  padding-top: 0px;
-  .content-warp {
-    padding: 0px;
-    position: relative;
-    .header {
-      height: 50px;
-      display: flex;
-      align-items: center;
-    }
-  }
-  .search-container {
-    margin-top: 20px;
-  }
-}
-
-:deep(.el-tabs__nav-wrap):after {
-  height: 0px !important;
-}
-
-:deep(.el-tabs__item) {
-  height: 52px !important;
-}
-</style>

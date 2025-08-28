@@ -812,7 +812,7 @@ export default [
       },
       {
         path: 'mops/prodPlan/addOrEdit',
-        name: '生产主计划生成工序生成工序',
+        name: '生产主计划生成工序',
         meta: {
           parentMenuId: '1930800534564184065',
         },
@@ -827,6 +827,17 @@ export default [
         },
         component: () =>
           import(/* webpackChunkName: "MES" */ '@/views/mes/mops/solutionPlan/addOrEdit/index.vue'),
+      },
+      {
+        path: 'processOutManage/outDoc/addOrEdit',
+        name: '工序单编辑或详情',
+        meta: {
+          parentMenuId: '1957702102835257345',
+        },
+        component: () =>
+          import(
+            /* webpackChunkName: "MES" */ '@/views/mes/processOutManage/outDoc/addOrEdit/index.vue'
+          ),
       },
     ],
   },

@@ -84,7 +84,7 @@
                     >
                       <el-input
                         v-if="col.type === 'input'"
-                        :placeholder="col.props?.placholder || `请输入${col.label}`"
+                        :placeholder="col.props?.placeholder || `请输入${col.label}`"
                         v-bind="col.props"
                         v-model="detailData[col.prop]"
                         clearable
@@ -93,7 +93,7 @@
                         class="param-value"
                         v-else-if="col.type === 'dict'"
                         v-model="detailData[col.prop]"
-                        :placeholder="col.props?.placholder || `请选择${col.label}`"
+                        :placeholder="col.props?.placeholder || `请选择${col.label}`"
                         v-bind="col.props"
                         clearable
                         @change="
@@ -128,7 +128,7 @@
                       <el-date-picker
                         v-else-if="col.type === 'date'"
                         v-model="detailData[col.prop]"
-                        :placeholder="col.props?.placholder || `请选择${col.label}`"
+                        :placeholder="col.props?.placeholder || `请选择${col.label}`"
                         v-bind="col.props"
                         value-format="YYYY-MM-DD"
                         format="YYYY-MM-DD"
@@ -138,7 +138,7 @@
                         v-else-if="col.type === 'number'"
                         v-model="detailData[col.prop]"
                         v-bind="col.props"
-                        :placeholder="col.props?.placholder || `请输入${col.label}`"
+                        :placeholder="col.props?.placeholder || `请输入${col.label}`"
                       />
                       <UserRemoteQuery
                         v-else-if="col.type === 'select-user'"
@@ -290,7 +290,7 @@
                                 }"
                                 v-if="col.type === 'dict'"
                                 v-model="scoped.row[col.prop]"
-                                :placeholder="col.props?.placholder || `请选择${col.label}`"
+                                :placeholder="col.props?.placeholder || `请选择${col.label}`"
                                 v-bind="col.props"
                                 clearable
                               >
@@ -1080,7 +1080,9 @@ const submit = (onlySelectRows = false, query = null) => {
       loading.value = true;
       const formDataSend = {
         ...JSON.parse(JSON.stringify(detailData.value)),
-        attachmentId: detailData.value?.attachmentId?.map(at => at.id)?.join(','),
+        attachmentId: Array.isArray(detailData.value?.attachmentId)
+          ? detailData.value?.attachmentId?.map(at => at.id)?.join(',')
+          : '',
       };
       formDataSend.dcErpOrderNeList = onlySelectRows
         ? JSON.parse(JSON.stringify(selectionRows.value))

@@ -24,7 +24,7 @@
 // 备注弹窗
 @use './remarkDialog';
 // 备注弹窗
-@use './page-add-or-edit';
+@use './add-or-edit-page';
 @use './list-edit-page';
 @use './list-page';
 
@@ -32,10 +32,11 @@
   --el-menu-base-level-padding: 15px;
   --el-menu-level-padding: 15px;
   --el-menu-item-height: 46px;
-  --el-color-primary: #{var.$color-primary};
-  --el-color-primary-light-3: #{var.$color-primary};
-  --el-color-primary-dark-2: #{var.$color-primary};
-  --el-color-primary-light-5: #{var.$color-primary};
+  --el-color-primary: #f26c0c;
+  --el-color-primary-light-3: #f26c0c;
+  --el-color-primary-dark-2: #f26c0c;
+  --el-color-primary-light-5: #f26c0c;
+  // --el-color-primary-light-9: #fff;
   --el-fill-color-light: #f2f2f4;
   --el-disabled-bg-color: #f2f2f4;
   --el-disabled-text-color: #333333;
@@ -157,8 +158,8 @@ a {
   border-radius: 4px;
 
   &.pendApproval {
-    color: var.$color-accent;
-    background: rgba(var.$color-accent, 0.1);
+    color: #f78431;
+    background: rgba(247, 132, 49, 0.1);
   }
 
   &.finished {
@@ -247,8 +248,8 @@ a {
   }
 
   &-11 {
-    color: var.$color-accent;
-    background-color: rgba(var.$color-accent, 0.1);
+    color: #f78431;
+    background-color: rgba(247, 132, 49, 0.1);
   }
 
   &-12 {
@@ -353,12 +354,12 @@ a {
 
 // 日标记线
 .today-line {
-  background-color: var.$color-accent !important;
+  background-color: #f78431 !important;
   user-select: unset;
 
   &::before {
     content: '今天';
-    color: var.$color-accent;
+    color: #f78431;
   }
 }
 

@@ -25,6 +25,7 @@
         <el-button icon="Refresh" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
+
     <div class="body-container">
       <div class="operate-container">
         <el-button
@@ -35,6 +36,7 @@
           >新增</el-button
         >
       </div>
+
       <div class="table-container">
         <el-table
           :data="dataList"
@@ -54,31 +56,37 @@
               <span>{{ scoped.row.mtoNo || '-' }}</span>
             </template>
           </el-table-column>
+
           <el-table-column label="计划名称" prop="billNumber" align="center" show-overflow-tooltip>
             <template #default="scoped">
               <span>{{ scoped.row.billNumber || '-' }}</span>
             </template>
           </el-table-column>
+
           <el-table-column label="创建人" prop="name" align="center" show-overflow-tooltip>
             <template #default="scoped">
               <dc-view v-model="scoped.row.createUser" objectName="user" showKey="realName" />
             </template>
           </el-table-column>
+
           <el-table-column label="创建时间" prop="name" align="center" show-overflow-tooltip>
             <template #default="scoped">
               <span>{{ scoped.row.createTime || '-' }}</span>
             </template>
           </el-table-column>
+
           <el-table-column label="总工时" prop="processTime" align="center" show-overflow-tooltip>
             <template #default="scoped">
-              <span>{{ proxy.secondToHour(scoped.row.processTime) || '-' }}</span>
+              <span>{{ secondToHour(scoped.row.processTime) || '-' }}</span>
             </template>
           </el-table-column>
+
           <el-table-column label="总数量" prop="processTime" align="center" show-overflow-tooltip>
             <template #default="scoped">
               <span>{{ scoped.row.qty || '-' }}</span>
             </template>
           </el-table-column>
+
           <el-table-column
             label="已汇报工时"
             prop="reportTotal"
@@ -86,9 +94,10 @@
             show-overflow-tooltip
           >
             <template #default="scoped">
-              <span>{{ proxy.secondToHour(scoped.row.reportTotal) || '0' }}时</span>
+              <span>{{ secondToHour(scoped.row.reportTotal) || '0' }}时</span>
             </template>
           </el-table-column>
+
           <el-table-column
             label="已汇报数量"
             prop="reportQtyTotal"
@@ -99,6 +108,7 @@
               <span>{{ scoped.row.reportQtyTotal || '0' }}</span>
             </template>
           </el-table-column>
+
           <el-table-column
             label="ERP汇报工时"
             prop="erpReportWorkingHours"
@@ -109,6 +119,7 @@
               <span>{{ scoped.row.erpReportWorkingHours || '0' }}</span>
             </template>
           </el-table-column>
+
           <el-table-column
             label="汇报工时"
             prop="mpsReportWorkingHours"
@@ -119,6 +130,7 @@
               <span>{{ scoped.row.mpsReportWorkingHours || '0' }}</span>
             </template>
           </el-table-column>
+
           <el-table-column
             label="本次汇报工时"
             prop="reportWorkingHours"
@@ -126,9 +138,10 @@
             show-overflow-tooltip
           >
             <template #default="scoped">
-              <span>{{ proxy.secondToHour(scoped.row.reportWorkingHours) || '0' }}</span>
+              <span>{{ secondToHour(scoped.row.reportWorkingHours) || '0' }}</span>
             </template>
           </el-table-column>
+
           <el-table-column
             label="本次汇报数量"
             prop="reportQty"
@@ -140,7 +153,7 @@
               <span>{{ scoped.row.reportQty || '-' }} 个</span>
             </template>
           </el-table-column>
-          <!-- 在此添加其他列 -->
+
           <el-table-column min-width="150" fixed="right" label="操作" align="center">
             <template #default="scoped">
               <el-button
@@ -152,19 +165,20 @@
                 v-permission="{ id: 'DC_WORKING_HOUR_SERPORT_DETAIL', row: scoped.row }"
                 >查看</el-button
               >
+
               <el-button
                 type="danger"
                 text
                 v-permission="{ id: 'DC_WORKING_HOUR_SERPORT_DEL', row: scoped.row }"
                 @click="handleRemove(scoped.row)"
+                >删除</el-button
               >
-                删除
-              </el-button>
             </template>
           </el-table-column>
         </el-table>
       </div>
     </div>
+
     <dc-pagination
       v-show="total > 0"
       :total="total"
@@ -173,6 +187,7 @@
       @pagination="getData"
     />
   </div>
+
   <!-- 新增抽屉 -->
   <el-drawer
     size="1400"
@@ -209,19 +224,18 @@
           />
         </el-select>
       </el-form-item>
+
       <div class="table-container">
         <el-table :data="formData.planDetail" :span-method="objectSpanMethod" height="100%" border>
           <el-table-column prop="produceRouteName" label="工艺" align="center" width="100" />
           <el-table-column prop="billNumber" label="MO" align="center" width="200" />
           <el-table-column prop="materialName" label="物料" align="center" />
           <el-table-column prop="processTime" label="总工时" align="center" width="100">
-            <template #default="scoped">
-              {{ proxy.secondToHour(scoped.row.processTime) }}时
-            </template>
+            <template #default="scoped"> {{ secondToHour(scoped.row.processTime) }}时 </template>
           </el-table-column>
           <el-table-column prop="reportWorkingHours" label="已汇报工时" align="center" width="100">
             <template #default="scoped">
-              {{ proxy.secondToHour(scoped.row.reportWorkingHours) || '0' }}时
+              {{ secondToHour(scoped.row.reportWorkingHours) || '0' }}时
             </template>
           </el-table-column>
           <el-table-column prop="number" label="总数量" align="center" width="80">
@@ -238,9 +252,7 @@
                 controls-position="right"
                 :min="0"
               >
-                <template #suffix>
-                  <span>时</span>
-                </template>
+                <template #suffix><span>时</span></template>
               </el-input-number>
             </template>
           </el-table-column>
@@ -278,13 +290,15 @@
         </el-table>
       </div>
     </el-form>
+
     <template #footer>
       <span class="dialog-footer">
-        <el-button type="primary" v-loading="loading" @click="submitFormProgress">确 定</el-button>
-        <el-button v-loading="loading" @click="closeAdd">关闭</el-button>
+        <el-button type="primary" :loading="loading" @click="submitFormProgress">确 定</el-button>
+        <el-button :loading="loading" @click="closeAdd">关闭</el-button>
       </span>
     </template>
   </el-drawer>
+
   <!-- 查看 -->
   <el-drawer
     size="1300"
@@ -306,16 +320,14 @@
         <el-table-column prop="billNumber" label="MO" align="center" width="200" />
         <el-table-column prop="materialName" label="物料" align="center" />
         <el-table-column prop="processTime" label="总工时" align="center" width="100">
-          <template #default="scoped">
-            {{ proxy.secondToHour(scoped.row.processTime) }}时
-          </template>
+          <template #default="scoped"> {{ secondToHour(scoped.row.processTime) }}时 </template>
         </el-table-column>
         <el-table-column prop="qty" label="总数量" align="center" width="100">
           <template #default="scoped"> {{ scoped.row.qty }}个 </template>
         </el-table-column>
         <el-table-column prop="reportHour" label="本次汇报工时" align="center" width="200">
           <template #default="scoped">
-            {{ proxy.secondToHour(scoped.row.reportWorkingHours) }}时
+            {{ secondToHour(scoped.row.reportWorkingHours) }}时
           </template>
         </el-table-column>
         <el-table-column
@@ -351,260 +363,235 @@
   </el-drawer>
 </template>
 
-<script setup name="WorkingHoursReport">
-import { reactive, toRefs, onMounted, getCurrentInstance } from 'vue';
-import Api from '@/api/index'; // 根据实际路径调整导入
+<script>
+import Api from '@/api/index';
 
-const { proxy } = getCurrentInstance();
+export default {
+  name: 'WorkingHoursReport',
+  data() {
+    return {
+      loading: false,
+      queryParams: {
+        current: 1,
+        size: 10,
+        // mtoNo: undefined,
+        // billNumber: undefined,
+        // createUser: undefined,
+      },
+      dataList: [],
+      total: 0,
 
-const pageData = reactive({
-  loading: false,
-  queryParams: {
-    current: 1,
-    size: 10,
-  },
-  dataList: [],
-  total: 0,
-  open: false,
-  title: '新增汇报工时',
-  selectValue: '',
-  planInfo: [],
-  options: [],
-  checkOpen: false,
-  detailErp: [],
-  // 新增表单数据
-  formData: {
-    // 计划id
-    planId: null,
-    // 是否标记完成
-    isComplete: {},
-    // 计划详情
-    planDetail: [],
-  },
-  // 新增表单校验规则
-  rules: {
-    planId: [{ required: true, message: '请选择计划', trigger: 'blur' }],
-    isComplete: [{ required: true, message: '请选择是否标记完成', trigger: 'blur' }],
-  },
-  isCompleteEnum: {
-    false: '未完成',
-    true: '已完成',
-  },
-});
+      open: false,
+      title: '新增汇报工时',
+      selectValue: '',
+      planInfo: [],
+      options: [],
+      checkOpen: false,
+      detailErp: [],
 
-const {
-  loading,
-  queryParams,
-  dataList,
-  total,
-  open,
-  title,
-  planInfo,
-  options,
-  selectValue,
-  checkOpen,
-  detailErp,
-  formData,
-  rules,
-  isCompleteEnum,
-} = toRefs(pageData);
+      // 新增表单
+      formData: {
+        planId: null,
+        isComplete: {},
+        planDetail: [],
+      },
 
-onMounted(() => {
-  getData();
-  remoteMethod('init');
-});
+      // 校验
+      rules: {
+        planId: [{ required: true, message: '请选择计划', trigger: 'blur' }],
+        isComplete: [{ required: true, message: '请选择是否标记完成', trigger: 'blur' }],
+      },
 
-// 主列表数据
-const getData = async () => {
-  try {
-    loading.value = true;
-    const res = await Api.mps.workinghoursreport.list(queryParams.value);
-    const { code, data } = res.data;
-    if (code === 200) {
-      dataList.value = data.records;
-      total.value = data.total;
-    }
-  } catch (err) {
-    console.error(err);
-  } finally {
-    loading.value = false;
-  }
-};
-
-// 新增
-const handleSubmit = async () => {
-  // 处理新增或编辑逻辑
-  open.value = true;
-  title.value = '新增';
-};
-
-// 处理删除
-const handleRemove = row => {
-  const ids = row.id;
-  proxy
-    .$confirm(`确认是否删除"${ids}"为的数据项？`)
-    .then(() => {
-      loading.value = true;
-      return Api.mps.workinghoursreport.remove({ ids });
-    })
-    .then(() => {
-      proxy.$message.success('删除成功');
-      getData();
-      loading.value = false;
-    })
-    .catch(() => {
-      loading.value = false;
-    });
-};
-
-// 选择框改变
-const handleChange = async () => {
-  const res = await Api.mps.workinghoursreport.planDetail({ planId: formData.value.planId });
-  const { code, data } = res.data;
-  if (code == 200) {
-    formData.value.planDetail = data;
-    data.forEach(item => {
-      formData.value.isComplete[item.produceRouteName] = item.isComplete;
-    });
-  }
-};
-
-// 远程搜索
-const remoteMethod = async query => {
-  if (query === 'init') {
-    const res = await Api.mps.workinghoursreport.planList();
-    const { code, data } = res.data;
-    if (code === 200) {
-      options.value = data;
-    }
-  } else if (query) {
-    const params = {
-      mtoNo: query,
+      isCompleteEnum: {
+        false: '未完成',
+        true: '已完成',
+      },
     };
-    const res = await Api.mps.workinghoursreport.planList(params);
-    const { code, data } = res.data;
-    if (code === 200) {
-      options.value = data;
-    }
-  }
-};
+  },
 
-// 抽屉确定
-const submitFormProgress = async () => {
-  proxy.$refs['formRef'].validate(async valid => {
-    if (valid) {
+  mounted() {
+    this.getData();
+    this.remoteMethod('init');
+  },
+
+  methods: {
+    // 工具：秒转小时（保留与原用法一致）
+    secondToHour(sec) {
+      if (sec == null || isNaN(sec)) return 0;
+      return (sec / 3600).toFixed(2);
+    },
+
+    // 主列表
+    async getData() {
       try {
-        loading.value = true;
-        const data = formData.value.planDetail.map(item => {
-          return {
-            ...item,
-            reportHour: item.reportHour * 3600, // 将小时转为秒
-            isComplete: formData.value.isComplete[item.produceRouteName] || false,
-          };
-        });
-        const res = await Api.mps.workinghoursreport.reporSavetSubmit(data);
-        const { code, msg } = res.data;
-        if (code == 200) {
-          closeAdd();
-          getData();
-          proxy.$message.success(msg);
+        this.loading = true;
+        const res = await Api.mps.workinghoursreport.list(this.queryParams);
+        const { code, data } = res.data;
+        if (code === 200) {
+          this.dataList = data.records;
+          this.total = data.total;
         }
-        loading.value = false;
-        open.value = false;
-      } catch (error) {
-        loading.value = false;
+      } catch (e) {
+        console.error(e);
+      } finally {
+        this.loading = false;
       }
-    }
-  });
-};
+    },
 
-const detail = async id => {
-  const res = await Api.mps.workinghoursreport.list({ parentId: id });
-  const { code, data } = res.data;
-  if (code == 200) {
-    planInfo.value = data.records;
-  }
-};
+    // 新增
+    handleSubmit() {
+      this.open = true;
+      this.title = '新增';
+    },
 
-// 查看
-const hanleDetail = async row => {
-  title.value = '查看';
-  checkOpen.value = true;
-  detail(row.id);
-  const params = {
-    moCode: row.billNumber,
-    mtoNo: row.mtoNo,
-  };
-  const res = await Api.mps.workinghoursreport.queryDetailErp(params);
-  const { code, data } = res.data;
-  if (code === 200) {
-    detailErp.value = data;
-  }
-};
+    // 删除
+    handleRemove(row) {
+      const ids = row.id;
+      this.$confirm(`确认是否删除"${ids}"为的数据项？`)
+        .then(() => {
+          this.loading = true;
+          return Api.mps.workinghoursreport.remove({ ids });
+        })
+        .then(() => {
+          this.$message.success('删除成功');
+          this.getData();
+          this.loading = false;
+        })
+        .catch(() => {
+          this.loading = false;
+        });
+    },
 
-// 关闭新增弹窗
-const closeAdd = () => {
-  open.value = false;
-  formData.value = {
-    planId: null,
-    isComplete: {},
-    planDetail: [],
-  };
-};
+    // 选择计划变化
+    async handleChange() {
+      const res = await Api.mps.workinghoursreport.planDetail({ planId: this.formData.planId });
+      const { code, data } = res.data;
+      if (code === 200) {
+        this.formData.planDetail = data;
+        data.forEach(item => {
+          this.formData.isComplete[item.produceRouteName] = item.isComplete;
+        });
+      }
+    },
 
-// 抽烟取消
-const closeProgress = () => {
-  checkOpen.value = false;
-  selectValue.value = null;
-  planInfo.value = [];
-};
+    // 远程搜索
+    async remoteMethod(query) {
+      if (query === 'init') {
+        const res = await Api.mps.workinghoursreport.planList();
+        const { code, data } = res.data;
+        if (code === 200) this.options = data;
+      } else if (query) {
+        const params = { mtoNo: query };
+        const res = await Api.mps.workinghoursreport.planList(params);
+        const { code, data } = res.data;
+        if (code === 200) this.options = data;
+      }
+    },
 
-// 树状方法
-const load = async (row, treeNode, resolve) => {
-  const params = { ...queryParams.value, parentId: row.id };
-  const res = await Api.mps.workinghoursreport.list(params);
-  const { code, data } = res.data;
-  if (code === 200) {
-    resolve(data.records);
-  }
-};
+    // 抽屉确定
+    submitFormProgress() {
+      this.$refs['formRef'].validate(async valid => {
+        if (!valid) return;
+        try {
+          this.loading = true;
+          const payload = this.formData.planDetail.map(item => ({
+            ...item,
+            reportHour: (item.reportHour || 0) * 3600,
+            isComplete: this.formData.isComplete[item.produceRouteName] || false,
+          }));
+          const res = await Api.mps.workinghoursreport.reporSavetSubmit(payload);
+          const { code, msg } = res.data;
+          if (code === 200) {
+            this.closeAdd();
+            this.getData();
+            this.$message.success(msg);
+          }
+          this.loading = false;
+          this.open = false;
+        } catch (e) {
+          this.loading = false;
+        }
+      });
+    },
 
-const handleQuery = () => {
-  queryParams.value.current = 1;
-  getData();
-};
+    // 详情数据
+    async detail(id) {
+      const res = await Api.mps.workinghoursreport.list({ parentId: id });
+      const { code, data } = res.data;
+      if (code === 200) {
+        this.planInfo = data.records;
+      }
+    },
 
-const resetQuery = () => {
-  queryParams.value = {
-    current: 1,
-    size: 10,
-  };
-  proxy.resetForm('queryRef');
-  getData();
-};
+    // 查看
+    async hanleDetail(row) {
+      this.title = '查看';
+      this.checkOpen = true;
+      await this.detail(row.id);
 
-const objectSpanMethod = ({ row, column, rowIndex, columnIndex }) => {
-  if (columnIndex === 0 || columnIndex === 9) {
-    const currentId = formData.value.planDetail[rowIndex].produceRouteId;
-    const prevId = rowIndex > 0 ? formData.value.planDetail[rowIndex - 1].produceRouteId : null;
+      const params = { moCode: row.billNumber, mtoNo: row.mtoNo };
+      const res = await Api.mps.workinghoursreport.queryDetailErp(params);
+      const { code, data } = res.data;
+      if (code === 200) {
+        this.detailErp = data;
+      }
+    },
 
-    // 如果是第一行，或者ID与上一行不同
-    if (rowIndex === 0 || currentId !== prevId) {
-      // 计算当前ID的重复行数
-      const count = formData.value.planDetail.filter(
-        item => item.produceRouteId === currentId
-      ).length;
-      return {
-        rowspan: count,
-        colspan: 1,
+    // 关闭新增
+    closeAdd() {
+      this.open = false;
+      this.formData = {
+        planId: null,
+        isComplete: {},
+        planDetail: [],
       };
-    } else {
-      return {
-        rowspan: 0,
-        colspan: 0,
-      };
-    }
-  }
+      // 如果你项目里有全局 resetForm 工具，保留如下（可选）
+      // this.resetForm && this.resetForm('formRef');
+    },
+
+    // 关闭查看
+    closeProgress() {
+      this.checkOpen = false;
+      this.selectValue = null;
+      this.planInfo = [];
+    },
+
+    // 懒加载树
+    async load(row, treeNode, resolve) {
+      const params = { ...this.queryParams, parentId: row.id };
+      const res = await Api.mps.workinghoursreport.list(params);
+      const { code, data } = res.data;
+      if (code === 200) resolve(data.records);
+    },
+
+    handleQuery() {
+      this.queryParams.current = 1;
+      this.getData();
+    },
+
+    resetQuery() {
+      this.queryParams = { current: 1, size: 10 };
+      // 若有全局 resetForm，请保留
+      this.resetForm && this.resetForm('queryRef');
+      this.getData();
+    },
+
+    // 合并行
+    objectSpanMethod({ row, column, rowIndex, columnIndex }) {
+      if (columnIndex === 0 || columnIndex === 9) {
+        const list = this.formData?.planDetail || [];
+        const currentId = list[rowIndex]?.produceRouteId;
+        const prevId = rowIndex > 0 ? list[rowIndex - 1]?.produceRouteId : null;
+
+        if (rowIndex === 0 || currentId !== prevId) {
+          const count = list.filter(item => item.produceRouteId === currentId).length;
+          return { rowspan: count, colspan: 1 };
+        } else {
+          return { rowspan: 0, colspan: 0 };
+        }
+      }
+    },
+  },
 };
 </script>
 
@@ -618,7 +605,6 @@ const objectSpanMethod = ({ row, column, rowIndex, columnIndex }) => {
 .select {
   margin-bottom: 20px;
 }
-
 :deep(.el-descriptions__cell) {
   padding: 12px 0 !important;
 }

@@ -25,9 +25,15 @@ export default {
               title: '数据操作',
               list: [
                 {
-                  label: '导入导出',
-                  component: 'wf-el-button', // 关联到导入导出组件
-                  span: 24,
+                  label: '导出',
+                  component: 'wf-export-button', // 关联到导入导出组件
+                  span: 2,
+                  display: true,
+                },
+                {
+                  label: '导入',
+                  component: 'wf-import-button', // 关联到导入导出组件
+                  span: 2,
                   display: true,
                 },
               ],

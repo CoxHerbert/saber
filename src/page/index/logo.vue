@@ -5,8 +5,11 @@
       'avue-logo_center': isCollapse,
     }"
   >
-    <img class="logo" src="/img/logo.png" alt="logo" v-if="isCollapse" />
-    <img class="logo" src="/img/logo-v2.png" alt="logo" v-else />
+<!--    <img class="logo" src="/img/logo.png" alt="logo" v-if="isCollapse" />-->
+    <img class="logo" src="/img/logo.png" alt="logo" />
+    <span class="avue-logo_title" key="1" v-if="getScreen(!isCollapse)"
+    >{{ website.indexTitle }}
+    </span>
 
     <div
       class="avue-breadcrumb"

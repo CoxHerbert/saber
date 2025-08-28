@@ -1,29 +1,6 @@
 <template>
   <basic-container>
-    <div class="content-warp">
-      <!-- <div class="header"> -->
-      <!-- <div class="title">
-          <el-tabs v-model="applyStatus" @tab-click="handleClick">
-            <el-tab-pane label="全部" name=""> </el-tab-pane>
-            <el-tab-pane
-              :label="item.label"
-              :name="item.dictKey"
-              v-for="(item, index) in DC_FLAG_STATUS"
-              :key="index"
-            ></el-tab-pane>
-          </el-tabs>
-        </div>
-        <div class="search-area">
-          <el-button type="primary" icon="el-icon-plus" @click="handleAdd">新增物料 </el-button>
-          <el-button
-            icon="el-icon-delete"
-            plain
-            @click="handleDelete"
-            :disabled="batchDelete.length == 0"
-            >批量删除</el-button
-          >
-        </div> -->
-      <!-- </div> -->
+    <div class="list-page material-list-page">
       <div class="search">
         <div class="search-left">
           <el-form
@@ -91,14 +68,15 @@
           size="small"
           @selection-change="handleSelectionChange"
           @row-dblclick="lookReport"
+          border
         >
-          <el-table-column type="selection" width="55" />
+          <el-table-column type="selection" width="50" align="center" />
           <el-table-column label="序号" width="60" type="index" align="center">
             <template #default="scoped">
               <span>{{ (queryParams.current - 1) * queryParams.size + scoped.$index + 1 }}</span>
             </template>
           </el-table-column>
-          <el-table-column label="物料分类" min-width="100px" align="center" prop="classifyDict">
+          <el-table-column label="物料分类" width="120" align="center" prop="classifyDict">
             <template #default="scoped">
               <dc-dict-key
                 color="#666"
@@ -109,21 +87,20 @@
           </el-table-column>
           <el-table-column
             label="物料名称"
-            min-width="120"
+            width="120"
             prop="materialName"
             align="center"
             show-overflow-tooltip
           >
           </el-table-column>
-
-          <el-table-column label="物料编码" min-width="110px" align="center" prop="materialNumber">
+          <el-table-column label="物料编码" width="120" align="center" prop="materialNumber">
           </el-table-column>
-
           <!-- <el-table-column label="品牌" min-width="120px" align="center" prop="brand" /> -->
-
-          <el-table-column label="规格型号" align="center" prop="specification" width="180px" />
-          <el-table-column label="单位" align="center" prop="unitDict"> </el-table-column>
-          <el-table-column label="物料属性" align="center" prop="attribute">
+          <el-table-column label="规格型号" align="center" prop="specification" min-width="200" />
+          <el-table-column label="单位" align="center" prop="unitDict" width="80">
+            <template #default="scoped">{{ scoped.row.unitDict || '-' }}</template>
+          </el-table-column>
+          <el-table-column label="物料属性" align="center" prop="attribute" min-width="140">
             <template #default="scoped">
               <dc-dict
                 type="text"
@@ -133,7 +110,7 @@
             </template>
           </el-table-column>
 
-          <el-table-column label="组织" align="center" prop="orgId">
+          <el-table-column label="组织" align="center" prop="orgId" width="160">
             <template #default="scoped">
               <dc-dict type="text" :options="SCMORG_LIST_CACHE" :value="scoped.row.orgId" />
             </template>
@@ -144,7 +121,7 @@
             </template>
           </el-table-column>
 
-          <el-table-column label="操作" align="center" width="160" fixed="right">
+          <el-table-column label="操作" align="center" width="100" fixed="right">
             <template #default="scoped">
               <el-button
                 link
@@ -310,27 +287,6 @@ const resetQuery = () => {
 </script>
 
 <style scoped lang="scss">
-:deep(.el-card__body) {
-  padding-top: 0px;
-  .content-warp {
-    padding: 0px;
-    position: relative;
-    .header {
-      height: 50px;
-      display: flex;
-      align-items: center;
-    }
-  }
-  .search {
-    margin-top: 10px;
-  }
-}
-
-:deep(.el-tabs__nav-wrap):after {
-  height: 0px !important;
-}
-
-:deep(.el-tabs__item) {
-  height: 52px !important;
+.material-list-page {
 }
 </style>

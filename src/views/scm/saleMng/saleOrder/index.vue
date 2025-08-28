@@ -1,6 +1,6 @@
 <template>
   <basic-container>
-    <div class="content-warp">
+    <div class="list-page sale-order-list-page">
       <div class="header">
         <dc-search
           v-model="queryParams"
@@ -350,44 +350,17 @@ const resetQuery = () => {
 </script>
 
 <style scoped lang="scss">
-.line-one {
-  width: 240px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  div {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-}
-
-:deep(.el-card__body) {
-  padding-top: 0px;
-  .content-warp {
-    padding: 0px;
-    position: relative;
-    .header {
-      padding-top: 10px;
-      // height: 50px;
-      // display: flex;
-      // align-items: center;
-      // margin-bottom: 20px;
-    }
-    .toolbar {
-      padding: 10px 0;
+.sale-order-list-page {
+  .line-one {
+    width: 240px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    div {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
   }
-  .search-container {
-    margin-top: 20px;
-  }
-}
-
-:deep(.el-tabs__nav-wrap):after {
-  height: 0px !important;
-}
-
-:deep(.el-tabs__item) {
-  height: 52px !important;
 }
 </style>

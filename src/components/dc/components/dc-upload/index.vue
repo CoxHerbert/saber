@@ -40,7 +40,7 @@
           </el-icon>
           下载
         </div>
-        <div class="item" @click="clearFiles">
+        <div class="item" @click="claer">
           <el-icon>
             <Delete />
           </el-icon>
@@ -193,25 +193,25 @@ const uploadFileFun = async option => {
   return res;
 };
 
-const handleBeforeUpload = file => {
+function handleBeforeUpload(file) {
   if (!props.targetType) {
     proxy.$message.error('上传文件类型不能为空');
     return false;
   }
-  const isImg = props.fileType.some(type => file.type.includes(type) || file.name.endsWith(type));
+  let isImg = props.fileType.some(type => file.type.includes(type) || file.name.endsWith(type));
   if (!isImg) {
     proxy.$message.error(`文件格式不正确, 请上传${props.fileType.join('/')}格式文件!`);
     return false;
   }
   proxy.$modal.loading('正在上传文件，请稍候...');
   number.value++;
-};
+}
 
-const handleExceed = () => {
+function handleExceed() {
   proxy.$message.error(`上传文件数量不能超过 ${props.limit} 个!`);
-};
+}
 
-const handleUploadSuccess = async (res, file) => {
+async function handleUploadSuccess(res, file) {
   const { code, data } = res.data;
   if (code === 200) {
     const res2 = await Api.common.postSubmitFile({
@@ -236,18 +236,18 @@ const handleUploadSuccess = async (res, file) => {
     proxy.$refs.fileUpload.handleRemove(file);
   }
   proxy.$modal.closeLoading();
-};
+}
 
-const handleDelete = file => {
+function handleDelete(file) {
   const index = fileList.value.findIndex(f => f.id === file.id);
   if (index > -1) {
     fileList.value.splice(index, 1);
     emit('update:modelValue', fileList.value);
     return false;
   }
-};
+}
 
-const uploadedSuccessfully = () => {
+function uploadedSuccessfully() {
   if (number.value && fileList.value.length === number.value) {
     fileList.value = fileList.value.filter(f => f.url).concat(fileList.value);
     fileList.value = [];
@@ -255,12 +255,12 @@ const uploadedSuccessfully = () => {
     emit('update:modelValue', fileList.value);
     proxy.$modal.closeLoading();
   }
-};
+}
 
-const handleUploadError = () => {
+function handleUploadError() {
   proxy.$message.error('上传文件失败');
   proxy.$modal.closeLoading();
-};
+}
 
 const handleDownload = item => {
   try {
@@ -270,19 +270,18 @@ const handleDownload = item => {
   }
 };
 
-const clearFiles = () => {
+const claer = () => {
   fileList.value = [];
   emit('update:modelValue', []);
 };
 
 const download = () => {
-  if (!fileList.value.length) {
+  if (!props.modelValue || props.modelValue.length === 0)
     return proxy.$message({ type: 'warning', message: '无可下载文件' });
-  }
   try {
-    fileList.value.forEach(({ url, originalName }) =>
-      downloadFileBlob(url, originalName)
-    );
+    props.modelValue.forEach(item => downloadFileBlob(item.url, item.originalName));
+    if (props.modelValue)
+      props.modelValue.forEach(item => downloadFileBlob(item.url, item.originalName));
   } catch (err) {
     proxy.$message.error('下载异常');
   }

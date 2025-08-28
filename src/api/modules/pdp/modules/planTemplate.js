@@ -17,6 +17,14 @@ export default {
       data,
     });
   },
+  // 根据模版ID查询模板详情克隆
+  queryListByTemIdClone(data) {
+    return request({
+      url: '/blade-bip/plan-template/queryListByTemId',
+      method: 'post',
+      data,
+    });
+  },
   // 模板详情
   detail(params) {
     return request({

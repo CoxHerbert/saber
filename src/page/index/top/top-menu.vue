@@ -192,8 +192,8 @@ export default {
     left: 0;
     width: 100vw;
     height: 100vh;
-    opacity: 0;
     z-index: 999;
+    background: rgba(0, 0, 0, 0.1);
 
     .menu-box {
       z-index: 1000;
@@ -206,7 +206,7 @@ export default {
     background: #fff;
     border: 1px solid#e5e5e5;
     position: absolute;
-    top: 55px;
+    top: 49px;
     left: -1px;
     z-index: 9999;
     .menu-content {

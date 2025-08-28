@@ -399,7 +399,6 @@ defineExpose({
 </script>
 <style lang="scss" scoped>
 .comp-page-search {
-  height: 44px;
   display: flex;
   flex-flow: row nowrap;
   justify-content: flex-start;

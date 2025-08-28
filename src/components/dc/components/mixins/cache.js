@@ -1,10 +1,10 @@
 import { ref } from 'vue';
-import cacheDataConfig from './../../constant/cacheData';
+import _cacheData from './../../constant/cacheData';
 
-export const useCacheMixin = () => {
-  const cacheData = ref(cacheDataConfig);
+export function useCacheMixin() {
+  const cacheData = ref(_cacheData);
 
   return {
     cacheData,
   };
-};
+}

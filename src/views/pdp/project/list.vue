@@ -1,5 +1,5 @@
 <template>
-  <div class="content-warp">
+  <div class="list-page">
     <div class="header">
       <dc-search
         v-model="queryParams"
@@ -8,7 +8,7 @@
         @search="handleSearch"
       ></dc-search>
     </div>
-    <div class="operate-container">
+    <div class="action-banner">
       <el-button
         type="primary"
         icon="Plus"
@@ -121,15 +121,13 @@
         </div>
       </div>
     </div>
-    <div class="footer">
-      <dc-pagination
-        v-show="total > 0"
-        :total="total"
-        v-model:page="queryParams.current"
-        v-model:limit="queryParams.size"
-        @pagination="getData"
-      />
-    </div>
+    <dc-pagination
+      v-show="total > 0"
+      :total="total"
+      v-model:page="queryParams.current"
+      v-model:limit="queryParams.size"
+      @pagination="getData"
+    />
   </div>
 </template>
 <script setup name="Projects">
@@ -378,25 +376,6 @@ const handleReset = () => {
   getData();
 };
 
-// tab点击
-const handleClick = tab => {
-  if (tab === '4') {
-    queryParams.value = {
-      ...queryParams.value,
-      current: 1,
-      levelClass: tab.props.label,
-    };
-    getData();
-  } else {
-    queryParams.value = {
-      ...queryParams.value,
-      current: 1,
-      levelClass: tab.props.label,
-    };
-    getData();
-  }
-};
-
 // 处理项目立项
 const handleCreateProject = () => {
   router.push({
@@ -499,18 +478,6 @@ const handleDelete = async item => {
 };
 </script>
 <style lang="scss" scoped>
-.content-warp {
-  display: flex;
-  flex-flow: column nowrap;
-}
-
-.card-item_head {
-  border-bottom-left-radius: 0 !important;
-  border-bottom-right-radius: 0 !important;
-}
-.footer {
-  padding-top: 10px;
-}
 .card-container {
   flex: 1;
   overflow-y: auto;

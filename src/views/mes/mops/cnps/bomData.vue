@@ -507,76 +507,14 @@ export default {
   },
 };
 </script>
-<style lang="scss">
-.page-container {
-  .basic-container__card {
-    .el-card__body {
-      display: flex;
-      align-items: center;
-      flex-direction: row;
-      .page-process-outsourcing-right {
-        .param-group {
-          display: none;
-        }
-      }
-    }
-  }
-}
-</style>
 <style lang="scss" scoped>
-.drawing-wrap {
-  width: 49%;
-  height: 100%;
-}
 .page-prod-plan-edit {
   margin-right: 1%;
   width: 50%;
-  .group-toolbar {
-    display: flex;
-    // justify-content: space-between;
-    padding: 4px 0 10px;
-    gap: 5px;
-  }
-  .ceil-value {
-    word-break: break-all;
-    display: inline-block;
-    width: 100%;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .form-item-table {
-    overflow: hidden;
-    position: relative;
-    &.is-error {
-      :deep(.el-input__wrapper),
-      :deep(.el-select__wrapper) {
-        box-shadow: 0 0 0 1px var(--el-input-border-color, var(--el-border-color)) inset;
-      }
-
-      .is-null {
-        :deep(.el-input__wrapper),
-        :deep(.el-select__wrapper) {
-          box-shadow: 0 0 0 1px var(--el-color-danger) inset;
-        }
-        &.is-not-required {
-          :deep(.el-input__wrapper),
-          :deep(.el-select__wrapper) {
-            box-shadow: 0 0 0 1px var(--el-input-border-color) inset;
-          }
-        }
-      }
-    }
-  }
   &.render-small {
     .form-basic-group {
       .form-item-rawMaterialId {
         width: 99% !important;
-      }
-      .form-item-operation-detail {
-        width: 100%;
-        margin-right: 0 !important;
       }
     }
   }
@@ -587,12 +525,6 @@ export default {
       }
       .form-item-number1 {
         width: 99% !important;
-      }
-      .form-item-operation-detail {
-        width: 49%;
-        &:nth-child(2n + 1) {
-          margin-right: 2%;
-        }
       }
     }
   }
@@ -610,115 +542,10 @@ export default {
       .form-item-bomNumber {
         width: 49%;
       }
-      .form-item-operation-detail {
-        width: 49%;
-        &:nth-child(3n) {
-          margin-right: 1%;
-        }
-        &:nth-child(3n + 1) {
-          margin-right: 1%;
-        }
-        &:nth-child(3n + 2) {
-          margin-right: 1%;
-        }
-      }
     }
   }
-
-  :deep(.form-item-table) {
-    .el-form-item__content {
-      width: 100%;
-      z-index: 1;
-      margin-left: 0 !important;
-    }
-    .el-input-number .el-input__inner {
-      text-align: left;
-    }
-  }
-}
-.page-process-outsourcing-right {
-  display: flex;
-  flex-direction: column;
-  overflow-y: hidden;
-  overflow-x: auto;
-  flex: 1;
-  height: 100%;
-  .table-container {
-    flex: 1;
-    overflow: hidden;
-  }
-}
-:deep(.label-suffix) {
-  color: #f56c6c;
 }
 .drawer-container {
-  display: flex;
-  flex-flow: column nowrap;
-  min-height: calc(100vh - 200px);
-  box-sizing: border-box;
-
-  :deep(.el-date-editor.el-input) {
-    width: 100%;
-  }
-
-  .step-box {
-    padding: 0 60px 20px;
-    height: 48px;
-    box-sizing: border-box;
-  }
-
-  .content-box {
-    min-height: calc(100vh - 200px);
-    display: flex;
-    flex-flow: column nowrap;
-    justify-content: flex-start;
-  }
-
-  .footer {
-    padding-top: 8px;
-    border-top: 1px solid #eaeaeb;
-    padding-left: 20px;
-    height: 34px;
-  }
-
-  .form-box {
-    padding: 0 20px 0 0;
-    flex: 1;
-    display: flex;
-    flex-flow: column nowrap;
-    justify-content: flex-start;
-    overflow: auto;
-  }
-  .form-main {
-    display: flex;
-    flex-flow: column nowrap;
-    justify-content: flex-start;
-    flex: 1;
-  }
-
-  .group-box {
-    transform-origin: 0 0;
-    transition: all ease-in 0.3s;
-    &:last-child {
-      flex: 1;
-      min-height: 300px;
-    }
-    &.hide-expand {
-      height: 40px;
-      overflow: hidden !important;
-    }
-  }
-
-  .group-header {
-    font-weight: bold;
-    box-sizing: border-box;
-    padding-left: 4px;
-    border-left: 3px solid #f78431;
-    line-height: 16px;
-    font-size: 14px;
-    margin: 10px 0;
-  }
-
   .form-item-operation-detail {
     width: 49%;
     display: inline-flex;
@@ -726,21 +553,8 @@ export default {
     &:nth-child(2n + 1) {
       margin-right: 2%;
     }
-
-    .detail-column-value {
-      width: 100%;
-      display: block;
-      white-space: wrap;
-      word-break: break-all;
-      text-overflow: ellipsis;
-      line-height: 20px;
-      padding-top: 6px;
-    }
   }
 
-  .toggle-expand-icon {
-    cursor: pointer;
-  }
   .compose {
     display: flex;
   }

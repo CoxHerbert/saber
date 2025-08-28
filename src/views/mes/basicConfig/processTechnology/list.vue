@@ -1,127 +1,125 @@
 <template>
-  <basic-container>
-    <div class="content-warp list-page">
-      <div class="header">
+  <div class="list-page">
+    <!-- <div class="header">
         <dc-search
           v-model="queryParams"
           v-bind="searchConfig"
           @reset="handleReset"
           @search="handleSearch"
         />
-      </div>
-      <div class="action-banner">
-        <el-button type="primary" icon="CirclePlus" @click="doAction('add')">新建</el-button>
-      </div>
-      <div class="table-container">
-        <el-table
-          ref="tableRef"
-          v-loading="loading"
-          :data="tableData"
-          row-key="id"
-          @row-dblclick="
-            row => {
-              doAction('row-dblclick', row);
-            }
-          "
-          @select="handleSelect"
-          @select-all="handleSelectAll"
-          @selection-change="handleSelectionChange"
-        >
-          <template v-for="(col, i) in columns">
-            <!-- 多选 -->
-            <el-table-column
-              v-if="col.type === 'selection'"
-              :key="i"
-              type="selection"
-              :align="col.align"
-              :width="col.width"
-            />
-            <!-- 序号类型 -->
-            <el-table-column
-              v-else-if="col.type === 'index'"
-              :key="'index' + i"
-              label="序号"
-              :align="col.align"
-              :width="col.width"
-            >
-              <template #default="{ $index }">
-                {{ $index + 1 }}
-              </template>
-            </el-table-column>
-            <el-table-column
-              v-else-if="col.type === 'actions'"
-              :key="'option' + i"
-              :fixed="col.fixed"
-              :label="col.label"
-              :width="col.width ? col.width : 180"
-              :min-width="col.minWidth"
-              :align="col.align ? col.align : 'center'"
-            >
-              <template #default="scoped">
-                <el-button
-                  v-for="(btn, j) in col.children"
-                  :key="j"
-                  link
-                  v-show="!btn.showFunc || (btn.showFunc && btn.showFunc(scoped))"
-                  type="primary"
-                  @click="doAction(btn.action, scoped)"
-                  >{{ btn.label }}</el-button
-                >
-              </template>
-            </el-table-column>
-            <el-table-column
-              v-else
-              :key="col.type + i"
-              :label="col.label"
-              :width="col.width"
-              :min-width="col.minWidth"
-              :prop="col.prop"
-              :align="col.align ? col.align : 'center'"
-              show-overflow-tooltip
-            >
-              <template #default="scoped">
-                <template v-if="col.type === 'rowText'">
-                  <template v-if="col?.transVal">
-                    {{ col?.transVal(scoped) }}
-                  </template>
-                  <template v-else>
-                    {{
-                      [null, undefined, ''].includes(scoped.row[col.prop])
-                        ? '-'
-                        : scoped.row[col.prop]
-                    }}
-                  </template>
-                </template>
-                <dc-view
-                  v-else-if="col.type === 'dc-view'"
-                  v-model="scoped.row[col.prop]"
-                  :objectName="col.objectName"
-                  :showKey="col.showKey"
-                />
-                <template v-else-if="col.type === 'dict'">
-                  <dc-dict-key
-                    v-if="dictMaps[col.dictKey]"
-                    type="text"
-                    :options="dictMaps[col.dictKey]"
-                    :value="scoped.row[col.prop]"
-                  ></dc-dict-key>
-                  <span v-else>-</span>
-                </template>
-              </template>
-            </el-table-column>
-          </template>
-        </el-table>
-      </div>
-      <dc-pagination
-        v-show="total > 0"
-        :total="total"
-        v-model:page="queryParams.current"
-        v-model:limit="queryParams.size"
-        @pagination="getData"
-      />
+      </div> -->
+    <div class="action-banner">
+      <el-button type="primary" icon="CirclePlus" @click="doAction('add')">新建</el-button>
     </div>
-    <AddEditeDialog ref="addEditeDialogRef" @success="handleReset" />
-  </basic-container>
+    <div class="table-container">
+      <el-table
+        ref="tableRef"
+        v-loading="loading"
+        :data="tableData"
+        row-key="id"
+        @row-dblclick="
+          row => {
+            doAction('row-dblclick', row);
+          }
+        "
+        @select="handleSelect"
+        @select-all="handleSelectAll"
+        @selection-change="handleSelectionChange"
+      >
+        <template v-for="(col, i) in columns">
+          <!-- 多选 -->
+          <el-table-column
+            v-if="col.type === 'selection'"
+            :key="i"
+            type="selection"
+            :align="col.align"
+            :width="col.width"
+          />
+          <!-- 序号类型 -->
+          <el-table-column
+            v-else-if="col.type === 'index'"
+            :key="'index' + i"
+            label="序号"
+            :align="col.align"
+            :width="col.width"
+          >
+            <template #default="{ $index }">
+              {{ $index + 1 }}
+            </template>
+          </el-table-column>
+          <el-table-column
+            v-else-if="col.type === 'actions'"
+            :key="'option' + i"
+            :fixed="col.fixed"
+            :label="col.label"
+            :width="col.width ? col.width : 180"
+            :min-width="col.minWidth"
+            :align="col.align ? col.align : 'center'"
+          >
+            <template #default="scoped">
+              <el-button
+                v-for="(btn, j) in col.children"
+                :key="j"
+                link
+                v-show="!btn.showFunc || (btn.showFunc && btn.showFunc(scoped))"
+                type="primary"
+                @click="doAction(btn.action, scoped)"
+                >{{ btn.label }}</el-button
+              >
+            </template>
+          </el-table-column>
+          <el-table-column
+            v-else
+            :key="col.type + i"
+            :label="col.label"
+            :width="col.width"
+            :min-width="col.minWidth"
+            :prop="col.prop"
+            :align="col.align ? col.align : 'center'"
+            show-overflow-tooltip
+          >
+            <template #default="scoped">
+              <template v-if="col.type === 'rowText'">
+                <template v-if="col?.transVal">
+                  {{ col?.transVal(scoped) }}
+                </template>
+                <template v-else>
+                  {{
+                    [null, undefined, ''].includes(scoped.row[col.prop])
+                      ? '-'
+                      : scoped.row[col.prop]
+                  }}
+                </template>
+              </template>
+              <dc-view
+                v-else-if="col.type === 'dc-view'"
+                v-model="scoped.row[col.prop]"
+                :objectName="col.objectName"
+                :showKey="col.showKey"
+              />
+              <template v-else-if="col.type === 'dict'">
+                <dc-dict-key
+                  v-if="dictMaps[col.dictKey]"
+                  type="text"
+                  :options="dictMaps[col.dictKey]"
+                  :value="scoped.row[col.prop]"
+                ></dc-dict-key>
+                <span v-else>-</span>
+              </template>
+            </template>
+          </el-table-column>
+        </template>
+      </el-table>
+    </div>
+    <dc-pagination
+      v-show="total > 0"
+      :total="total"
+      v-model:page="queryParams.current"
+      v-model:limit="queryParams.size"
+      @pagination="getData"
+    />
+  </div>
+  <AddEditeDialog ref="addEditeDialogRef" @success="handleReset" />
 </template>
 <script>
 import listPage from '@/mixins/list-page';
@@ -202,28 +200,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.list-page {
-  .action-banner {
-    padding: 8px 0;
-    display: flex;
-    flex-flow: row wrap;
-    width: 100%;
-  }
-}
-:deep(.el-card__body) {
-  padding-top: 0px;
-  .content-warp {
-    padding: 0px;
-    position: relative;
-    .header {
-      padding-top: 6px;
-      padding-bottom: 0;
-    }
-  }
-  .search-container {
-    margin-top: 20px;
-  }
-}
-</style>

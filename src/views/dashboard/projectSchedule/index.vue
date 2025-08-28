@@ -2,7 +2,8 @@
   <div class="dashboard-container" v-loading="loading">
     <div class="dashboard-head">
       <div class="logo-wrap">
-        <img class="logo-img" src="/img/logo-v2.png" alt="" />
+        <img class="logo-img" src="/img/logo.png" alt="" />
+        联合东创BIP2.0
       </div>
       <img class="title" src="/img/dashboard/gantt-title.png" alt="" />
       <div class="button-group">

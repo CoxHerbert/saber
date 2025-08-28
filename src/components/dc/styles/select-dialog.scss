@@ -15,7 +15,7 @@
   overflow: hidden;
 
   .el-dialog__header {
-    padding: 20px 20px 10px;
+    padding: 10px 10px 5px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -23,7 +23,7 @@
 
     .head-title {
       line-height: 24px;
-      font-size: 18px;
+      font-size: 16px;
       color: #303133;
       font-weight: 700;
     }
@@ -79,6 +79,10 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
+        .clear-btn {
+          color: #f26c0c;
+          cursor: pointer;
+        }
       }
     }
 
@@ -190,7 +194,7 @@
   }
 
   .el-dialog__footer {
-    padding: 15px 20px 15px 10px;
+    padding: 10px;
     background-color: #f4f6f9;
   }
 }

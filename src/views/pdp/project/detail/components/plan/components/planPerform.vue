@@ -614,7 +614,6 @@ function getUrlParams(url) {
 
 const handleToCreateProcess = () => {
   const { processId, id } = info.value;
-
   let param = window.btoa(
     JSON.stringify({
       // processId: processId,
@@ -640,6 +639,8 @@ const handleToCreateProcess = () => {
 
 // 处理去创建
 const handleToCreate = async () => {
+  console.log('info.value', info.value);
+
   if (info?.businessCategoryId === '1859779087373963266') {
     const res = await Api.pdp.workflow.getWorkflow({
       processId: info.value.processId,

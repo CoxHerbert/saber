@@ -80,27 +80,27 @@ const style = computed(() => {
 });
 
 // 搜索
-const toggleSearch = () => {
+function toggleSearch() {
   emits("update:showSearch", !props.showSearch);
-};
+}
 
 // 刷新
-const refresh = () => {
+function refresh() {
   emits("queryTable");
-};
+}
 
 // 右侧列表元素变化
-const dataChange = data => {
-  for (const item in props.columns) {
+function dataChange(data) {
+  for (let item in props.columns) {
     const key = props.columns[item].key;
     props.columns[item].visible = !data.includes(key);
   }
-};
+}
 
 // 打开显隐列dialog
-const showColumn = () => {
+function showColumn() {
   open.value = true;
-};
+}
 
 if (props.showColumnsType == 'transfer') {
   // 显隐列初始默认隐藏列
@@ -112,9 +112,9 @@ if (props.showColumnsType == 'transfer') {
 }
 
 // 勾选
-const checkboxChange = (event, label) => {
+function checkboxChange(event, label) {
   props.columns.filter(item => item.label == label)[0].visible = event;
-};
+}
 
 </script>
 

@@ -1,77 +1,75 @@
 <template>
-  <div class="app-container">
-    <div class="body-container">
-      <div class="operate-container">
-        <el-button type="primary" @click="handleCreate">新增</el-button>
-        <el-button type="danger" @click="handleDeletes">删除</el-button>
-      </div>
-      <div class="table-container">
-        <el-table
-          :data="tableData"
-          @row-click="handleRowClick"
-          @selection-change="handleSelectionChange"
-          row-key="id"
-          height="100%"
-        >
-          <el-table-column type="selection" width="40" :reserve-selection="true" />
-          <el-table-column label="序号" width="80" type="index" align="center">
-            <template #default="scoped">
-              <span>{{ (queryParams.current - 1) * queryParams.size + scoped.$index + 1 }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column
-            v-for="(column, index) in currentObject?.column || []"
-            :prop="column?.prop"
-            :label="column?.label"
-            :align="column?.align || 'center'"
-            :show-overflow-tooltip="!!column?.tooltip"
-            :key="index"
-          >
-            <template #default="scoped">
-              <dc-view
-                v-model="scoped.row[column?.prop]"
-                :objectName="column?.objectName"
-                v-if="column?.component === 'dc-view'"
-              />
-              <span v-else>{{ scoped.row[column?.prop] }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column
-            label="操作"
-            width="160"
-            align="center"
-            fixed="right"
-            v-if="!!currentObject?.dialogEdit || !!currentObject?.dialogRemove"
-          >
-            <template #default="scoped">
-              <el-button
-                type="primary"
-                text
-                @click="handleEdit(scoped.row)"
-                v-if="!!currentObject?.dialogEdit"
-              >
-                编辑
-              </el-button>
-              <el-button
-                type="danger"
-                text
-                @click="handleRemove(scoped.row)"
-                v-if="!!currentObject?.dialogRemove"
-              >
-                删除
-              </el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-      </div>
-      <dc-pagination
-        v-show="total > 0"
-        :total="total"
-        v-model:page="queryParams.current"
-        v-model:limit="queryParams.size"
-        @pagination="getData"
-      />
+  <div class="list-page">
+    <div class="action-banner">
+      <el-button type="primary" @click="handleCreate">新增</el-button>
+      <el-button type="danger" @click="handleDeletes">删除</el-button>
     </div>
+    <div class="table-container">
+      <el-table
+        :data="tableData"
+        @row-click="handleRowClick"
+        @selection-change="handleSelectionChange"
+        row-key="id"
+        height="100%"
+      >
+        <el-table-column type="selection" width="40" :reserve-selection="true" />
+        <el-table-column label="序号" width="80" type="index" align="center">
+          <template #default="scoped">
+            <span>{{ (queryParams.current - 1) * queryParams.size + scoped.$index + 1 }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          v-for="(column, index) in currentObject?.column || []"
+          :prop="column?.prop"
+          :label="column?.label"
+          :align="column?.align || 'center'"
+          :show-overflow-tooltip="!!column?.tooltip"
+          :key="index"
+        >
+          <template #default="scoped">
+            <dc-view
+              v-model="scoped.row[column?.prop]"
+              :objectName="column?.objectName"
+              v-if="column?.component === 'dc-view'"
+            />
+            <span v-else>{{ scoped.row[column?.prop] }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="操作"
+          width="160"
+          align="center"
+          fixed="right"
+          v-if="!!currentObject?.dialogEdit || !!currentObject?.dialogRemove"
+        >
+          <template #default="scoped">
+            <el-button
+              type="primary"
+              text
+              @click="handleEdit(scoped.row)"
+              v-if="!!currentObject?.dialogEdit"
+            >
+              编辑
+            </el-button>
+            <el-button
+              type="danger"
+              text
+              @click="handleRemove(scoped.row)"
+              v-if="!!currentObject?.dialogRemove"
+            >
+              删除
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
+    <dc-pagination
+      v-show="total > 0"
+      :total="total"
+      v-model:page="queryParams.current"
+      v-model:limit="queryParams.size"
+      @pagination="getData"
+    />
   </div>
   <el-dialog :title="submitTitle" append-to-body v-model="openSubmit" width="800px">
     <avue-form :option="currentObject" v-model="formData" @submit="submitForm" />

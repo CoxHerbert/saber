@@ -1,6 +1,6 @@
 <template>
   <basic-container>
-    <div class="content-warp page-my-task-list">
+    <div class="list-page page-my-task-list">
       <!-- 我的任务配置 -->
       <div class="header">
         <dc-search
@@ -324,21 +324,6 @@ const getData = async () => {
     display: flex;
     flex-flow: row wrap;
     width: 100%;
-  }
-}
-:deep(.el-card__body) {
-  padding-top: 0px;
-  .content-warp {
-    padding: 0px;
-    position: relative;
-    .header {
-      padding-top: 6px;
-      padding-bottom: 0;
-      margin-bottom: 8px;
-    }
-  }
-  .search-container {
-    margin-top: 20px;
   }
 }
 </style>

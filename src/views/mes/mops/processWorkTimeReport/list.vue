@@ -9,9 +9,8 @@
       />
     </div>
     <div class="action-banner">
-      <el-button icon="Plus" type="primary" style="margin-right: 16px" @click="doAction('add')"
-        >新增</el-button
-      >
+      <el-button icon="Plus" type="primary" @click="doAction('add')">新增</el-button>
+      <el-button icon="Upload" type="primary" @click="doAction('push-erp')">推送ERP</el-button>
     </div>
     <div class="table-container">
       <el-table
@@ -101,7 +100,7 @@
 import listPage from '@/mixins/list-page';
 import options from './list';
 import addOrEditDialog from './cpns/addOrEditDialog.vue';
-
+import Api from '@/api';
 export default {
   components: { addOrEditDialog },
   mixins: [listPage],
@@ -148,11 +147,22 @@ export default {
     doAction(action, scope = {}) {
       const { row } = scope;
       if (action === 'look') {
-        this.$refs.addOrEditDialogRef.openDialog(row);
+        this.$refs.addOrEditDialogRef.openDialog({
+          action,
+          row,
+        });
       } else if (action === 'delete') {
         this.deleteData([scope.row.id]);
       } else if (action === 'add') {
-        this.$refs.addOrEditDialogRef.openDialog();
+        this.$refs.addOrEditDialogRef.openDialog({
+          action,
+          searchApi: Api.mes.mops.getPlanList,
+        });
+      } else if (action === 'push-erp') {
+        this.$refs.addOrEditDialogRef.openDialog({
+          action,
+          searchApi: Api.mes.mops.getErpReportList,
+        });
       }
     },
     /** 处理删除 **/
@@ -163,6 +173,8 @@ export default {
         this.api.mes.mops.deleteProcessWorkTimeReport
       );
     },
+    /** 处理推送ERP **/
+    handlePushErp() {},
   },
 };
 </script>

@@ -18,6 +18,14 @@
         <div class="clearfix" v-if="!isEdit">
           <el-text style="padding: 0 15px">{{ total }}个</el-text>
           <el-button type="primary" size="medium" @click="handleNextItem">下一个</el-button>
+          <el-button
+            v-if="!routeRow.id"
+            type="warning"
+            style="margin-left: 40px"
+            size="medium"
+            @click="handleNotPricing"
+            >不核价</el-button
+          >
         </div>
 
         <!-- 基本信息 -->
@@ -170,7 +178,7 @@
             + 加工费:{{ routeRow.processFee || 0 }}+ 表处费:{{ routeRow.surfaceFee || 0 }}
           </el-text>
         </div>
-        <div>
+        <div v-if="!routeRow.id">
           <el-button type="primary" @click="handleSubmit">提交</el-button>
           <el-button type="primary" @click="openHistoryProcess">历史工艺</el-button>
         </div>
@@ -288,12 +296,63 @@ const basicInfoConfig = ref([
 
 // 分页操作：下一个
 const handleNextItem = () => {
-  ElMessageBox.confirm('当前页面有未保存的数据，确定要离开吗？', '警告', {
+  // if(routeRow.value)
+  if (routeRow.value.rawMaterialName && routeRow.value.size && !hasHistoryProcess.value) {
+    ElMessageBox.confirm('当前页面有未保存的数据，确定要离开吗？', '警告', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning',
+    })
+      .then(() => {
+        iframeShow.value = true;
+        router.push({
+          path: `/system/outsource-quotation/pricingdetail`,
+          query: { ...route.query },
+        });
+        processRouteRef.value?.resetProcessRoute();
+        nextTick(() => {
+          iframeShow.value = false;
+          initData(true);
+        });
+      })
+      .catch(() => {});
+  } else {
+    iframeShow.value = true;
+    router.push({
+      path: `/system/outsource-quotation/pricingdetail`,
+      query: { ...route.query },
+    });
+    processRouteRef.value?.resetProcessRoute();
+    nextTick(() => {
+      iframeShow.value = false;
+      initData(true);
+      // route.query.srcEntryId = routeRow.value.srcEntryId;
+      // route.query.total = total.value;
+    });
+  }
+};
+// 不核价
+const handleNotPricing = () => {
+  ElMessageBox.confirm('确定不核价吗？', '警告', {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
     type: 'warning',
   })
     .then(() => {
+      handleNotPricingRequest();
+    })
+    .catch(() => {});
+};
+
+// 不核价的请求
+const handleNotPricingRequest = async () => {
+  try {
+    let params = {
+      srcEntryId: route.query.srcEntryId,
+    };
+
+    const res = await Api.system.OutsourceQuotation.notPricing(params);
+    if (res.data.code === 200) {
       iframeShow.value = true;
       router.push({
         path: `/system/outsource-quotation/pricingdetail`,
@@ -303,11 +362,14 @@ const handleNextItem = () => {
       nextTick(() => {
         iframeShow.value = false;
         initData(true);
+        ElMessage.success('不核价成功,跳转到下一页');
       });
-    })
-    .catch(() => {});
+    }
+  } catch (error) {
+    ElMessage.error('不核价失败');
+    console.error('不核价失败:', error);
+  }
 };
-
 // 初始化数据
 const initData = async (isNext = false) => {
   loading.value = true;
@@ -384,9 +446,9 @@ const getDict = async () => {
       item.options = dictData.map(d => ({ label: d.dictValue, value: d.dictKey }));
 
       // 设置默认值（如果未设置）
-      if (!routeRow.value[item.prop] && item.options.length > 0) {
-        routeRow.value[item.prop] = item.options[0].value;
-      }
+      // if (!routeRow.value[item.prop] && item.options.length > 0) {
+      //   routeRow.value[item.prop] = item.options[0].value;
+      // }
     });
 
     // 初始化时过滤工艺库
@@ -467,8 +529,8 @@ const handleRemoteSearchByNumber = query => {
 // 选择下拉项
 const handleSelectOptionClick = (option, item) => {
   if (item.prop === 'precisionGrade') {
-    routeRow.value.precisionGrade = option.value;
-    filterProcessLibrary();
+    // routeRow.value.precisionGrade = option.value;
+    // filterProcessLibrary();
   } else if (item.prop === 'workpieceType') {
     routeRow.value.workpieceType = option.value;
   } else {
@@ -521,7 +583,7 @@ const handleFieldChange = item => {
   if (['shape', 'size', 'supplierMaterial', 'materialUnitPrice'].includes(item.prop)) {
     calculateCosts();
   }
-  markAsUnsaved();
+  // markAsUnsaved();
 };
 
 // 计算费用
@@ -671,7 +733,7 @@ const submitFormData = async () => {
       route.query.total = total.value;
       initData(false);
       processRouteRef.value?.resetProcessRoute();
-      markAsSaved();
+      // markAsSaved();
     } else {
       ElMessage.error(res.data.msg || '保存失败');
     }
@@ -686,6 +748,7 @@ const submitFormData = async () => {
 // 编辑状态数据加载
 const loadEditData = async () => {
   try {
+    await getDict();
     const res = await Api.system.OutsourceQuotation.loadHistoryByEntryId({
       srcEntryId: route.query.srcEntryId,
     });
@@ -706,8 +769,6 @@ const loadEditData = async () => {
       total.value = res.data.data.total;
       hasHistoryProcess.value = res.data.data.existHistoryProcess;
       currentOutsourceProcessTable.value = res.data.data.currentOutsourceProcess;
-
-      await getDict();
     }
   } catch (error) {
     ElMessage.error('加载编辑数据失败');
@@ -723,11 +784,21 @@ const openHistoryProcess = () => {
   });
 };
 
-const handleHistoryProcessConfirm = data => {
+const handleHistoryProcessConfirm = (data, row) => {
+  // console.log('data', data);
+  // console.log('row', row);
   if (Array.isArray(data)) {
     currentOutsourceProcess.value = data;
+    routeRow.value = row;
+    routeRow.value.id = '';
     processRouteRef.value?.resetProcessRoute();
-    filterProcessLibrary();
+    // 如果有原材料编码，自动加载对应数据
+    if (routeRow.value.rawMaterialCode) {
+      handleRemoteSearchByNumber(routeRow.value.rawMaterialCode);
+    }
+    // nextTick(() => {
+    //   filterProcessLibrary();
+    // });
   } else {
     ElMessage.error('历史工艺数据格式错误');
   }
@@ -738,6 +809,8 @@ const canAddToRoute = ref(false);
 watchEffect(() => {
   // 确保routeRow.value已初始化再计算费用
   if (routeRow.value) {
+    // 直接访问precisionGrade以建立依赖关系
+    const precisionGrade = routeRow.value.precisionGrade;
     calculateCosts();
 
     // 表单验证
@@ -746,6 +819,8 @@ watchEffect(() => {
         // 调用表单验证方法
         dynamicForm.value.validate(valid => {
           // 更新验证结果
+          console.log('valid', valid);
+
           canAddToRoute.value = valid;
         });
       });
@@ -755,7 +830,8 @@ watchEffect(() => {
 
 // 监听形状和尺寸变化，触发工艺过滤
 watch(
-  () => [routeRow.value.shape, routeRow.value.size],
+  () => [routeRow.value.shape, routeRow.value.size, routeRow.value.precisionGrade],
+
   () => {
     filterProcessLibrary();
   }

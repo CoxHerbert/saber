@@ -92,15 +92,17 @@ const EVENT_CODE = {
   backspace: 'Backspace',
 };
 
-const isFirefox = () => !!window.navigator.userAgent.match(/firefox/i);
+const isFirefox = function () {
+  return !!window.navigator.userAgent.match(/firefox/i);
+};
 
-const rafThrottle = fn => {
+const rafThrottle = function (fn) {
   let locked = false;
-  return (...args) => {
+  return function (...args) {
     if (locked) return;
     locked = true;
     window.requestAnimationFrame(() => {
-      fn(...args);
+      fn.apply(this, args);
       locked = false;
     });
   };
@@ -205,12 +207,12 @@ export default {
       return style;
     });
 
-    const hide = () => {
+    function hide() {
       deviceSupportUninstall();
       emit(CLOSE_EVENT);
-    };
+    }
 
-    const deviceSupportInstall = () => {
+    function deviceSupportInstall() {
       _keyDownHandler = rafThrottle(e => {
         switch (e.code) {
           // ESC
@@ -257,24 +259,24 @@ export default {
 
       document.addEventListener('keydown', _keyDownHandler, false);
       document.addEventListener(mousewheelEventName, _mouseWheelHandler, false);
-    };
+    }
 
-    const deviceSupportUninstall = () => {
+    function deviceSupportUninstall() {
       document.removeEventListener('keydown', _keyDownHandler, false);
       document.removeEventListener(mousewheelEventName, _mouseWheelHandler, false);
       _keyDownHandler = null;
       _mouseWheelHandler = null;
-    };
+    }
 
-    const handleMediaLoad = () => {
+    function handleMediaLoad() {
       loading.value = false;
-    };
+    }
 
-    const handleMediaError = e => {
+    function handleMediaError(e) {
       loading.value = false;
-    };
+    }
 
-    const handleMouseDown = e => {
+    function handleMouseDown(e) {
       if (loading.value || e.button !== 0) return;
 
       const { offsetX, offsetY } = transform.value;
@@ -310,7 +312,7 @@ export default {
       e.preventDefault();
     }
 
-    const reset = () => {
+    function reset() {
       transform.value = {
         scale: 1,
         deg: 0,
@@ -318,9 +320,9 @@ export default {
         offsetY: 0,
         enableTransition: false,
       };
-    };
+    }
 
-    const toggleMode = () => {
+    function toggleMode() {
       if (loading.value) return;
 
       const modeNames = Object.keys(Mode);
@@ -330,21 +332,21 @@ export default {
       const nextIndex = (index + 1) % modeNames.length;
       mode.value = Mode[modeNames[nextIndex]];
       reset();
-    };
+    }
 
-    const prev = () => {
+    function prev() {
       if (isFirst.value && !props.infinite) return;
       const len = props.urlList.length;
       index.value = (index.value - 1 + len) % len;
-    };
+    }
 
-    const next = () => {
+    function next() {
       if (isLast.value && !props.infinite) return;
       const len = props.urlList.length;
       index.value = (index.value + 1) % len;
-    };
+    }
 
-    const handleActions = (action, options = {}) => {
+    function handleActions(action, options = {}) {
       if (loading.value) return;
       const { zoomRate, rotateDeg, enableTransition } = {
         zoomRate: 0.2,
@@ -369,7 +371,7 @@ export default {
           break;
       }
       transform.value.enableTransition = enableTransition;
-    };
+    }
 
     watch(currentMedia, () => {
       nextTick(() => {

@@ -140,6 +140,71 @@ export default {
       },
     ],
   },
+  stockMaterialList: {
+    url: '/blade-pda/common/material-search',
+    defaultLabel: 'materialNumber',
+    defaultLabelName: '物料名称',
+    title: '物料选择',
+    placeholder: '请输入物料编码',
+    submitTitle: '物料',
+    dialogGet: Api.mes.forward.getStockMaterialList,
+    rowKey: 'erpId',
+    search: {
+      config: {
+        orgId: {
+          label: '组织',
+          paramKey: 'orgId',
+          type: 'dc-select',
+          props: {
+            objectName: 'org',
+            placeholder: '请选择',
+          },
+        },
+      },
+    },
+    column: [
+      {
+        label: '物料编码',
+        prop: 'materialNumber',
+        search: true,
+        searchProps: {
+          is: 'input',
+          placeholder: '请输入专案号',
+        },
+      },
+      {
+        label: '物料名称',
+        prop: 'materialName',
+        minWidth: 200,
+        tooltip: true,
+        search: true,
+        searchProps: {
+          is: 'input',
+          placeholder: '请输入物料名称',
+        },
+      },
+      {
+        label: '计划跟踪号',
+        prop: 'mtoNo',
+        search: true,
+        searchProps: {
+          is: 'input',
+          placeholder: '请输入计划跟踪号',
+        },
+      },
+      {
+        label: '所属组织',
+        prop: 'orgId',
+        component: 'dc-view',
+        objectName: 'org',
+        width: 200,
+      },
+      {
+        label: '当前库存',
+        prop: 'currentQty',
+      },
+    ],
+  },
   SnCheckMaterial: {
     url: '/blade-pda/common/material-search',
     defaultLabel: 'fname',
@@ -945,16 +1010,24 @@ export default {
       {
         label: '仓库编号',
         prop: 'warehouseCode',
+        width: 100,
+        search: true,
+        searchProps: {
+          is: 'input',
+        },
       },
       {
         label: '仓库名称',
         prop: 'warehouseName',
+        width: 160,
       },
       {
         label: '仓库类型',
         prop: 'stockType',
         dictData: 'DC_WMS_STOCK_TYPE',
+        type: 'dict',
         component: 'dc-dict-key',
+        width: 90,
       },
       {
         label: '仓库地址',
@@ -963,6 +1036,7 @@ export default {
       {
         label: '区域',
         prop: 'warehouseRegion',
+        width: 100,
       },
       // {
       //   label: '联系方式',
@@ -973,6 +1047,7 @@ export default {
         prop: 'warehouseSupervisor',
         component: 'dc-view',
         objectName: 'user',
+        width: 160,
       },
     ],
   },
@@ -1717,6 +1792,55 @@ export default {
         transVal(scope) {
           return scope.row.standardWorkingHours + 'h';
         },
+      },
+    ],
+  },
+  workList: {
+    url: '/blade-bip/mps/work-group/get-work-group-list',
+    defaultLabel: 'prdMoFbillno',
+    defaultLabelName: '生产退料名称',
+    title: '生产退料选择',
+    placeholder: '生产退料名称查询选择',
+    dialogGet: Api.mps.workGroup.queryErpMoList,
+    rowKey: 'prdMoFid',
+    defaultParams: {
+      prdMoFmtono: 'YCF2507123',
+      prdMoNumber: 'MO250802539',
+    },
+    column: [
+      {
+        label: '生产订单编号',
+        prop: 'prdMoFbillno',
+        type: 'rowText',
+        search: true,
+        searchProps: {
+          is: 'input',
+        },
+      },
+      {
+        label: '计划跟踪号',
+        prop: 'prdMoFmtono',
+
+        search: true,
+        searchProps: {
+          is: 'input',
+        },
+      },
+      {
+        label: '物料编码',
+        prop: 'prdMoFmaterialNumber',
+      },
+      {
+        label: '成品名称',
+        prop: 'prdMoFname',
+      },
+      {
+        label: '库位名称',
+        prop: 'stockLocName',
+      },
+      {
+        label: '库位编码',
+        prop: 'stockLocCode',
       },
     ],
   },
