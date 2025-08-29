@@ -26,6 +26,7 @@
     "@wangeditor/editor": "^5.1.23",
     "autoprefixer": "^10.4.20",
     "avue-plugin-ueditor": "^1.0.3",
+    "dayjs": "^1.11.13",
     "dhtmlx-gantt": "^9.0.2",
     "element-plus": "^2.7.3",
     "element-resize-detector": "^1.2.4",
